@@ -131,13 +131,9 @@ android {
         }
     }
 
-    // NimarkoGram: rebrand the published applicationId for this variant only.
-    // Upstream TG namespace ('org.telegram.messenger') stays intact for compatibility
-    // (TG core references it everywhere — renaming the whole package is out of scope).
-    // Final ids (no ".web" suffix anymore — see buildTypes comments):
-    //   debug      -> app.nimarkogram.messenger
-    //   standalone -> app.nimarkogram.messenger
-    defaultConfig.applicationId = 'app.nimarkogram.messenger'
+    // MofGram: keep Telegram's internal namespace for core compatibility.
+    // The installed application ID is owned by this project.
+    defaultConfig.applicationId = 'com.mofgram.app'
 
     sourceSets.debug {
         manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_standalone.xml'
