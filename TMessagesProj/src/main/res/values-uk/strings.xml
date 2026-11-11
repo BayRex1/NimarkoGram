@@ -2,8 +2,8 @@
 <resources>
     <string name="UseProxyWeb">WEB-проксі</string>
     <string name="UseProxyWebInfo">WEB-проксі використовує HTTPS-сторінку в окремому WebView. Укажіть ім’я хоста без схеми й шляху, а також 16-байтовий секрет MTProxy. Це експериментальна реалізація для тестування у відкритому застосунку. Потрібна актуальна версія Android System WebView.</string>
-    <string name="AppName">NimarkoGram</string>
-    <string name="AppNameBeta">NimarkoGram Beta</string>
+    <string name="AppName">MofGram</string>
+    <string name="AppNameBeta">MofGram Beta</string>
     <string name="LanguageName">Українська</string>
     <string name="English">Англійська</string>
     <string name="LanguageNameInEnglish">Ukrainian</string>
@@ -29,21 +29,21 @@
     <string name="WrongNumberFormat">Неправильний формат</string>
     <string name="ShortNumberInfo">Вказаний номер є занадто коротким для **%1$s**:\n\n**%2$s**\n\nВведіть номер телефону повністю, разом із кодом країни.</string>
     <string name="EditNumber">Змінити номер</string>
-    <string name="DidNotGetTheCodeInfo">Якщо ви не одержали коду в SMS або виклику, перевірте **налаштування мобільної мережі** та номер телефону:\n\n**%1$s**\n\nЯкщо це не допоможе, вам залишиться спробувати інший номер телефону або звʼязатися з підтримкою NimarkoGram. Натисніть **Допомога**, щоб надіслати нам технічну інформацію і ми могли зʼясувати проблему.</string>
+    <string name="DidNotGetTheCodeInfo">Якщо ви не одержали коду в SMS або виклику, перевірте **налаштування мобільної мережі** та номер телефону:\n\n**%1$s**\n\nЯкщо це не допоможе, вам залишиться спробувати інший номер телефону або звʼязатися з підтримкою MofGram. Натисніть **Допомога**, щоб надіслати нам технічну інформацію і ми могли зʼясувати проблему.</string>
     <string name="DidNotGetTheCodeHelpButton">Допомога</string>
     <string name="DidNotGetTheCodeEditNumberButton">Змінити номер</string>
     
     <string name="YourCode">Підтвердження номера</string>
     <string name="SentSmsCode">Ми надіслали SMS із кодом активації на ваш телефон **%1$s**.</string>
-    <string name="SentAppCode">Ми надіслали код до **NimarkoGram** на іншому вашому пристрої.</string>
-    <string name="SentAppCodeWithPhone">Ми надіслали код до **NimarkoGram** для %1$s на іншому вашому пристрої.</string>
-    <string name="SentAppCodeTitle">Перевірте повідомлення в NimarkoGram</string>
+    <string name="SentAppCode">Ми надіслали код до **MofGram** на іншому вашому пристрої.</string>
+    <string name="SentAppCodeWithPhone">Ми надіслали код до **MofGram** для %1$s на іншому вашому пристрої.</string>
+    <string name="SentAppCodeTitle">Перевірте повідомлення в MofGram</string>
     <string name="SentFragmentCode">Отримайте код для %1$s у розділі «Anonymous Numbers» на Fragment.</string>
     <string name="SentSmsCodeTitle">Введіть код</string>
     <string name="OpenFragment">Відкрити Fragment</string>
-    <string name="SentCallCode">Ми телефонуємо на ваш номер **%1$s**.\n\nВідповідати на виклик не потрібно, NimarkoGram автоматично зробить усе сам.</string>
+    <string name="SentCallCode">Ми телефонуємо на ваш номер **%1$s**.\n\nВідповідати на виклик не потрібно, MofGram автоматично зробить усе сам.</string>
     <string name="SentCallOnly">Ми телефонуємо на номер **%1$s**, щоб продиктувати код.</string>
-    <string name="CallText">NimarkoGram зателефонує вам за %1$d:%2$02d</string>
+    <string name="CallText">MofGram зателефонує вам за %1$d:%2$02d</string>
     <string name="SmsText">Ми надішлемо вам SMS за %1$d:%2$02d</string>
     <string name="Calling">Телефонуємо вам...</string>
     <string name="SendingSms">Надсилаємо SMS...</string>
@@ -54,7 +54,7 @@
     <string name="DidNotGetTheCodeSms">Отримати код в SMS</string>
     <string name="DidNotGetTheCodeFragment">Отримати код на платформі Fragment</string>
     <string name="CancelAccountReset">Скасувати скидання акаунта</string>
-    <string name="CancelAccountResetInfo2">Хтось з доступом до **%1$s ** запросив видалення вашого акаунта NimarkoGram і скидання хмарного пароля.\n\nЯкщо це були не ви, введіть код з SMS, надісланого на ваш номер. Ви також можете скасувати видалення, *змінивши номер телефону*.</string>
+    <string name="CancelAccountResetInfo2">Хтось з доступом до **%1$s ** запросив видалення вашого акаунта MofGram і скидання хмарного пароля.\n\nЯкщо це були не ви, введіть код з SMS, надісланого на ваш номер. Ви також можете скасувати видалення, *змінивши номер телефону*.</string>
     <string name="ResetAccount">Скинути акаунт</string>
     <string name="ResetAccountInfo">"Акаунт **%1$s** активний та захищений паролем, тому з міркувань безпеки ми видалимо його лише через тиждень.\n\nВи можете скасувати цей процес будь-коли. "</string>
     <string name="ResetAccountStatus">Ви зможете скинути акаунт через:</string>
@@ -63,7 +63,7 @@
     <string name="CancelLinkExpired">Посилання недійсне або застаріле.</string>
     <string name="CancelLinkSuccessTitle">Успіх!</string>
     <string name="CancelLinkSuccess">Процес видалення вашого акаунта %1$s було скасовано. Зараз ви можете закрити це вікно.</string>
-    <string name="OtherLoginCode">Ваш код для входу – **%1$s**. Введіть його у програмі NimarkoGram, через яку ви хочете увійти.\n\nНе повідомляйте цей код нікому.</string>
+    <string name="OtherLoginCode">Ваш код для входу – **%1$s**. Введіть його у програмі MofGram, через яку ви хочете увійти.\n\nНе повідомляйте цей код нікому.</string>
     <string name="SmsAvailableIn">Ви зможете зробити запит на SMS за %1$d:%2$02d</string>
     <string name="ResendSmsAvailableIn">Ви зможете зробити запит на SMS за %1$d:%2$02d</string>
     <string name="RequestSmsButton">Отримати код в SMS-повідомленні</string>
@@ -132,7 +132,7 @@
     <string name="PleaseEnterNewSecondPasswordHint">Введіть новий пароль ще раз</string>
     <string name="RecoveryEmail">Е-пошта для відновлення</string>
     <string name="RecoveryEmailTitle">Е-пошта для відновлення</string>
-    <string name="RecoveryEmailSubtitle">Ви можете встановити е-пошту, за допомогою якої ви зможете скинути пароль і відновити доступ до NimarkoGram-акаунта.</string>
+    <string name="RecoveryEmailSubtitle">Ви можете встановити е-пошту, за допомогою якої ви зможете скинути пароль і відновити доступ до MofGram-акаунта.</string>
     <string name="YourEmail">Ваша е-пошта</string>
     <string name="YourNewEmail">Ваша нова е-пошта</string>
     <string name="YourLoginEmailChangedSuccess">Вашу адресу е-пошти змінено.</string>
@@ -213,9 +213,9 @@
     <string name="VerificationCode">Код підтвердження</string>
     <string name="EnterCode">Введіть код</string>
     <string name="ResendCodeInfo">На вашу е-пошту надіслано код підтвердження.</string>
-    <string name="EnabledPasswordText">Увімкнено двоетапну перевірку.\nДля входу в акаунт NimarkoGram вам знадобиться встановлений тут пароль.</string>
+    <string name="EnabledPasswordText">Увімкнено двоетапну перевірку.\nДля входу в акаунт MofGram вам знадобиться встановлений тут пароль.</string>
     <string name="AddEmailTitle">Вкажіть е-пошту для входу</string>
-    <string name="AddEmailSubtitle">Ви отримуватимете коди для входу в NimarkoGram на е-пошту, а не через SMS. Будь ласка, додайте адресу, до якої ви маєте доступ.</string>
+    <string name="AddEmailSubtitle">Ви отримуватимете коди для входу в MofGram на е-пошту, а не через SMS. Будь ласка, додайте адресу, до якої ви маєте доступ.</string>
     <string name="EnterNewEmail">Вкажіть нову е-пошту</string>
     <string name="VerificationCodeSubtitle">"Перевірте свою е-пошту %1$s і введіть код, який ми вам щойно надіслали. Не забудьте перевірити теку зі спамом. "</string>
     <string name="CheckYourEmail">Перевірте вашу е-пошту</string>
@@ -224,18 +224,18 @@
     <string name="CheckYourNewEmailSubtitle">Введіть код, який ми щойно надіслали на вашу нову е-пошту %1$s.</string>
     <string name="LoginOrSingInWithGoogle">або</string>
     
-    <string name="Page1Title">NimarkoGram</string>
+    <string name="Page1Title">MofGram</string>
     <string name="Page2Title">Швидкий</string>
     <string name="Page3Title">Безплатний</string>
     <string name="Page4Title">Захищений</string>
     <string name="Page5Title">Потужний</string>
     <string name="Page6Title">Хмарний</string>
     <string name="Page1Message">**Найшвидший** месенджер у світі.\n**Безплатний** і **захищений**.</string>
-    <string name="Page2Message">**NimarkoGram** доставляє повідомлення\nшвидше за всі інші застосунки.</string>
-    <string name="Page3Message">У **NimarkoGram** можна безплатно зберігати\nскільки завгодно повідомлень і медіафайлів.</string>
-    <string name="Page4Message">**NimarkoGram** оберігає ваші повідомлення\nвід хакерських атак.</string>
-    <string name="Page5Message">**NimarkoGram** не обмежує вас\nу розмірі чатів і медіа.</string>
-    <string name="Page6Message">**NimarkoGram** надає вам доступ до\nповідомлень з безлічі пристроїв.</string>
+    <string name="Page2Message">**MofGram** доставляє повідомлення\nшвидше за всі інші застосунки.</string>
+    <string name="Page3Message">У **MofGram** можна безплатно зберігати\nскільки завгодно повідомлень і медіафайлів.</string>
+    <string name="Page4Message">**MofGram** оберігає ваші повідомлення\nвід хакерських атак.</string>
+    <string name="Page5Message">**MofGram** не обмежує вас\nу розмірі чатів і медіа.</string>
+    <string name="Page6Message">**MofGram** надає вам доступ до\nповідомлень з безлічі пристроїв.</string>
     <string name="StartMessaging">Почати спілкування</string>
     
     <string name="formatterBoostExpired">dd MMM yyyy</string>
@@ -309,4 +309,4 @@
     <string name="PluginInstalled">Плагін встановлено</string>
     <string name="PluginUpdated">Плагін оновлено</string>
     <string name="PluginInstallError">Не вдалося встановити плагін</string>
-<string name="Preferences">Налаштування exteraGram</string><string name="Links">Посилання</string><string name="EnablePluginsEngine">Увімкнути систему плагінів</string><string name="PluginNotEnabled">Увімкніть **Систему плагінів** для встановлення **%1$s**.</string><string name="PluginInstalledButFailedToEnable">**%1$s** встановлено, але під час увімкнення сталася помилка.</string><string name="PluginEnableError">Не вдалося увімкнути **%1$s**.</string><string name="PluginDisableError">Не вдалося вимкнути **%1$s**.</string><string name="PluginIsNotResponding">Плагін не відповідає.</string><string name="PluginIsNotRespondingAlert">%1$s не відповідає</string><string name="EnterValue">Введіть значення</string><string name="PluginDelete">Видалити плагін</string><string name="PluginDeleteInfo">Ви впевнені, що хочете видалити %1$s?</string><string name="ResetPluginSettings">Налаштування **%1$s** були скинуті.</string><string name="ResetPluginSettingsInfo">Ви впевнені, що хочете скинути налаштування **%1$s** до стандартних?</string><string name="PluginEngineNotEnabled">Увімкніть **Систему плагінів**, щоб відкрити налаштування **%1$s**.</string><string name="PluginNotFound">**%1$s** не знайдено.</string><string name="PluginHasNoSettings">**%1$s** не має налаштувань.</string><string name="PluginsRowSubtitle">Python-скрипти, що розширюють додаток</string><string name="PluginsDevMode">Режим розробника</string><string name="PluginsDevServerLaunched">Сервер розробки запущено.</string><string name="PluginsDevServerStopped">Сервер розробки зупинено.</string><string name="PluginsDisableAll">Вимкнути всі плагіни</string><string name="PluginsDisableAllConfirm">Вимкнути всі активні плагіни?</string><string name="PluginsDisabledN">%1$d плагінів вимкнено.</string><string name="PluginsPySdkAutoUpdate">Авто-оновлення SDK</string><string name="PluginsPySdkCheckUpdates">Перевірити оновлення SDK</string><string name="PluginsPySdkEnableBetaVersion">Використовувати бета SDK</string><string name="PluginsPySdkHeader">Python SDK</string><string name="PluginsPySdkOffline">Онлайн-оновлення вимкнено в NimarkoGram.</string><string name="PluginsRestartEngine">Перезапустити двигун</string><string name="PluginsRestartingEngine">Перезапуск двигуна плагінів…</string><string name="PluginsSafeModeOff">Безпечний режим вимкнено.</string><string name="PluginsSafeModeOn">Безпечний режим увімкнено. Плагіни не завантажуватимуться автоматично.</string></resources>
+<string name="Preferences">Налаштування exteraGram</string><string name="Links">Посилання</string><string name="EnablePluginsEngine">Увімкнути систему плагінів</string><string name="PluginNotEnabled">Увімкніть **Систему плагінів** для встановлення **%1$s**.</string><string name="PluginInstalledButFailedToEnable">**%1$s** встановлено, але під час увімкнення сталася помилка.</string><string name="PluginEnableError">Не вдалося увімкнути **%1$s**.</string><string name="PluginDisableError">Не вдалося вимкнути **%1$s**.</string><string name="PluginIsNotResponding">Плагін не відповідає.</string><string name="PluginIsNotRespondingAlert">%1$s не відповідає</string><string name="EnterValue">Введіть значення</string><string name="PluginDelete">Видалити плагін</string><string name="PluginDeleteInfo">Ви впевнені, що хочете видалити %1$s?</string><string name="ResetPluginSettings">Налаштування **%1$s** були скинуті.</string><string name="ResetPluginSettingsInfo">Ви впевнені, що хочете скинути налаштування **%1$s** до стандартних?</string><string name="PluginEngineNotEnabled">Увімкніть **Систему плагінів**, щоб відкрити налаштування **%1$s**.</string><string name="PluginNotFound">**%1$s** не знайдено.</string><string name="PluginHasNoSettings">**%1$s** не має налаштувань.</string><string name="PluginsRowSubtitle">Python-скрипти, що розширюють додаток</string><string name="PluginsDevMode">Режим розробника</string><string name="PluginsDevServerLaunched">Сервер розробки запущено.</string><string name="PluginsDevServerStopped">Сервер розробки зупинено.</string><string name="PluginsDisableAll">Вимкнути всі плагіни</string><string name="PluginsDisableAllConfirm">Вимкнути всі активні плагіни?</string><string name="PluginsDisabledN">%1$d плагінів вимкнено.</string><string name="PluginsPySdkAutoUpdate">Авто-оновлення SDK</string><string name="PluginsPySdkCheckUpdates">Перевірити оновлення SDK</string><string name="PluginsPySdkEnableBetaVersion">Використовувати бета SDK</string><string name="PluginsPySdkHeader">Python SDK</string><string name="PluginsPySdkOffline">Онлайн-оновлення вимкнено в MofGram.</string><string name="PluginsRestartEngine">Перезапустити двигун</string><string name="PluginsRestartingEngine">Перезапуск двигуна плагінів…</string><string name="PluginsSafeModeOff">Безпечний режим вимкнено.</string><string name="PluginsSafeModeOn">Безпечний режим увімкнено. Плагіни не завантажуватимуться автоматично.</string></resources>
