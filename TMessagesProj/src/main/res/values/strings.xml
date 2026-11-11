@@ -2,8 +2,8 @@
 <!-- Modifications Copyright (C) 2026 Ettacent -->
 
 <resources>
-    <string name="AppName">NimarkoGram</string>
-    <string name="AppNameBeta">NimarkoGram Beta</string>
+    <string name="AppName">MofGram</string>
+    <string name="AppNameBeta">MofGram Beta</string>
     <string name="LanguageName">English</string>
     <string name="English">English</string>
     <string name="LanguageNameInEnglish">English</string>
