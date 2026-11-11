@@ -299,7 +299,7 @@ class TelegramSettingsHelper(
                 0xFFE54C7F.toInt(),
                 0xFFA33156.toInt(),
                 R.drawable.msg_settings_solar,
-                getString(R.string.NimarkoGramSettings)
+                getString(R.string.MofGramSettings)
             )
         )
 
