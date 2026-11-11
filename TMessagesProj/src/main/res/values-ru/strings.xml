@@ -3,7 +3,7 @@
 <resources>
     <string name="UseProxyWeb">WEB-прокси</string>
     <string name="UseProxyWebInfo">WEB-прокси использует HTTPS-страницу в отдельном WebView. Укажите имя хоста без схемы и пути, а также 16-байтовый секрет MTProxy. Это экспериментальная реализация для тестирования при открытом приложении. Требуется актуальная версия Android System WebView.</string>
-    <string name="AppName">NimarkoGram</string>
+    <string name="AppName">MofGram</string>
     <string name="NM_Header_ChatView">Вид чата</string>
     <string name="NM_Header_Interaction">Взаимодействие</string>
     <string name="NM_Header_Media">Медиа</string>
@@ -13,7 +13,7 @@
     <string name="NM_WeekdayNearDate_Desc">Показывает день недели рядом с датой в чате.</string>
     <string name="NM_PreReformRussian">Дореформенная орфография</string>
     <string name="NM_PreReformRussian_Desc">Исходящие сообщения – в дореформенном правописании (ѣ, і, ѳ, ъ).</string>
-    <string name="AppNameBeta">NimarkoGram Beta</string>
+    <string name="AppNameBeta">MofGram Beta</string>
     <string name="LanguageName">Русский</string>
     <string name="English">Английский</string>
     <string name="LanguageNameInEnglish">Russian</string>
@@ -39,21 +39,21 @@
     <string name="WrongNumberFormat">Некорректный формат</string>
     <string name="ShortNumberInfo">Указанный номер слишком короткий для региона **%1$s**:\n\n**%2$s**\n\nУбедитесь, что правильно указываете номер. Он должен начинаться с кода страны.</string>
     <string name="EditNumber">Изменить номер</string>
-    <string name="DidNotGetTheCodeInfo">Если Вы не получили звонок или SMS с кодом, проверьте настройки сотовой связи и указанный Вами номер:\n\n**%1$s**\n\nЕсли это не помогло, Вы можете указать другой номер телефона или связаться с командой поддержки NimarkoGram. Чтобы сообщить нам о проблеме и отправить техническую информацию для диагностики, нажмите **Помощь**.</string>
+    <string name="DidNotGetTheCodeInfo">Если Вы не получили звонок или SMS с кодом, проверьте настройки сотовой связи и указанный Вами номер:\n\n**%1$s**\n\nЕсли это не помогло, Вы можете указать другой номер телефона или связаться с командой поддержки MofGram. Чтобы сообщить нам о проблеме и отправить техническую информацию для диагностики, нажмите **Помощь**.</string>
     <string name="DidNotGetTheCodeHelpButton">Помощь</string>
     <string name="DidNotGetTheCodeEditNumberButton">Другой номер</string>
 
     <string name="YourCode">Проверка телефона</string>
     <string name="SentSmsCode">Мы отправили SMS с кодом проверки на Ваш телефон **%1$s**.</string>
-    <string name="SentAppCode">Мы отправили код в приложение **NimarkoGram** на другом Вашем устройстве.</string>
-    <string name="SentAppCodeWithPhone">Мы отправили код через **NimarkoGram** на другое устройство, где авторизован %1$s.</string>
-    <string name="SentAppCodeTitle">Проверьте сообщения в NimarkoGram</string>
+    <string name="SentAppCode">Мы отправили код в приложение **MofGram** на другом Вашем устройстве.</string>
+    <string name="SentAppCodeWithPhone">Мы отправили код через **MofGram** на другое устройство, где авторизован %1$s.</string>
+    <string name="SentAppCodeTitle">Проверьте сообщения в MofGram</string>
     <string name="SentFragmentCode">Получите код для %1$s в разделе Anonymous Numbers платформы Fragment.</string>
     <string name="SentSmsCodeTitle">Введите код</string>
     <string name="OpenFragment">Перейти к Fragment</string>
-    <string name="SentCallCode">Наш робот звонит на номер **%1$s**.\n\nОтвечать на звонок не требуется, NimarkoGram автоматически получит код для входа.</string>
+    <string name="SentCallCode">Наш робот звонит на номер **%1$s**.\n\nОтвечать на звонок не требуется, MofGram автоматически получит код для входа.</string>
     <string name="SentCallOnly">Мы звоним Вам по номеру **%1$s**, чтобы продиктовать код.</string>
-    <string name="CallText">NimarkoGram позвонит Вам через %1$d:%2$02d</string>
+    <string name="CallText">MofGram позвонит Вам через %1$d:%2$02d</string>
     <string name="SmsText">Мы отправим Вам SMS через %1$d:%2$02d</string>
     <string name="Calling">Звоним вам...</string>
     <string name="SendingSms">Отправка SMS...</string>
@@ -64,7 +64,7 @@
     <string name="DidNotGetTheCodeSms">Отправить код через SMS</string>
     <string name="DidNotGetTheCodeFragment">Получить код на платформе Fragment</string>
     <string name="CancelAccountReset">Отмена сброса аккаунта</string>
-    <string name="CancelAccountResetInfo2">Кто-то с доступом к **%1$s** запросил удаление Вашего аккаунта NimarkoGram и сброс пароля двухэтапной аутентификации.\n\nЕсли это были не Вы, введите код из SMS, отправленного на Ваш номер. Вы также можете отменить удаление, *изменив номер телефона*.</string>
+    <string name="CancelAccountResetInfo2">Кто-то с доступом к **%1$s** запросил удаление Вашего аккаунта MofGram и сброс пароля двухэтапной аутентификации.\n\nЕсли это были не Вы, введите код из SMS, отправленного на Ваш номер. Вы также можете отменить удаление, *изменив номер телефона*.</string>
     <string name="ResetAccount">Сброс аккаунта</string>
     <string name="ResetAccountInfo">Поскольку аккаунт **%1$s** используется и защищён паролем, в целях безопасности мы удалим его только через неделю.\n\nВы можете передумать и остановить отсчёт в любой момент.</string>
     <string name="ResetAccountStatus">Вы сможете сбросить свой аккаунт через:</string>
@@ -73,7 +73,7 @@
     <string name="CancelLinkExpired">Ссылка неверна или устарела.</string>
     <string name="CancelLinkSuccessTitle">Готово</string>
     <string name="CancelLinkSuccess">Удаление аккаунта %1$s отменено. Это окно можно закрыть.</string>
-    <string name="OtherLoginCode">Ваш код для входа: **%1$s**. Укажите его в приложении NimarkoGram, в котором хотите зайти в свой аккаунт.\n\nНикому не передавайте этот код.</string>
+    <string name="OtherLoginCode">Ваш код для входа: **%1$s**. Укажите его в приложении MofGram, в котором хотите зайти в свой аккаунт.\n\nНикому не передавайте этот код.</string>
     <string name="SmsAvailableIn">Вы сможете запросить SMS через %1$d:%2$02d</string>
     <string name="ResendSmsAvailableIn">Вы сможете повторно запросить SMS через %1$d:%2$02d</string>
     <string name="RequestSmsButton">Получить SMS с кодом</string>
@@ -129,7 +129,7 @@
     <string name="PleaseEnterNewSecondPasswordHint">Повторите новый пароль</string>
     <string name="RecoveryEmail">Электронная почта</string>
     <string name="RecoveryEmailTitle">Электронная почта</string>
-    <string name="RecoveryEmailSubtitle">Вы можете задать адрес электронной почты для сброса пароля и восстановления доступа к своему аккаунту в NimarkoGram.</string>
+    <string name="RecoveryEmailSubtitle">Вы можете задать адрес электронной почты для сброса пароля и восстановления доступа к своему аккаунту в MofGram.</string>
     <string name="YourEmail">Адрес электронной почты</string>
     <string name="YourNewEmail">Ваш новый адрес</string>
     <string name="YourLoginEmailChangedSuccess">Электронная почта изменена.</string>
@@ -210,9 +210,9 @@
     <string name="VerificationCode">Код подтверждения</string>
     <string name="EnterCode">Ввести код</string>
     <string name="ResendCodeInfo">На Ваш email отправлен код подтверждения.</string>
-    <string name="EnabledPasswordText">Установлен облачный пароль.\nВам нужно будет вводить его для входа в свой аккаунт в NimarkoGram.</string>
+    <string name="EnabledPasswordText">Установлен облачный пароль.\nВам нужно будет вводить его для входа в свой аккаунт в MofGram.</string>
     <string name="AddEmailTitle">Укажите почту для входа</string>
-    <string name="AddEmailSubtitle">Вы будете получать коды для входа в NimarkoGram на адрес электронной почты, а не через SMS. Пожалуйста, введите адрес, к которому у Вас есть доступ.</string>
+    <string name="AddEmailSubtitle">Вы будете получать коды для входа в MofGram на адрес электронной почты, а не через SMS. Пожалуйста, введите адрес, к которому у Вас есть доступ.</string>
     <string name="EnterNewEmail">Укажите новый адрес</string>
     <string name="VerificationCodeSubtitle">Проверьте почту %1$s (не забудьте о папке со спамом) и введите код, который получили в письме.</string>
     <string name="CheckYourEmail">Проверьте почту</string>
@@ -221,18 +221,18 @@
     <string name="CheckYourNewEmailSubtitle">Введите код, который пришёл на указанный Вами адрес %1$s.</string>
     <string name="LoginOrSingInWithGoogle">или</string>
 
-    <string name="Page1Title">NimarkoGram</string>
+    <string name="Page1Title">MofGram</string>
     <string name="Page2Title">Быстрый</string>
     <string name="Page3Title">Бесплатный</string>
     <string name="Page4Title">Безопасный</string>
     <string name="Page5Title">Мощный</string>
     <string name="Page6Title">Облачный</string>
     <string name="Page1Message">Самый **быстрый** мессенджер в мире.\n**Бесплатный** и **безопасный**.</string>
-    <string name="Page2Message">**NimarkoGram** доставляет сообщения быстрее\nлюбого другого приложения.</string>
-    <string name="Page3Message">**NimarkoGram** предоставляет бесплатное безлимитное облачное хранилище для чатов и медиа.\n</string>
-    <string name="Page4Message">**NimarkoGram** защищает Вашу переписку от злоумышленников.</string>
-    <string name="Page5Message">**NimarkoGram** не ограничивает размер\n Ваших медиафайлов и чатов.</string>
-    <string name="Page6Message">В **NimarkoGram** можно переписываться с любого количества устройств.</string>
+    <string name="Page2Message">**MofGram** доставляет сообщения быстрее\nлюбого другого приложения.</string>
+    <string name="Page3Message">**MofGram** предоставляет бесплатное безлимитное облачное хранилище для чатов и медиа.\n</string>
+    <string name="Page4Message">**MofGram** защищает Вашу переписку от злоумышленников.</string>
+    <string name="Page5Message">**MofGram** не ограничивает размер\n Ваших медиафайлов и чатов.</string>
+    <string name="Page6Message">В **MofGram** можно переписываться с любого количества устройств.</string>
     <string name="StartMessaging">Начать общение</string>
 
     <string name="formatterBoostExpired">dd MMM yyyy</string>
@@ -332,7 +332,7 @@
     <string name="PluginsSafeModeOff">Безопасный режим выключен</string>
     <string name="PluginsSafeModeOn">Безопасный режим включён</string>
 <string name="Preferences">Настройки exteraGram</string><string name="Links">Ссылки</string><string name="EnablePluginsEngine">Включить систему плагинов</string><string name="PluginNotEnabled">Включите **Систему плагинов**, чтобы установить **%1$s**.</string><string name="PluginInstalledButFailedToEnable">**%1$s** установлен, но при включении произошла ошибка.</string><string name="PluginEnableError">Не удалось включить **%1$s**.</string><string name="PluginDisableError">Не удалось выключить **%1$s**.</string><string name="PluginIsNotResponding">Плагин не отвечает.</string><string name="PluginIsNotRespondingAlert">%1$s не отвечает</string><string name="EnterValue">Введите значение</string><string name="PluginDelete">Удалить плагин</string><string name="PluginDeleteInfo">Вы уверены, что хотите удалить **%1$s**?</string><string name="ResetPluginSettings">Настройки **%1$s** были сброшены.</string><string name="ResetPluginSettingsInfo">Вы уверены, что хотите сбросить настройки **%1$s** до стандартных?</string><string name="PluginEngineNotEnabled">Включите **Систему плагинов**, чтобы открыть настройки **%1$s**.</string><string name="PluginNotFound">**%1$s** не найден.</string><string name="PluginHasNoSettings">**%1$s** не имеет настроек.</string><string name="PluginsDevMode">Режим разработчика</string><string name="PluginsPySdkHeader">Python SDK</string><string name="PluginsPySdkAutoUpdate">Авто-обновление SDK</string><string name="PluginsPySdkEnableBetaVersion">Использовать бета SDK</string><string name="PluginsPySdkCheckUpdates">Проверить обновления SDK</string>
-    <string name="NimarkoGramSettings">Настройки NimarkoGram</string>
+    <string name="MofGramSettings">Настройки MofGram</string>
     <string name="Privacy">Конфиденциальность</string>
     <string name="ChatTweaks">Настройки чата</string>
     <string name="HideProxySponsor">Скрыть рекламу прокси</string>
@@ -558,14 +558,14 @@
     <string name="NM_HUB_Restart">Перезапустить приложение</string>
     <string name="NM_HUB_SourceCode">Исходный код</string>
     <string name="NM_HUB_ForkedFromCherrygram">Портировано из Cherrygram</string>
-    <string name="NM_HUB_ForkedFromCherrygramSub">NimarkoGram построен на официальном клиенте Telegram; фичи портированы из &lt;a href="https://github.com/arslan4k1390/Cherrygram"&gt;Cherrygram&lt;/a&gt; — благодарим оригинальный проект.</string>
+    <string name="NM_HUB_ForkedFromCherrygramSub">MofGram построен на официальном клиенте Telegram; фичи портированы из &lt;a href="https://github.com/arslan4k1390/Cherrygram"&gt;Cherrygram&lt;/a&gt; — благодарим оригинальный проект.</string>
     <string name="NM_HUB_Debug">Отладка</string>
     <string name="NM_HUB_Experimental">Экспериментальные</string>
 
     <string name="NM_RestartRequired">Нужен перезапуск</string>
     <string name="NM_Restart">Перезапустить</string>
 
-    <!-- NimarkoGram: меню сообщения (порядок, виброотклик, режим на чат) -->
+    <!-- MofGram: меню сообщения (порядок, виброотклик, режим на чат) -->
     <string name="NM_Menu_Reorder">Порядок пунктов меню</string>
     <string name="NM_Menu_Reorder_Desc">Перетаскивайте пункты контекстного меню сообщения. Удерживайте строку, чтобы начать перетаскивание.</string>
     <string name="NM_Menu_Reorder_Reset">Сбросить порядок</string>
@@ -670,7 +670,7 @@
     <string name="NM_MP_CustomizeProfile">Настроить профиль</string>
     <string name="NM_MP_ShowSeconds">Показывать время с секундами</string>
     <string name="NM_MP_ShowSeconds_Desc" translatable="false">12:34 -&gt; 12:34:56</string>
-    <string name="NM_MP_PreviewChannelMessage">Добро пожаловать в NimarkoGram — функциональный форк Telegram.</string>
+    <string name="NM_MP_PreviewChannelMessage">Добро пожаловать в MofGram — функциональный форк Telegram.</string>
     <string name="NM_MP_DisablePremiumStatuses">Отключить Premium статусы</string>
     <string name="NM_MP_ReplyBackground">Фон в ответах</string>
     <string name="NM_MP_ReplyCustomColors">Кастомные цвета в ответах и превью ссылок</string>
@@ -719,7 +719,7 @@
     <string name="NM_MI_ClearFromCache">Очистить из кэша</string>
     <string name="NM_MI_ClearedFromCache">Файл удалён из кэша</string>
 
-    <!-- NimarkoGram OTA updater (дизайн из Cherrygram) -->
+    <!-- MofGram OTA updater (дизайн из Cherrygram) -->
     <string name="UP_UpdateAvailable">Доступно обновление!</string>
     <string name="UP_Version">Версия</string>
     <string name="UP_CurrentVersion">Текущая версия</string>
@@ -729,7 +729,7 @@
     <string name="UP_ClearedUpdatesCache">Очищено %1$s кэша.</string>
     <string name="UP_NothingToClear">Нечего очищать.</string>
     <string name="UP_CheckForUpdates">Проверить обновления</string>
-    <string name="UP_Not_Found">У вас последняя версия NimarkoGram.</string>
+    <string name="UP_Not_Found">У вас последняя версия MofGram.</string>
     <string name="UP_CheckFailed">Не удалось проверить наличие обновлений. Повторите попытку позже.</string>
     <string name="UP_Install">Установить</string>
     <string name="UP_DownloadFailed">Ошибка загрузки, нажмите ещё раз</string>
@@ -793,7 +793,7 @@
     <string name="NM_Config_Info">Сохраните настройки в файл или восстановите их на другом устройстве.</string>
     <string name="NM_Config_Exported">Настройки сохранены в файл</string>
     <string name="NM_Config_Error">Не удалось</string>
-    <string name="NM_Config_ImportEmpty">Выбранный файл — не конфигурация NimarkoGram</string>
+    <string name="NM_Config_ImportEmpty">Выбранный файл — не конфигурация MofGram</string>
     <string name="NM_BAN_GlobalHeader">Глобальный баннер</string>
     <string name="NM_BAN_LocalHeader">Локальный баннер</string>
     <string name="NM_BAN_ExtraHeader">Дополнительно</string>
@@ -1215,7 +1215,7 @@
     <string name="CG_SendPhotoAsSticker">Отправить как стикер</string>
     <string name="CG_Sleep">Таймер сна</string>
     <string name="CG_Sleep_Disabled">Таймер сна отключен</string>
-    <string name="CG_Sleep_Permission">Разрешите NimarkoGram устанавливать точные будильники, чтобы таймер сна работал корректно.</string>
+    <string name="CG_Sleep_Permission">Разрешите MofGram устанавливать точные будильники, чтобы таймер сна работал корректно.</string>
     <string name="CG_Sleep_Timer">Таймер сна установлен на **%s**</string>
     <string name="CG_SortByDate">Сортировка по дате сообщения</string>
     <string name="CG_SortByUnread">Сортировка по непрочитанным</string>
@@ -1297,12 +1297,12 @@
     <string name="CG_LastSeenHours_few">был(а) %1$d часа назад</string>
     <string name="CG_LastSeenHours_many">был(а) %1$d часов назад</string>
     <string name="CG_LastSeenHours_other">был(а) %1$d часов назад</string>
-    <!-- NimarkoGram start (ported from Cherrygram): SafeStars -->
+    <!-- MofGram start (ported from Cherrygram): SafeStars -->
     <string name="CG_SafeStars_buy">Купить через SafeStars</string>
     <string name="CG_SafeStars_Desc">Мультичейн и без KYC</string>
     <string name="CG_SafeStars_BuyPremiumButton">Проверить на сайте</string>
     <string name="CG_SafeStars_buy_Telegram">Купить звёзды через Telegram</string>
-    <!-- NimarkoGram finish -->
+    <!-- MofGram finish -->
 
     <!-- NimarkoCameraXController extensions (NG-only, no CG equivalent) -->
     <string name="NM_Camera_HDR">HDR</string>
