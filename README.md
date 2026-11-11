@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/mofgram-icon.png" width="128" height="128" alt="MofGram icon">
+  <img src="docs/assets/nimarkogram-icon.png" width="128" height="128" alt="MofGram icon">
 </p>
 
 <h1 align="center">MofGram</h1>
@@ -59,7 +59,7 @@ Clone the repository and all native submodules:
 
 ```bash
 git clone --recursive https://github.com/BayRex1/NimarkoGram.git
-cd MofGram
+cd NimarkoGram
 ```
 
 Create the local configuration:
@@ -86,7 +86,7 @@ For a faster local ARM64-only build, add `-PngArm64Only`. See the [complete buil
 
 ## Plugin platform
 
-The plugin implementation lives in `TMessagesProj/src/main/java/app/mofgram/messenger/plugins` and `TMessagesProj/src/main/python`. It includes the Python runtime, hook bridge, package management, plugin UI models, DEX loading and lifecycle coordination.
+The plugin implementation lives in `TMessagesProj/src/main/java/app/nimarkogram/messenger/plugins` and `TMessagesProj/src/main/python`. It includes the Python runtime, hook bridge, package management, plugin UI models, DEX loading and lifecycle coordination.
 
 Packages under `com.exteragram` and related Python aliases are interoperability shims for existing third-party plugins. They do not change the MofGram application ID or branding.
 
@@ -103,7 +103,7 @@ Every independent build must use its own Telegram API credentials. Read Telegram
 | `TMessagesProj_AppStandalone` | Standalone MofGram application |
 | `TMessagesProj/jni` | Native code and third-party native libraries |
 | `third_party/pine` | Pinned Pine hook-engine source |
-| `patches/pine-mofgram.patch` | Reproducible MofGram changes for Pine |
+| `patches/pine-nimarkogram.patch` | Reproducible MofGram changes for Pine |
 
 ## Contributing and security
 
