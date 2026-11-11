@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/mofgram-icon.png" width="128" height="128" alt="Иконка MofGram">
+  <img src="docs/assets/nimarkogram-icon.png" width="128" height="128" alt="Иконка MofGram">
 </p>
 
 <h1 align="center">MofGram</h1>
@@ -59,7 +59,7 @@ MofGram расширяет возможности [Telegram для Android](http
 
 ```bash
 git clone --recursive https://github.com/BayRex1/NimarkoGram.git
-cd MofGram
+cd NimarkoGram
 ```
 
 Создайте локальную конфигурацию:
@@ -86,7 +86,7 @@ TMessagesProj_AppStandalone/build/outputs/apk/afat/standalone/app.apk
 
 ## Платформа плагинов
 
-Реализация плагинов расположена в `TMessagesProj/src/main/java/app/mofgram/messenger/plugins` и `TMessagesProj/src/main/python`. В неё входят среда Python, мост перехватов, управление пакетами, UI-модели плагинов, загрузка DEX и координация жизненного цикла.
+Реализация плагинов расположена в `TMessagesProj/src/main/java/app/nimarkogram/messenger/plugins` и `TMessagesProj/src/main/python`. В неё входят среда Python, мост перехватов, управление пакетами, UI-модели плагинов, загрузка DEX и координация жизненного цикла.
 
 Пакеты в пространстве имён `com.exteragram` и связанные Python-псевдонимы являются мостами совместимости со сторонними плагинами. Они не меняют идентификатор приложения или бренд MofGram.
 
@@ -103,7 +103,7 @@ TMessagesProj_AppStandalone/build/outputs/apk/afat/standalone/app.apk
 | `TMessagesProj_AppStandalone` | Standalone-приложение MofGram |
 | `TMessagesProj/jni` | Нативный код и сторонние нативные библиотеки |
 | `third_party/pine` | Зафиксированный исходный код движка перехватов Pine |
-| `patches/pine-mofgram.patch` | Воспроизводимые изменения Pine для MofGram |
+| `patches/pine-nimarkogram.patch` | Воспроизводимые изменения Pine для MofGram |
 
 ## Участие и безопасность
 
