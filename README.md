@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/assets/nimarkogram-icon.png" width="128" height="128" alt="NimarkoGram icon">
+  <img src="docs/assets/mofgram-icon.png" width="128" height="128" alt="MofGram icon">
 </p>
 
-<h1 align="center">NimarkoGram</h1>
+<h1 align="center">MofGram</h1>
 
 <p align="center">
   <strong>English</strong> · <a href="README.ru.md">Русский</a> · <a href="README.zh-CN.md">简体中文</a>
@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <img alt="NimarkoGram 13.2.1" src="https://img.shields.io/badge/NimarkoGram-13.2.1-ff4fa3">
+  <img alt="MofGram 13.2.1" src="https://img.shields.io/badge/MofGram-13.2.1-ff4fa3">
   <a href="LICENSE"><img alt="GPL-2.0 license" src="https://img.shields.io/badge/license-GPL--2.0-6f42c1"></a>
   <img alt="Android 7.0 or newer" src="https://img.shields.io/badge/Android-7.0%2B-3DDC84?logo=android&logoColor=white">
   <img alt="Telegram 13.2.1" src="https://img.shields.io/badge/Telegram-13.2.1-26A5E4?logo=telegram&logoColor=white">
@@ -24,15 +24,15 @@
   <a href="#build-from-source">Build</a> ·
   <a href="#plugin-platform">Plugins</a> ·
   <a href="CONTRIBUTING.md">Contributing</a> ·
-  <a href="https://github.com/Ettacent/NimarkoGram/issues">Issues</a>
+  <a href="https://github.com/BayRex1/NimarkoGram/issues">Issues</a>
 </p>
 
 > [!IMPORTANT]
-> NimarkoGram is an independent project based on the official Telegram for Android source code. It is not affiliated with or endorsed by Telegram Messenger Inc.
+> MofGram is an independent project based on the official Telegram for Android source code. It is not affiliated with or endorsed by Telegram Messenger Inc.
 
 ## About
 
-NimarkoGram extends [Telegram for Android](https://github.com/DrKLO/Telegram) while preserving the familiar Telegram experience. The project focuses on a flexible interface, improved camera and media workflows, privacy controls, network tools and a complete extensibility platform.
+MofGram extends [Telegram for Android](https://github.com/DrKLO/Telegram) while preserving the familiar Telegram experience. The project focuses on a flexible interface, improved camera and media workflows, privacy controls, network tools and a complete extensibility platform.
 
 ## Features
 
@@ -58,8 +58,8 @@ NimarkoGram extends [Telegram for Android](https://github.com/DrKLO/Telegram) wh
 Clone the repository and all native submodules:
 
 ```bash
-git clone --recursive https://github.com/Ettacent/NimarkoGram.git
-cd NimarkoGram
+git clone --recursive https://github.com/BayRex1/NimarkoGram.git
+cd MofGram
 ```
 
 Create the local configuration:
@@ -86,9 +86,9 @@ For a faster local ARM64-only build, add `-PngArm64Only`. See the [complete buil
 
 ## Plugin platform
 
-The plugin implementation lives in `TMessagesProj/src/main/java/app/nimarkogram/messenger/plugins` and `TMessagesProj/src/main/python`. It includes the Python runtime, hook bridge, package management, plugin UI models, DEX loading and lifecycle coordination.
+The plugin implementation lives in `TMessagesProj/src/main/java/app/mofgram/messenger/plugins` and `TMessagesProj/src/main/python`. It includes the Python runtime, hook bridge, package management, plugin UI models, DEX loading and lifecycle coordination.
 
-Packages under `com.exteragram` and related Python aliases are interoperability shims for existing third-party plugins. They do not change the NimarkoGram application ID or branding.
+Packages under `com.exteragram` and related Python aliases are interoperability shims for existing third-party plugins. They do not change the MofGram application ID or branding.
 
 ## Telegram API
 
@@ -98,12 +98,12 @@ Every independent build must use its own Telegram API credentials. Read Telegram
 
 | Path | Purpose |
 | --- | --- |
-| `TMessagesProj` | Telegram core, NimarkoGram features and Android resources |
+| `TMessagesProj` | Telegram core, MofGram features and Android resources |
 | `TMessagesProj/src/main/python` | Python plugin API and runtime |
-| `TMessagesProj_AppStandalone` | Standalone NimarkoGram application |
+| `TMessagesProj_AppStandalone` | Standalone MofGram application |
 | `TMessagesProj/jni` | Native code and third-party native libraries |
 | `third_party/pine` | Pinned Pine hook-engine source |
-| `patches/pine-nimarkogram.patch` | Reproducible NimarkoGram changes for Pine |
+| `patches/pine-mofgram.patch` | Reproducible MofGram changes for Pine |
 
 ## Contributing and security
 
@@ -118,4 +118,4 @@ Bug reports and focused pull requests are welcome in English, Russian or Chinese
 
 ## License
 
-NimarkoGram is distributed under the [GNU General Public License v2.0](LICENSE). Telegram and bundled third-party components retain their respective copyright and license notices.
+MofGram is distributed under the [GNU General Public License v2.0](LICENSE). Telegram and bundled third-party components retain their respective copyright and license notices.
