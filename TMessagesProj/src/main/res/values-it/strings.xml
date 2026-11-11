@@ -4,8 +4,8 @@
     <string name="UseProxyWebInfo">Il proxy WEB utilizza una pagina HTTPS in una WebView separata. Inserisci un nome host senza schema del protocollo né percorso e un segreto MTProxy di 16 byte. Questa implementazione sperimentale è destinata ai test con l’app in primo piano e richiede una versione aggiornata di Android System WebView.</string>
     <string name="NM_Menu_TelegramPlus">Menu messaggi moderno</string>
     <string name="NM_Menu_TelegramPlus_Desc">Un menu compatto con effetto Liquid Glass, azioni raggruppate, animazioni elastiche ed effetti reattivi. Il layout compatto resta disponibile.</string>
-    <string name="AppName">NimarkoGram</string>
-    <string name="AppNameBeta">NimarkoGram Beta</string>
+    <string name="AppName">MofGram</string>
+    <string name="AppNameBeta">MofGram Beta</string>
     <string name="LanguageName">Italiano</string>
     <string name="English">Inglese</string>
     <string name="LanguageNameInEnglish">Italian</string>
@@ -31,21 +31,21 @@
     <string name="WrongNumberFormat">Formato errato</string>
     <string name="ShortNumberInfo">Il numero che hai fornito è troppo breve per **%1$s**:\n\n**%2$s**\n\nInserisci il numero corretto, incluso il tuo prefisso internazionale.</string>
     <string name="EditNumber">Modifica numero</string>
-    <string name="DidNotGetTheCodeInfo">Se non hai ricevuto il codice tramite SMS o chiamata, per favore controlla le tue **impostazioni dati cellulare** e il numero di telefono:\n\n**%1$s**\n\nNon ti resta che provare un altro numero o contattare il supporto NimarkoGram. Tocca **Aiuto** per inviarci i dettagli tecnici in modo da poter identificare il problema.</string>
+    <string name="DidNotGetTheCodeInfo">Se non hai ricevuto il codice tramite SMS o chiamata, per favore controlla le tue **impostazioni dati cellulare** e il numero di telefono:\n\n**%1$s**\n\nNon ti resta che provare un altro numero o contattare il supporto MofGram. Tocca **Aiuto** per inviarci i dettagli tecnici in modo da poter identificare il problema.</string>
     <string name="DidNotGetTheCodeHelpButton">Aiuto</string>
     <string name="DidNotGetTheCodeEditNumberButton">Modifica numero</string>
     
     <string name="YourCode">Verifica numero</string>
     <string name="SentSmsCode">Abbiamo inviato un SMS con un codice di accesso al tuo numero **%1$s**.</string>
-    <string name="SentAppCode">Abbiamo inviato il codice su **NimarkoGram** in un tuo altro dispositivo.</string>
-    <string name="SentAppCodeWithPhone">Abbiamo inviato il codice sull\'app **NimarkoGram** per %1$s in un altro tuo dispositivo.</string>
-    <string name="SentAppCodeTitle">Controlla i tuoi messaggi NimarkoGram</string>
+    <string name="SentAppCode">Abbiamo inviato il codice su **MofGram** in un tuo altro dispositivo.</string>
+    <string name="SentAppCodeWithPhone">Abbiamo inviato il codice sull\'app **MofGram** per %1$s in un altro tuo dispositivo.</string>
+    <string name="SentAppCodeTitle">Controlla i tuoi messaggi MofGram</string>
     <string name="SentFragmentCode">Ottieni il codice per %1$s nella sezione Anonymous Numbers su Fragment.</string>
     <string name="SentSmsCodeTitle">Inserisci il codice</string>
     <string name="OpenFragment">Apri Fragment</string>
-    <string name="SentCallCode">Stiamo chiamando il tuo numero **%1$s**.\n\nNon rispondere alla chiamata. NimarkoGram farà tutto in automatico.</string>
+    <string name="SentCallCode">Stiamo chiamando il tuo numero **%1$s**.\n\nNon rispondere alla chiamata. MofGram farà tutto in automatico.</string>
     <string name="SentCallOnly">Chiameremo il tuo numero **%1$s** per dettarti il codice.</string>
-    <string name="CallText">NimarkoGram ti chiamerà tra %1$d:%2$02d</string>
+    <string name="CallText">MofGram ti chiamerà tra %1$d:%2$02d</string>
     <string name="SmsText">Ti invieremo un SMS tra %1$d:%2$02d</string>
     <string name="Calling">Ti stiamo chiamando...</string>
     <string name="SendingSms">Invio SMS...</string>
@@ -56,7 +56,7 @@
     <string name="DidNotGetTheCodeSms">Tocca qui per ricevere il codice via SMS</string>
     <string name="DidNotGetTheCodeFragment">Ricevi il codice su Fragment</string>
     <string name="CancelAccountReset">Annulla ripristino account</string>
-    <string name="CancelAccountResetInfo2">Qualcuno con accesso a **%1$s** ha richiesto l\'eliminazione del tuo account NimarkoGram e il ripristino della password della verifica in due passaggi.\n\nSe non sei stato tu, inserisci il codice che ti abbiamo appena inviato tramite SMS. Puoi anche annullare *cambiando il tuo numero di telefono*.</string>
+    <string name="CancelAccountResetInfo2">Qualcuno con accesso a **%1$s** ha richiesto l\'eliminazione del tuo account MofGram e il ripristino della password della verifica in due passaggi.\n\nSe non sei stato tu, inserisci il codice che ti abbiamo appena inviato tramite SMS. Puoi anche annullare *cambiando il tuo numero di telefono*.</string>
     <string name="ResetAccount">Ripristino account</string>
     <string name="ResetAccountInfo">Dato che l\'account **%1$s** è attivo e protetto da una password, sarà eliminato tra 1 settimana. Questo ritardo è richiesto per motivi di sicurezza.\n\nPuoi annullare questo processo in qualsiasi momento.</string>
     <string name="ResetAccountStatus">Potrai ripristinare il tuo account tra:</string>
@@ -64,7 +64,7 @@
     <string name="CancelLinkExpired">Link non valido o scaduto.</string>
     <string name="CancelLinkSuccessTitle">Fatto!</string>
     <string name="CancelLinkSuccess">Il processo di eliminazione per il tuo account %1$s è stato annullato. Puoi chiudere questa finestra ora.</string>
-    <string name="OtherLoginCode">Il tuo codice di accesso è **%1$s**. Inseriscilo nell\'app NimarkoGram in cui stai cercando di accedere.\n\nNon dare questo codice a nessuno.</string>
+    <string name="OtherLoginCode">Il tuo codice di accesso è **%1$s**. Inseriscilo nell\'app MofGram in cui stai cercando di accedere.\n\nNon dare questo codice a nessuno.</string>
     <string name="SmsAvailableIn">Puoi richiedere un SMS tra %1$d:%2$02d</string>
     <string name="ResendSmsAvailableIn">Puoi richiedere un nuovo SMS tra %1$d:%2$02d</string>
     <string name="RequestSmsButton">Ricevi il codice tramite SMS</string>
@@ -220,8 +220,8 @@
     <string name="NotificationGroupFew">%1$s ha inviato %3$s nel gruppo %2$s</string>
     <string name="NotificationGroupAlbum">%1$s ha inviato un album nel gruppo %2$s</string>
     <string name="NotificationGroupForwardedFew">%1$s ha inoltrato %3$s nel gruppo %2$s</string>
-    <string name="NotificationHiddenName">NimarkoGram</string>
-    <string name="NotificationHiddenChatName">NimarkoGram</string>
+    <string name="NotificationHiddenName">MofGram</string>
+    <string name="NotificationHiddenChatName">MofGram</string>
     <string name="NotificationHiddenChatUserName">Utente</string>
     <string name="NotificationHiddenMessage">Nuovo messaggio</string>
     <string name="Reply">Rispondi</string>
@@ -285,7 +285,7 @@
     <string name="NotificationActionPinnedGeoLiveUser">%1$s ha fissato una posizione in tempo reale</string>
     <string name="NotificationActionPinnedGifUser">%1$s ha fissato una GIF</string>
     <string name="NotificationActionPinnedMusicUser">%1$s ha fissato un file audio</string>
-    <string name="SecretChatName">NimarkoGram</string>
+    <string name="SecretChatName">MofGram</string>
     
     <string name="Username">Username</string>
     <string name="UsernameAlso">e %1$s</string>
@@ -441,11 +441,11 @@
     <string name="LanguageUnsupportedError">Lingua non trovata.</string>
     <string name="LanguageSame">Stai già usando questa lingua (**%1$s**). Puoi cambiare la tua lingua in qualsiasi momento nelle Impostazioni.</string>
     <string name="LanguageUnknownCustomAlert">Sfortunatamente, questa lingua personalizzata (**%1$s**) non contiene dati per Telegram Android.</string>
-    <string name="AskAQuestionInfo">Per favore ricorda che il supporto di NimarkoGram è gestito da volontari. Proviamo a rispondere quanto prima, ma potrebbe volerci del tempo.\n\nDai un\'occhiata alle &lt;a href=\"https://telegram.org/faq/it#domande-generali\"&gt;FAQ di NimarkoGram&lt;/a&gt;: contengono risposte a quasi tutte le domande e suggerimenti importanti per &lt;a href=\"https://telegram.org/faq/it#risoluzione-dei-problemi\"&gt;risolvere i problemi&lt;/a&gt;.</string>
+    <string name="AskAQuestionInfo">Per favore ricorda che il supporto di MofGram è gestito da volontari. Proviamo a rispondere quanto prima, ma potrebbe volerci del tempo.\n\nDai un\'occhiata alle &lt;a href=\"https://telegram.org/faq/it#domande-generali\"&gt;FAQ di MofGram&lt;/a&gt;: contengono risposte a quasi tutte le domande e suggerimenti importanti per &lt;a href=\"https://telegram.org/faq/it#risoluzione-dei-problemi\"&gt;risolvere i problemi&lt;/a&gt;.</string>
     <string name="AskButton">Chiedi ai volontari</string>
-    <string name="TelegramFAQ">FAQ NimarkoGram</string>
-    <string name="TelegramFaq">FAQ NimarkoGram</string>
-    <string name="TelegramFeatures">Funzioni di NimarkoGram</string>
+    <string name="TelegramFAQ">FAQ MofGram</string>
+    <string name="TelegramFaq">FAQ MofGram</string>
+    <string name="TelegramFeatures">Funzioni di MofGram</string>
     <string name="TelegramFeaturesUrl">https://t.me/TelegramTipsIT</string>
     <string name="AddAccount">Aggiungi account</string>
     <string name="SelectAccount">Seleziona Account</string>
@@ -592,7 +592,7 @@
     <string name="DirectShareInfo">Mostra le chat recenti nel menu di condivisione</string>
     <string name="Emoji">Emoji</string>
     <string name="LargeEmoji">Emoji grandi</string>
-    <string name="TelegramVersion">NimarkoGram per Android %1$s</string>
+    <string name="TelegramVersion">MofGram per Android %1$s</string>
     <string name="DebugMenu">Menu debug</string>
     <string name="DebugMenuLongPress">Tieni premuto di nuovo per il menu di debug</string>
     <string name="DebugSendLogs">Invia i log</string>
@@ -970,7 +970,7 @@
     <string name="PleaseEnterNewSecondPasswordHint">Ripeti la nuova password</string>
     <string name="RecoveryEmail">Email di recupero</string>
     <string name="RecoveryEmailTitle">Email di recupero</string>
-    <string name="RecoveryEmailSubtitle">Puoi impostare un\'email di recupero per poter ripristinare la password e recuperare l\'accesso al tuo account NimarkoGram.</string>
+    <string name="RecoveryEmailSubtitle">Puoi impostare un\'email di recupero per poter ripristinare la password e recuperare l\'accesso al tuo account MofGram.</string>
     <string name="YourEmail">La tua email</string>
     <string name="YourNewEmail">La tua nuova email</string>
     <string name="YourLoginEmailChangedSuccess">La tua email è stata cambiata.</string>
@@ -1046,9 +1046,9 @@
     <string name="VerificationCode">Codice di verifica</string>
     <string name="EnterCode">Inserisci il codice</string>
     <string name="ResendCodeInfo">Il codice di verifica è stato inviato alla tua email.</string>
-    <string name="EnabledPasswordText">Hai attivato la verifica in due passaggi.\nAvrai bisogno della password che hai impostato per accedere al tuo account NimarkoGram.</string>
+    <string name="EnabledPasswordText">Hai attivato la verifica in due passaggi.\nAvrai bisogno della password che hai impostato per accedere al tuo account MofGram.</string>
     <string name="AddEmailTitle">Scegli un\'email di accesso</string>
-    <string name="AddEmailSubtitle">Riceverai i codici di accesso a NimarkoGram via email e non via SMS. Inserisci un indirizzo email a cui hai accesso.</string>
+    <string name="AddEmailSubtitle">Riceverai i codici di accesso a MofGram via email e non via SMS. Inserisci un indirizzo email a cui hai accesso.</string>
     <string name="EnterNewEmail">Inserisci la nuova email</string>
     <string name="VerificationCodeSubtitle">Controlla la tua email %1$s (incluso lo spam) e inserisci il codice che ti abbiamo appena inviato.</string>
     <string name="CheckYourEmail">Controlla la tua email</string>
@@ -1483,14 +1483,14 @@
     <string name="PermissionNoAudioVideoWithHint">**Telegram** deve accedere al microfono per poter inviare messaggi vocali. Tocca Impostazioni &gt; Permessi, e attiva **Microfono**.</string>
     <string name="PermissionNoCameraWithHint">**Telegram** deve accedere alla fotocamera per poter scattare foto e video. Tocca Impostazioni &gt; Permessi, e attiva **Fotocamera**.</string>
     <string name="PermissionNoCameraMicVideo">**Telegram** deve accedere alla fotocamera e al microfono per poter inviare videomessaggi. Tocca Impostazioni &gt; Permessi, e attiva **Microfono** e **Fotocamera**.</string>
-    <string name="PermissionNoLocation">NimarkoGram deve accedere alla tua posizione perché tu possa condividerla con i tuoi amici.</string>
-    <string name="PermissionNoLocationStory">NimarkoGram deve accedere alla tua posizione perché tu possa aggiungere il widget meteo alle tue storie.</string>
+    <string name="PermissionNoLocation">MofGram deve accedere alla tua posizione perché tu possa condividerla con i tuoi amici.</string>
+    <string name="PermissionNoLocationStory">MofGram deve accedere alla tua posizione perché tu possa aggiungere il widget meteo alle tue storie.</string>
     <string name="PermissionNoLocationFriends">**Telegram** deve accedere alla posizione perché tu possa condividerla con i tuoi amici. Tocca Impostazioni &gt; Permessi, e attiva **Posizione**.</string>
     <string name="PermissionNoLocationNavigation">**Telegram** deve accedere alla posizione per poter ottenere le indicazioni. Tocca Impostazioni &gt; Permessi, e attiva **Posizione**.</string>
     <string name="PermissionNoContactsSharing">**Telegram** deve accedere ai contatti perché tu possa condividerli con i tuoi amici. Tocca Impostazioni &gt; Permessi, e attiva **Contatti**.</string>
     <string name="PermissionNoStorageAvatar">**Telegram** deve accedere all\'archivio per poter caricare foto del profilo. Tocca Impostazioni &gt; Permessi, e attiva **File e media**.</string>
     <string name="PermissionNoAudioStorageStory">**Telegram** deve accedere ai tuoi file musicali per aggiungerli alla tua storia. Tocca Impostazioni &gt; Permessi, e attiva **Musica e audio**.</string>
-    <string name="PermissionDrawAboveOtherApps">NimarkoGram deve accedere allo spostamento su altre app per riprodurre i video in modalità Picture-in-Picture.</string>
+    <string name="PermissionDrawAboveOtherApps">MofGram deve accedere allo spostamento su altre app per riprodurre i video in modalità Picture-in-Picture.</string>
     <string name="PermissionDrawAboveOtherAppsGroupCall">La modalità overlay ti consente di usare il push-to-talk e vedere chi sta parlando anche quando sei fuori da Telegram.</string>
     <string name="PermissionOpenSettings">Impostazioni</string>
     <string name="PermissionXiaomiLockscreen">Consenti a Telegram di apparire sulla schermata di blocco in modo che le chiamate possano funzionare correttamente.</string>
@@ -1569,4 +1569,4 @@
     <string name="PluginInstalled">Plugin installato</string>
     <string name="PluginUpdated">Plugin aggiornato</string>
     <string name="PluginInstallError">Impossibile installare il plugin</string>
-<string name="Preferences">Preferenze ExteraGram</string><string name="Links">Link</string><string name="EnablePluginsEngine">Abilita i plug-in</string><string name="PluginNotEnabled">Abilita i **Plug-in** per installare **%1$s**.</string><string name="PluginInstalledButFailedToEnable">**%1$s** installato, ma non attivato a causa di un errore.</string><string name="PluginEnableError">Non è stato possibile attivare **%1$s**.</string><string name="PluginDisableError">Impossibile disattivare **%1$s**.</string><string name="EnterValue">Inserisci un valore</string><string name="PluginDelete">Disinstalla il plug-in</string><string name="PluginDeleteInfo">Vuoi davvero disinstallare **%1$s**?</string><string name="ResetPluginSettings">Impostazioni di **%1$s** ripristinate.</string><string name="ResetPluginSettingsInfo">Vuoi davvero ripristinare le impostazioni predefinite di **%1$s**?</string><string name="PluginEngineNotEnabled">Abilita i plug-in per accedere alla configurazione di **%1$s**.</string><string name="PluginNotFound">**%1$s** non trovato.</string><string name="PluginHasNoSettings">**%1$s** non ha impostazioni.</string><string name="PluginIsNotRespondingAlert">Il plugin "%s" non risponde</string><string name="PluginsDevMode">Modalità sviluppatore</string><string name="PluginsDevServerLaunched">Server di sviluppo avviato.</string><string name="PluginsDevServerStopped">Server di sviluppo fermato.</string><string name="PluginsDisableAll">Disattiva tutti</string><string name="PluginsDisableAllConfirm">Disattivare tutti i plugin attivi?</string><string name="PluginsDisabledN">%1$d plugin disattivati.</string><string name="PluginsPySdkAutoUpdate">Aggiornamento automatico SDK</string><string name="PluginsPySdkCheckUpdates">Cerca aggiornamenti SDK</string><string name="PluginsPySdkEnableBetaVersion">Usa SDK beta</string><string name="PluginsPySdkHeader">SDK Python</string><string name="PluginsPySdkOffline">Aggiornamenti online disabilitati in NimarkoGram.</string><string name="PluginsRestartEngine">Riavvia motore</string><string name="PluginsRestartingEngine">Riavvio motore plugin…</string><string name="PluginsRowSubtitle">Script Python che estendono l\'app</string><string name="PluginsSafeModeOff">Modalità sicura disattivata.</string><string name="PluginsSafeModeOn">Modalità sicura attivata. I plugin non verranno caricati automaticamente.</string></resources>
+<string name="Preferences">Preferenze ExteraGram</string><string name="Links">Link</string><string name="EnablePluginsEngine">Abilita i plug-in</string><string name="PluginNotEnabled">Abilita i **Plug-in** per installare **%1$s**.</string><string name="PluginInstalledButFailedToEnable">**%1$s** installato, ma non attivato a causa di un errore.</string><string name="PluginEnableError">Non è stato possibile attivare **%1$s**.</string><string name="PluginDisableError">Impossibile disattivare **%1$s**.</string><string name="EnterValue">Inserisci un valore</string><string name="PluginDelete">Disinstalla il plug-in</string><string name="PluginDeleteInfo">Vuoi davvero disinstallare **%1$s**?</string><string name="ResetPluginSettings">Impostazioni di **%1$s** ripristinate.</string><string name="ResetPluginSettingsInfo">Vuoi davvero ripristinare le impostazioni predefinite di **%1$s**?</string><string name="PluginEngineNotEnabled">Abilita i plug-in per accedere alla configurazione di **%1$s**.</string><string name="PluginNotFound">**%1$s** non trovato.</string><string name="PluginHasNoSettings">**%1$s** non ha impostazioni.</string><string name="PluginIsNotRespondingAlert">Il plugin "%s" non risponde</string><string name="PluginsDevMode">Modalità sviluppatore</string><string name="PluginsDevServerLaunched">Server di sviluppo avviato.</string><string name="PluginsDevServerStopped">Server di sviluppo fermato.</string><string name="PluginsDisableAll">Disattiva tutti</string><string name="PluginsDisableAllConfirm">Disattivare tutti i plugin attivi?</string><string name="PluginsDisabledN">%1$d plugin disattivati.</string><string name="PluginsPySdkAutoUpdate">Aggiornamento automatico SDK</string><string name="PluginsPySdkCheckUpdates">Cerca aggiornamenti SDK</string><string name="PluginsPySdkEnableBetaVersion">Usa SDK beta</string><string name="PluginsPySdkHeader">SDK Python</string><string name="PluginsPySdkOffline">Aggiornamenti online disabilitati in MofGram.</string><string name="PluginsRestartEngine">Riavvia motore</string><string name="PluginsRestartingEngine">Riavvio motore plugin…</string><string name="PluginsRowSubtitle">Script Python che estendono l\'app</string><string name="PluginsSafeModeOff">Modalità sicura disattivata.</string><string name="PluginsSafeModeOn">Modalità sicura attivata. I plugin non verranno caricati automaticamente.</string></resources>
