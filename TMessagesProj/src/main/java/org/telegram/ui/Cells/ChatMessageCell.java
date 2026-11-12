@@ -18336,6 +18336,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             drawTime(canvas, 1f, false);
         }
 
+        if (currentMessageObject.ayuDeleted) {
+            drawAyuDeletedMark(canvas);
+        }
+
         if ((controlsAlpha != 1.0f || timeAlpha != 1.0f) && currentMessageObject.type != MessageObject.TYPE_ROUND_VIDEO) {
             long newTime = System.currentTimeMillis();
             long dt = Math.abs(lastControlsAlphaChangeTime - newTime);
@@ -18390,6 +18394,36 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         if (transparentRestore != -1) {
             canvas.restoreToCount(transparentRestore);
         }
+    }
+
+    private void drawAyuDeletedMark(Canvas canvas) {
+        if (currentMessageObject == null || currentBackgroundDrawable == null) {
+            return;
+        }
+        android.graphics.Rect bounds = currentBackgroundDrawable.getBounds();
+        float x = bounds.right - dp(13);
+        float y = bounds.top + dp(13);
+        Paint iconPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        iconPaint.setColor(0xff929292);
+        iconPaint.setStyle(Paint.Style.STROKE);
+        iconPaint.setStrokeWidth(dp(1.35f));
+        iconPaint.setStrokeCap(Paint.Cap.ROUND);
+        iconPaint.setStrokeJoin(Paint.Join.ROUND);
+        Path bin = new Path();
+        bin.moveTo(x - dp(4), y - dp(3));
+        bin.lineTo(x - dp(3), y + dp(4));
+        bin.lineTo(x + dp(3), y + dp(4));
+        bin.lineTo(x + dp(4), y - dp(3));
+        canvas.drawPath(bin, iconPaint);
+        canvas.drawLine(x - dp(5), y - dp(4), x + dp(5), y - dp(4), iconPaint);
+        canvas.drawLine(x - dp(2), y - dp(6), x + dp(2), y - dp(6), iconPaint);
+        canvas.drawLine(x - dp(1), y - dp(1), x - dp(1), y + dp(2), iconPaint);
+        canvas.drawLine(x + dp(1), y - dp(1), x + dp(1), y + dp(2), iconPaint);
+        Paint labelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        labelPaint.setColor(0xff929292);
+        labelPaint.setTextSize(dp(9));
+        labelPaint.setTextAlign(Paint.Align.RIGHT);
+        canvas.drawText("Удалено", x - dp(9), y + dp(3), labelPaint);
     }
 
     public void drawBackgroundInternal(Canvas canvas, boolean fromParent) {

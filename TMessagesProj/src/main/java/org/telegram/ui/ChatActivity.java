@@ -10,6 +10,8 @@
 
 package org.telegram.ui;
 
+import app.nimarkogram.messenger.AppConfig;
+import app.nimarkogram.messenger.deletedmessages.DeletedMessagesController;
 import app.nimarkogram.messenger.ui.MessageMenuTelegramPlus;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
@@ -28893,6 +28895,20 @@ public class ChatActivity extends BaseFragment implements
                     }
                 }
                 obj.deleted = true;
+                if (AppConfig.showDeletedMessages && !obj.scheduled
+                        && DeletedMessagesController.hasDeletedMessage(currentAccount, obj.getDialogId(), mid)) {
+                    obj.deleted = false;
+                    obj.ayuDeleted = true;
+                    messagesDict[loadIndex].remove(mid);
+                    updated = true;
+                    if (chatAdapter != null && !chatAdapter.isFrozen) {
+                        int preservedIndex = chatAdapter.getMessages().indexOf(obj);
+                        if (preservedIndex >= 0) {
+                            chatAdapter.notifyItemChanged(chatAdapter.messagesStartRow + preservedIndex);
+                        }
+                    }
+                    continue;
+                }
                 if (obj.scheduled && sent) {
                     obj.scheduledSent = true;
                 }

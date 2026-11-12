@@ -92,9 +92,6 @@ public final class DeletedMessagesController {
                     continue;
                 }
                 String text = message.messageOwner.message;
-                if (text == null || text.trim().isEmpty()) {
-                    continue;
-                }
                 long dialogId = message.getDialogId();
                 JSONObject json = new JSONObject();
                 try {
@@ -212,6 +209,27 @@ public final class DeletedMessagesController {
             editor.remove(entries.get(i).getKey());
         }
         editor.apply();
+    }
+
+    public static synchronized boolean hasDeletedMessage(int account, long dialogId, int messageId) {
+        SharedPreferences prefs = preferences();
+        if (prefs == null) {
+            return false;
+        }
+        String prefix = DELETED_PREFIX + account + "_";
+        for (Map.Entry<String, ?> entry : prefs.getAll().entrySet()) {
+            if (!entry.getKey().startsWith(prefix) || !(entry.getValue() instanceof String)) {
+                continue;
+            }
+            try {
+                JSONObject json = new JSONObject((String) entry.getValue());
+                if (json.optLong("dialogId") == dialogId && json.optInt("messageId") == messageId) {
+                    return true;
+                }
+            } catch (JSONException ignored) {
+            }
+        }
+        return false;
     }
 
     public static synchronized List<DeletedMessage> getRecentMessages(int account, int limit) {
