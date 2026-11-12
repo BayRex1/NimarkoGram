@@ -10636,6 +10636,7 @@ public class MessagesStorage extends BaseController {
                                 deletedMessage.message = TextUtils.isEmpty(deletedMessage.message)
                                         ? "Сообщение удалено"
                                         : deletedMessage.message + "\n[удалено]";
+                                addUsersAndChatsFromMessage(deletedMessage, usersToLoad, chatsToLoad, animatedEmojiToLoad);
                                 res.messages.add(deletedMessage);
                                 loadedIds.add(deletedMessage.id);
                             } finally {
