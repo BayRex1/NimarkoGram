@@ -22,6 +22,8 @@ jobs:
     env:
       ANDROID_HOME: /usr/local/lib/android/sdk
       ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+      TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+      TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
 
     steps:
       - name: Checkout source
@@ -52,6 +54,18 @@ jobs:
 
       - name: Validate Gradle wrapper
         uses: gradle/actions/wrapper-validation@v4
+
+      - name: Validate Telegram API credentials
+        shell: bash
+        run: |
+          if [[ ! "$TELEGRAM_API_ID" =~ ^[0-9]+$ ]] || [[ "$TELEGRAM_API_ID" == "0" ]]; then
+            echo "TELEGRAM_API_ID is missing or invalid. Add it to GitHub Actions secrets."
+            exit 1
+          fi
+          if [[ -z "$TELEGRAM_API_HASH" ]]; then
+            echo "TELEGRAM_API_HASH is missing. Add it to GitHub Actions secrets."
+            exit 1
+          fi
 
       - name: Build MofGram standalone APK
         run: ./gradlew --no-daemon --stacktrace :TMessagesProj_AppStandalone:assembleAfatStandalone
