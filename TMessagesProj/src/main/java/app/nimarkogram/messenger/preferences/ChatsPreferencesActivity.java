@@ -183,11 +183,11 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
                     items.add(UItem.asShadow("Пока нет сохранённых сообщений. Включите функцию и дождитесь загрузки переписки или новых сообщений."));
                 } else {
                     for (DeletedMessagesController.DeletedMessage message : deleted) {
-                        String preview = message.text == null ? "" : message.text.replace('\\n', ' ').trim();
+                        String preview = message.text == null ? "" : message.text.replace('\n', ' ').trim();
                         if (preview.length() > 180) {
                             preview = preview.substring(0, 177) + "...";
                         }
-                        items.add(UItem.asShadow("Чат ID: " + message.dialogId + " · Сообщение #" + message.messageId + "\\n" + preview));
+                        items.add(UItem.asShadow("Чат ID: " + message.dialogId + " · Сообщение #" + message.messageId + "\n" + preview));
                     }
                 }
             }
