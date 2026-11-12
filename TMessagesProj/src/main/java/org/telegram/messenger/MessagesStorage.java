@@ -8465,6 +8465,92 @@ public class MessagesStorage extends BaseController {
         return result[0];
     }
 
+    /**
+     * Copies messages to a local archive before Telegram removes them from messages_v2.
+     * Must be called on storageQueue so the source rows cannot disappear between read and copy.
+     */
+    public void saveDeletedMessages(long dialogId, ArrayList<Integer> messageIds) {
+        if (messageIds == null || messageIds.isEmpty()) {
+            return;
+        }
+        SQLiteCursor cursor = null;
+        SQLitePreparedStatement statement = null;
+        try {
+            database.executeFast("CREATE TABLE IF NOT EXISTS nimarko_deleted_messages (uid INTEGER NOT NULL, mid INTEGER NOT NULL, date INTEGER NOT NULL, data BLOB NOT NULL, PRIMARY KEY(uid, mid))").stepThis().dispose();
+            StringBuilder ids = new StringBuilder();
+            for (int i = 0; i < messageIds.size(); i++) {
+                if (i > 0) {
+                    ids.append(',');
+                }
+                ids.append(messageIds.get(i));
+            }
+            cursor = database.queryFinalized("SELECT mid, date, data FROM messages_v2 WHERE uid = " + dialogId + " AND mid IN (" + ids + ")");
+            statement = database.executeFast("INSERT OR IGNORE INTO nimarko_deleted_messages(uid, mid, date, data) VALUES(?, ?, ?, ?)");
+            while (cursor.next()) {
+                NativeByteBuffer data = cursor.byteBufferValue(2);
+                if (data == null) {
+                    continue;
+                }
+                try {
+                    statement.requery();
+                    statement.bindLong(1, dialogId);
+                    statement.bindInteger(2, cursor.intValue(0));
+                    statement.bindInteger(3, cursor.intValue(1));
+                    statement.bindByteBuffer(4, data);
+                    statement.step();
+                } finally {
+                    data.reuse();
+                }
+            }
+        } catch (Exception e) {
+            checkSQLException(e);
+        } finally {
+            if (statement != null) {
+                statement.dispose();
+            }
+            if (cursor != null) {
+                cursor.dispose();
+            }
+        }
+    }
+
+    /**
+     * Returns a previously archived message, or null when it was not captured.
+     */
+    public TLRPC.Message getDeletedMessage(long dialogId, long messageId) {
+        CountDownLatch latch = new CountDownLatch(1);
+        java.util.concurrent.atomic.AtomicReference<TLRPC.Message> result = new java.util.concurrent.atomic.AtomicReference<>();
+        storageQueue.postRunnable(() -> {
+            SQLiteCursor cursor = null;
+            try {
+                cursor = database.queryFinalized("SELECT data FROM nimarko_deleted_messages WHERE uid = " + dialogId + " AND mid = " + messageId + " LIMIT 1");
+                if (cursor.next()) {
+                    NativeByteBuffer data = cursor.byteBufferValue(0);
+                    if (data != null) {
+                        try {
+                            result.set(TLRPC.Message.TLdeserialize(data, data.readInt32(false), false));
+                        } finally {
+                            data.reuse();
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                checkSQLException(e);
+            } finally {
+                if (cursor != null) {
+                    cursor.dispose();
+                }
+                latch.countDown();
+            }
+        });
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return result.get();
+    }
+
     public TLRPC.Message getMessage(long dialogId, long msgId) {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         AtomicReference<TLRPC.Message> ref = new AtomicReference<>();
