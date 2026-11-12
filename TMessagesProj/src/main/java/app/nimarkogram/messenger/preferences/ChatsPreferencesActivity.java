@@ -54,6 +54,7 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
     private static final int PAGE_REACTIONS = 5;
     private static final int PAGE_NOTIFICATIONS = 6;
     private static final int PAGE_TOOLS = 7;
+    private static final int PAGE_AYUGRAM = 8;
 
     private static final int openChatListRow = 1_001;
     private static final int openInputRow = 1_002;
@@ -62,6 +63,8 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
     private static final int openReactionsRow = 1_005;
     private static final int openNotificationsRow = 1_006;
     private static final int openToolsRow = 1_007;
+    private static final int openAyuGramRow = 1_008;
+    private static final int showDeletedMessagesRow = 90;
 
     private final int page;
 
@@ -124,6 +127,7 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
             case PAGE_REACTIONS -> getString(R.string.NM_SettingsSectionReactionsEffects);
             case PAGE_NOTIFICATIONS -> getString(R.string.Notifications);
             case PAGE_TOOLS -> getString(R.string.NM_SettingsSectionTools);
+            case PAGE_AYUGRAM -> "Функции AyuGram";
             default -> getString(R.string.FilterChats);
         };
     }
@@ -163,6 +167,14 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
                 items.add(UItem.asHeader(getString(R.string.NM_SettingsSectionTools)));
                 fillTools(items);
             }
+            case PAGE_AYUGRAM -> {
+                items.add(UItem.asHeader("История сообщений"));
+                items.add(SettingsHelper.asSwitchCG(showDeletedMessagesRow,
+                        "Показывать удалённые сообщения",
+                        "Сохраняет локальную копию сообщений при получении события удаления от Telegram. Уже удалённые до включения сообщения восстановить нельзя."))
+                        .setChecked(AppConfig.showDeletedMessages));
+                items.add(UItem.asShadow("Сохраняются данные, доступные на устройстве в момент удаления. Медиафайлы и отображение копий непосредственно в переписке пока не поддерживаются."));
+            }
             default -> fillOverview(items);
         }
     }
@@ -196,6 +208,8 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
         items.add(asSettingsLink(openToolsRow, IconBackgroundColors.ORANGE_DEEP,
                 R.drawable.msg_settings, getString(R.string.NM_SettingsSectionTools),
                 getString(R.string.NM_SettingsSummaryChatTools)));
+        items.add(asSettingsLink(openAyuGramRow, IconBackgroundColors.PURPLE,
+                R.drawable.msg_settings, "Функции AyuGram", "История удалённых сообщений и дополнительные функции."));
         items.add(UItem.asShadow(null));
     }
 
@@ -376,9 +390,15 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
         } else if (id == openToolsRow) {
             presentFragment(new ChatsPreferencesActivity(PAGE_TOOLS));
             return;
+        } else if (id == openAyuGramRow) {
+            presentFragment(new ChatsPreferencesActivity(PAGE_AYUGRAM));
+            return;
         }
 
-        if (id == sortByUnreadRow) {
+        if (id == showDeletedMessagesRow) {
+            AppConfig.toggleShowDeletedMessages();
+            updateCheckState(view, AppConfig.showDeletedMessages);
+        } else if (id == sortByUnreadRow) {
             AppConfig.toggleSortByUnread();
             updateCheckState(view, AppConfig.sortByUnread);
             MessagesController.getInstance(currentAccount).sortDialogs(null);
