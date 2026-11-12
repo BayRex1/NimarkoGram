@@ -8557,6 +8557,50 @@ public class MessagesStorage extends BaseController {
         return result.get();
     }
 
+    /**
+     * Loads archived messages for a dialog, newest first. A positive maxId loads
+     * older archived messages, matching the usual history pagination convention.
+     */
+    public ArrayList<TLRPC.Message> getDeletedMessages(long dialogId, int maxId, int limit) {
+        CountDownLatch latch = new CountDownLatch(1);
+        java.util.concurrent.atomic.AtomicReference<ArrayList<TLRPC.Message>> result = new java.util.concurrent.atomic.AtomicReference<>(new ArrayList<>());
+        storageQueue.postRunnable(() -> {
+            SQLiteCursor cursor = null;
+            try {
+                database.executeFast("CREATE TABLE IF NOT EXISTS nimarko_deleted_messages (uid INTEGER NOT NULL, mid INTEGER NOT NULL, date INTEGER NOT NULL, data BLOB NOT NULL, PRIMARY KEY(uid, mid))").stepThis().dispose();
+                String olderThan = maxId > 0 ? " AND mid < " + maxId : "";
+                cursor = database.queryFinalized("SELECT data FROM nimarko_deleted_messages WHERE uid = " + dialogId + olderThan + " ORDER BY mid DESC LIMIT " + Math.max(1, Math.min(limit, 200)));
+                while (cursor.next()) {
+                    NativeByteBuffer data = cursor.byteBufferValue(0);
+                    if (data == null) {
+                        continue;
+                    }
+                    try {
+                        TLRPC.Message message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
+                        message.readAttachPath(data, getUserConfig().getClientUserId());
+                        message.dialog_id = dialogId;
+                        result.get().add(message);
+                    } finally {
+                        data.reuse();
+                    }
+                }
+            } catch (Exception e) {
+                checkSQLException(e);
+            } finally {
+                if (cursor != null) {
+                    cursor.dispose();
+                }
+                latch.countDown();
+            }
+        });
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return result.get();
+    }
+
     public TLRPC.Message getMessage(long dialogId, long msgId) {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         AtomicReference<TLRPC.Message> ref = new AtomicReference<>();
