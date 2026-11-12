@@ -282,7 +282,7 @@ public class SettingsRegistry {
         Entry previous = aliases.get(alias);
         Entry entry = new Entry(previous == null ? nextGuid() : previous.guid, alias,
                 MainPreferencesActivity.class, LocaleController.getString(titleRes),
-                LocaleController.getString(R.string.NimarkoGramSettings));
+                LocaleController.getString(R.string.MofGramSettings));
         entry.itemId = itemId;
         entry.explicitAlias = true;
         aliases.put(alias, entry);
