@@ -8532,7 +8532,9 @@ public class MessagesStorage extends BaseController {
                     NativeByteBuffer data = cursor.byteBufferValue(0);
                     if (data != null) {
                         try {
-                            result.set(TLRPC.Message.TLdeserialize(data, data.readInt32(false), false));
+                            TLRPC.Message message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
+                            message.readAttachPath(data, getUserConfig().getClientUserId());
+                            result.set(message);
                         } finally {
                             data.reuse();
                         }
