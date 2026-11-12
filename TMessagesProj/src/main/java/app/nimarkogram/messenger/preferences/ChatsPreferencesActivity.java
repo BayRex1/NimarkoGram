@@ -99,6 +99,10 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
         this.page = page;
     }
 
+    public static ChatsPreferencesActivity forAyuGram() {
+        return new ChatsPreferencesActivity(PAGE_AYUGRAM);
+    }
+
     public static ChatsPreferencesActivity forSetting(int itemId) {
         int targetPage = switch (itemId) {
             case sortByUnreadRow, unarchiveOnSwipeRow, customChatRow -> PAGE_CHAT_LIST;

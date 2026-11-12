@@ -390,7 +390,7 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                 presentFragment(new InfoCardsPreferencesActivity());
                 break;
             case ID_AYUGRAM:
-                presentFragment(new ChatsPreferencesActivity(8));
+                presentFragment(ChatsPreferencesActivity.forAyuGram());
                 break;
             case ID_TEXTANIM:
                 presentFragment(new TextAnimPreferencesActivity());
