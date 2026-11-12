@@ -134,6 +134,10 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                 R.drawable.msg_theme_solar, R.string.NM_Cat_Appearance, R.string.NM_SettingsSummaryAppearance, "nimarko_appearance"));
         arrayList.add(category(ID_CHATS, IconBackgroundColors.BLUE_DEEP,
                 R.drawable.msg_msgbubble3_solar, R.string.NM_Cat_Chats, R.string.NM_SettingsSummaryChats, "nimarko_chats"));
+        arrayList.add(SettingsActivity.SettingCell.Factory.of(ID_AYUGRAM,
+                IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom,
+                R.drawable.msg_settings, "Функции AyuGram", "Настройки и история удалённых сообщений.")
+                .setSearchable(this).setLinkAlias("nimarko_ayugram", this));
         arrayList.add(category(ID_CAMERA, IconBackgroundColors.CYAN,
                 R.drawable.camera_solar, R.string.NM_Cat_Camera, R.string.NM_SettingsSummaryCamera, "nimarko_camera"));
         arrayList.add(UItem.asShadow(null));
@@ -158,10 +162,6 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                 R.drawable.msg_edit_solar, R.string.NM_TA_Title, R.string.NM_SettingsSummaryTextAnimation, "nimarko_textanim"));
         arrayList.add(category(ID_PILLSTACK, IconBackgroundColors.CYAN,
                 R.drawable.msg_search_solar, R.string.NM_CARDS_Title, R.string.NM_SettingsSummaryInfoCards, "nimarko_infocards"));
-        arrayList.add(SettingsActivity.SettingCell.Factory.of(ID_AYUGRAM,
-                IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom,
-                R.drawable.msg_settings, "Функции AyuGram", "История удалённых сообщений и дополнительные функции.")
-                .setSearchable(this).setLinkAlias("nimarko_ayugram", this));
         arrayList.add(UItem.asShadow(null));
 
         arrayList.add(UItem.asHeader(LocaleController.getString(R.string.NM_SettingsSectionApp)));
