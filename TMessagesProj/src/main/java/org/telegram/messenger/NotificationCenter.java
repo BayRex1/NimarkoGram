@@ -24,6 +24,7 @@ import androidx.annotation.UiThread;
 import androidx.collection.MutableIntList;
 
 import app.nimarkogram.messenger.diagnostics.RawProxyDiagnostics;
+import app.nimarkogram.messenger.deletedmessages.DeletedMessagesController;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
 
@@ -796,6 +797,9 @@ public class NotificationCenter {
 
     @UiThread
     public void postNotificationNameInternal(int id, boolean allowDuringAnimation, Object... args) {
+        if (id == didReceiveNewMessages || id == messagesDidLoad || id == messagesDidLoadWithoutProcess || id == messagesDeleted || id == historyCleared) {
+            DeletedMessagesController.onNotification(currentAccount, id, args);
+        }
         if (BuildVars.DEBUG_VERSION) {
             if (Thread.currentThread() != ApplicationLoader.applicationHandler.getLooper().getThread()) {
                 throw new RuntimeException("postNotificationName allowed only from MAIN thread");
