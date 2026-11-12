@@ -224,8 +224,6 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
         items.add(asSettingsLink(openToolsRow, IconBackgroundColors.ORANGE_DEEP,
                 R.drawable.msg_settings, getString(R.string.NM_SettingsSectionTools),
                 getString(R.string.NM_SettingsSummaryChatTools)));
-        items.add(asSettingsLink(openAyuGramRow, IconBackgroundColors.PURPLE,
-                R.drawable.msg_settings, "Функции AyuGram", "История удалённых сообщений и дополнительные функции."));
         items.add(UItem.asShadow(null));
     }
 
@@ -406,8 +404,6 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
         } else if (id == openToolsRow) {
             presentFragment(new ChatsPreferencesActivity(PAGE_TOOLS));
             return;
-        } else if (id == openAyuGramRow) {
-            presentFragment(new ChatsPreferencesActivity(PAGE_AYUGRAM));
             return;
         }
 
