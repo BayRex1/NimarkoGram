@@ -171,7 +171,7 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
                 items.add(UItem.asHeader("История сообщений"));
                 items.add(SettingsHelper.asSwitchCG(showDeletedMessagesRow,
                         "Показывать удалённые сообщения",
-                        "Сохраняет локальную копию сообщений при получении события удаления от Telegram. Уже удалённые до включения сообщения восстановить нельзя."))
+                        "Сохраняет локальную копию сообщений при получении события удаления от Telegram. Уже удалённые до включения сообщения восстановить нельзя.")
                         .setChecked(AppConfig.showDeletedMessages));
                 items.add(UItem.asShadow("Сохраняются данные, доступные на устройстве в момент удаления. Медиафайлы и отображение копий непосредственно в переписке пока не поддерживаются."));
             }
