@@ -10635,7 +10635,7 @@ public class MessagesStorage extends BaseController {
                                 deletedMessage.dialog_id = dialogId;
                                 deletedMessage.message = TextUtils.isEmpty(deletedMessage.message)
                                         ? "Сообщение удалено"
-                                        : deletedMessage.message + "\\n[удалено]";
+                                        : deletedMessage.message + "\n[удалено]";
                                 res.messages.add(deletedMessage);
                                 loadedIds.add(deletedMessage.id);
                             } finally {
