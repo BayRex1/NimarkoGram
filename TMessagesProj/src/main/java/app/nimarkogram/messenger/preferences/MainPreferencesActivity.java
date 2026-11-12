@@ -55,6 +55,7 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
     public static final int ID_TEXTANIM       = 28;
     public static final int ID_PILLSTACK      = 29;
     public static final int ID_SOURCE_CODE    = 30;
+    public static final int ID_AYUGRAM        = 31;
 
     private static final String SOURCE_REPOSITORY_URL = "https://github.com/Ettacent/NimarkoGram";
     private static final int SEARCH_MENU_ID = 1000;
@@ -157,6 +158,10 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                 R.drawable.msg_edit_solar, R.string.NM_TA_Title, R.string.NM_SettingsSummaryTextAnimation, "nimarko_textanim"));
         arrayList.add(category(ID_PILLSTACK, IconBackgroundColors.CYAN,
                 R.drawable.msg_search_solar, R.string.NM_CARDS_Title, R.string.NM_SettingsSummaryInfoCards, "nimarko_infocards"));
+        arrayList.add(SettingsActivity.SettingCell.Factory.of(ID_AYUGRAM,
+                IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom,
+                R.drawable.msg_settings, "Функции AyuGram", "История удалённых сообщений и дополнительные функции.")
+                .setSearchable(this).setLinkAlias("nimarko_ayugram", this));
         arrayList.add(UItem.asShadow(null));
 
         arrayList.add(UItem.asHeader(LocaleController.getString(R.string.NM_SettingsSectionApp)));
@@ -383,6 +388,9 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                 break;
             case ID_PILLSTACK:
                 presentFragment(new InfoCardsPreferencesActivity());
+                break;
+            case ID_AYUGRAM:
+                presentFragment(new ChatsPreferencesActivity(8));
                 break;
             case ID_TEXTANIM:
                 presentFragment(new TextAnimPreferencesActivity());
