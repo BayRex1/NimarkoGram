@@ -2,12 +2,15 @@ package app.nimarkogram.messenger.deletedmessages;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Base64;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.NotificationCenter;
+import org.telegram.tgnet.SerializedData;
+import org.telegram.tgnet.TLRPC;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -100,6 +103,9 @@ public final class DeletedMessagesController {
                     json.put("messageId", message.getId());
                     json.put("date", message.messageOwner.date);
                     json.put("text", text);
+                    SerializedData serialized = new SerializedData();
+                    message.messageOwner.serializeToStream(serialized);
+                    json.put("messageData", Base64.encodeToString(serialized.toByteArray(), Base64.NO_WRAP));
                     editor.putString(pendingKey(account, dialogId, message.getId()), json.toString());
                     changed = true;
                 } catch (JSONException ignored) {
@@ -209,6 +215,38 @@ public final class DeletedMessagesController {
             editor.remove(entries.get(i).getKey());
         }
         editor.apply();
+    }
+
+    public static synchronized void restoreDeletedMessages(int account, long dialogId, ArrayList<MessageObject> target) {
+        if (target == null || !AppConfig.showDeletedMessages) return;
+        SharedPreferences prefs = preferences();
+        if (prefs == null) return;
+        Set<Integer> existingIds = new HashSet<>();
+        for (MessageObject object : target) if (object != null) existingIds.add(object.getId());
+        String prefix = DELETED_PREFIX + account + "_";
+        boolean changed = false;
+        for (Map.Entry<String, ?> entry : prefs.getAll().entrySet()) {
+            if (!entry.getKey().startsWith(prefix) || !(entry.getValue() instanceof String)) continue;
+            try {
+                JSONObject json = new JSONObject((String) entry.getValue());
+                if (json.optLong("dialogId") != dialogId) continue;
+                int messageId = json.optInt("messageId");
+                String encoded = json.optString("messageData", "");
+                if (messageId == 0 || existingIds.contains(messageId) || encoded.isEmpty()) continue;
+                SerializedData data = new SerializedData(Base64.decode(encoded, Base64.DEFAULT));
+                int constructor = data.readInt32(false);
+                TLRPC.Message message = TLRPC.Message.TLdeserialize(data, constructor, false);
+                data.cleanup();
+                if (message == null) continue;
+                MessageObject restored = new MessageObject(account, message, true, false);
+                restored.ayuDeleted = true;
+                target.add(restored);
+                existingIds.add(messageId);
+                changed = true;
+            } catch (Exception ignored) {
+            }
+        }
+        if (changed) Collections.sort(target, (a, b) -> Integer.compare(b.getId(), a.getId()));
     }
 
     public static synchronized boolean hasDeletedMessage(int account, long dialogId, int messageId) {

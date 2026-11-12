@@ -23020,6 +23020,9 @@ public class ChatActivity extends BaseFragment implements
             postponedScrollToLastMessageQueryIndex = 0;
         }
         ArrayList<MessageObject> messArr = (ArrayList<MessageObject>) args[2];
+        if (AppConfig.showDeletedMessages && mode == MODE_DEFAULT) {
+            DeletedMessagesController.restoreDeletedMessages(currentAccount, dialog_id, messArr);
+        }
         layOutWidgetsForSideMenu(messArr);
         boolean universalNotify = false;
         HashMap<Integer, MessageObject> oldMessages = null;

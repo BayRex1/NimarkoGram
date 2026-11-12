@@ -176,24 +176,9 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
                 items.add(UItem.asHeader("История сообщений"));
                 items.add(SettingsHelper.asSwitchCG(showDeletedMessagesRow,
                         "Сохранять удалённые сообщения",
-                        "Сохраняет локальную копию загруженного текста, если Telegram присылает событие удаления. Сообщения, удалённые до включения функции, не восстановить.")
+                        "Сохраняет сообщения на этом устройстве и показывает их в переписке с отметкой «Удалено».")
                         .setChecked(AppConfig.showDeletedMessages));
-                items.add(UItem.asShadow("Копии хранятся только на этом устройстве. Сейчас сохраняется текст; фото, видео и другие вложения не копируются. Хранится до 300 последних удалённых сообщений."));
-
-                items.add(UItem.asHeader("Недавно удалённые"));
-                List<DeletedMessagesController.DeletedMessage> deleted =
-                        DeletedMessagesController.getRecentMessages(currentAccount, 10);
-                if (deleted.isEmpty()) {
-                    items.add(UItem.asShadow("Пока нет сохранённых сообщений. Включите функцию и дождитесь загрузки переписки или новых сообщений."));
-                } else {
-                    for (DeletedMessagesController.DeletedMessage message : deleted) {
-                        String preview = message.text == null ? "" : message.text.replace('\n', ' ').trim();
-                        if (preview.length() > 180) {
-                            preview = preview.substring(0, 177) + "...";
-                        }
-                        items.add(UItem.asShadow("Чат ID: " + message.dialogId + " · Сообщение #" + message.messageId + "\n" + preview));
-                    }
-                }
+                items.add(UItem.asShadow("Сохранённые сообщения остаются в чате после повторного входа. Сообщения, удалённые до включения функции, восстановить нельзя."));
             }
             default -> fillOverview(items);
         }
