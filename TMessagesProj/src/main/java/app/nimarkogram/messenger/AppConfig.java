@@ -1105,6 +1105,13 @@ public final class AppConfig {
     public static boolean deleteForAll = getPreferences().getBoolean("deleteForAll", false);
     public static void toggleDeleteForAll() { deleteForAll = !deleteForAll; getEditor().putBoolean("deleteForAll", deleteForAll).apply(); }
 
+    // AyuGram-compatible message history options. The deletion capture pipeline is implemented separately.
+    public static boolean showDeletedMessages = getPreferences().getBoolean("showDeletedMessages", false);
+    public static void toggleShowDeletedMessages() {
+        showDeletedMessages = !showDeletedMessages;
+        getEditor().putBoolean("showDeletedMessages", showDeletedMessages).apply();
+    }
+
     public static final int DTAP_NONE = 0;
     public static final int DTAP_REACTION = 1;
     public static final int DTAP_REPLY = 2;
