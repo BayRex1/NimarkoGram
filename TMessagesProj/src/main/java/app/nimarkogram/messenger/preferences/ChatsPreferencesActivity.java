@@ -404,7 +404,6 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
         } else if (id == openToolsRow) {
             presentFragment(new ChatsPreferencesActivity(PAGE_TOOLS));
             return;
-            return;
         }
 
         if (id == showDeletedMessagesRow) {
