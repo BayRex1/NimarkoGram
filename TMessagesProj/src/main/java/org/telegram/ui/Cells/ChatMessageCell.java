@@ -18397,33 +18397,38 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
     }
 
     private void drawAyuDeletedMark(Canvas canvas) {
-        if (currentMessageObject == null || currentBackgroundDrawable == null) {
+        if (currentMessageObject == null) {
             return;
         }
-        android.graphics.Rect bounds = currentBackgroundDrawable.getBounds();
-        float x = bounds.right - dp(13);
-        float y = bounds.top + dp(13);
+        android.graphics.Rect bounds = currentBackgroundDrawable != null
+                ? currentBackgroundDrawable.getBounds()
+                : new android.graphics.Rect(0, 0, getMeasuredWidth(), getMeasuredHeight());
+        if (bounds.isEmpty()) {
+            bounds = new android.graphics.Rect(0, 0, getMeasuredWidth(), getMeasuredHeight());
+        }
+
+        // Keep the marker at the lower edge for text, stickers and media messages alike.
+        float x = bounds.right - dp(17);
+        float y = bounds.bottom - dp(15);
         Paint iconPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        iconPaint.setColor(0xff929292);
+        iconPaint.setColor(0xffe53935);
         iconPaint.setStyle(Paint.Style.STROKE);
-        iconPaint.setStrokeWidth(dp(1.35f));
+        iconPaint.setStrokeWidth(dp(2f));
         iconPaint.setStrokeCap(Paint.Cap.ROUND);
         iconPaint.setStrokeJoin(Paint.Join.ROUND);
+
         Path bin = new Path();
-        bin.moveTo(x - dp(4), y - dp(3));
-        bin.lineTo(x - dp(3), y + dp(4));
-        bin.lineTo(x + dp(3), y + dp(4));
-        bin.lineTo(x + dp(4), y - dp(3));
+        bin.moveTo(x - dp(6), y - dp(5));
+        bin.lineTo(x - dp(5), y + dp(6));
+        bin.quadTo(x - dp(5), y + dp(8), x - dp(3), y + dp(8));
+        bin.lineTo(x + dp(3), y + dp(8));
+        bin.quadTo(x + dp(5), y + dp(8), x + dp(5), y + dp(6));
+        bin.lineTo(x + dp(6), y - dp(5));
         canvas.drawPath(bin, iconPaint);
-        canvas.drawLine(x - dp(5), y - dp(4), x + dp(5), y - dp(4), iconPaint);
-        canvas.drawLine(x - dp(2), y - dp(6), x + dp(2), y - dp(6), iconPaint);
-        canvas.drawLine(x - dp(1), y - dp(1), x - dp(1), y + dp(2), iconPaint);
-        canvas.drawLine(x + dp(1), y - dp(1), x + dp(1), y + dp(2), iconPaint);
-        Paint labelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        labelPaint.setColor(0xff929292);
-        labelPaint.setTextSize(dp(9));
-        labelPaint.setTextAlign(Paint.Align.RIGHT);
-        canvas.drawText("Удалено", x - dp(9), y + dp(3), labelPaint);
+        canvas.drawLine(x - dp(8), y - dp(7), x + dp(8), y - dp(7), iconPaint);
+        canvas.drawLine(x - dp(3), y - dp(10), x + dp(3), y - dp(10), iconPaint);
+        canvas.drawLine(x - dp(2), y - dp(3), x - dp(2), y + dp(4), iconPaint);
+        canvas.drawLine(x + dp(2), y - dp(3), x + dp(2), y + dp(4), iconPaint);
     }
 
     public void drawBackgroundInternal(Canvas canvas, boolean fromParent) {
