@@ -8484,18 +8484,22 @@ public class MessagesStorage extends BaseController {
                 }
                 ids.append(messageIds.get(i));
             }
-            cursor = database.queryFinalized("SELECT mid, date, data FROM messages_v2 WHERE uid = " + dialogId + " AND mid IN (" + ids + ")");
+            if (dialogId == 0) {
+                cursor = database.queryFinalized("SELECT uid, mid, date, data FROM messages_v2 WHERE mid IN (" + ids + ") AND is_channel = 0");
+            } else {
+                cursor = database.queryFinalized("SELECT uid, mid, date, data FROM messages_v2 WHERE uid = " + dialogId + " AND mid IN (" + ids + ")");
+            }
             statement = database.executeFast("INSERT OR IGNORE INTO nimarko_deleted_messages(uid, mid, date, data) VALUES(?, ?, ?, ?)");
             while (cursor.next()) {
-                NativeByteBuffer data = cursor.byteBufferValue(2);
+                NativeByteBuffer data = cursor.byteBufferValue(3);
                 if (data == null) {
                     continue;
                 }
                 try {
                     statement.requery();
-                    statement.bindLong(1, dialogId);
-                    statement.bindInteger(2, cursor.intValue(0));
-                    statement.bindInteger(3, cursor.intValue(1));
+                    statement.bindLong(1, cursor.longValue(0));
+                    statement.bindInteger(2, cursor.intValue(1));
+                    statement.bindInteger(3, cursor.intValue(2));
                     statement.bindByteBuffer(4, data);
                     statement.step();
                 } finally {
