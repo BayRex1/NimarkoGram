@@ -232,6 +232,12 @@ public final class AppConfig {
     }
 
     public static volatile boolean silenceNonContacts = getPreferences().getBoolean("silenceNonContacts", false);
+    public static volatile boolean showDeletedMessages = getPreferences().getBoolean("showDeletedMessages", false);
+
+    public static void toggleShowDeletedMessages() {
+        showDeletedMessages = !showDeletedMessages;
+        getEditor().putBoolean("showDeletedMessages", showDeletedMessages).apply();
+    }
     public static volatile boolean inAppNotifications = getPreferences().getBoolean("inAppNotifications", true);
 
     public static void toggleInAppNotifications() {
