@@ -875,7 +875,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             items.add(UItem.asShadow(null));
         }
 
-        items.add(SettingCell.Factory.of(900, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.msg_settings_solar, getString(R.string.NimarkoGramSettings)));
+        items.add(SettingCell.Factory.of(900, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.msg_settings_solar, getString(R.string.MofGramSettings)));
         items.add(UItem.asShadow(null));
 
         final boolean walletAvailable = getMessagesController().config.walletAvailable.get();
