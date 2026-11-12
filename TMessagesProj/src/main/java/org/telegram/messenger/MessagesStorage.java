@@ -10603,6 +10603,55 @@ public class MessagesStorage extends BaseController {
                     cursor = null;
                 }
 
+                // Restore archived deleted messages into the same history page.
+                // Keep the marker at the end so existing entity offsets remain valid.
+                if (app.nimarkogram.messenger.AppConfig.showDeletedMessages
+                        && processMessages && !scheduled && !quickReplies && !welcomeMessages
+                        && threadMessageId == 0 && !res.messages.isEmpty()) {
+                    int minLoadedId = Integer.MAX_VALUE;
+                    int maxLoadedId = Integer.MIN_VALUE;
+                    java.util.HashSet<Integer> loadedIds = new java.util.HashSet<>();
+                    for (TLRPC.Message loadedMessage : res.messages) {
+                        minLoadedId = Math.min(minLoadedId, loadedMessage.id);
+                        maxLoadedId = Math.max(maxLoadedId, loadedMessage.id);
+                        loadedIds.add(loadedMessage.id);
+                    }
+                    SQLiteCursor deletedCursor = null;
+                    try {
+                        database.executeFast("CREATE TABLE IF NOT EXISTS nimarko_deleted_messages (uid INTEGER NOT NULL, mid INTEGER NOT NULL, date INTEGER NOT NULL, data BLOB NOT NULL, PRIMARY KEY(uid, mid))").stepThis().dispose();
+                        deletedCursor = database.queryFinalized("SELECT data FROM nimarko_deleted_messages WHERE uid = "
+                                + dialogId + " AND mid >= " + minLoadedId + " AND mid <= " + maxLoadedId + " ORDER BY mid ASC");
+                        while (deletedCursor.next()) {
+                            NativeByteBuffer deletedData = deletedCursor.byteBufferValue(0);
+                            if (deletedData == null) {
+                                continue;
+                            }
+                            try {
+                                TLRPC.Message deletedMessage = TLRPC.Message.TLdeserialize(deletedData, deletedData.readInt32(false), false);
+                                deletedMessage.readAttachPath(deletedData, currentUserId);
+                                if (loadedIds.contains(deletedMessage.id)) {
+                                    continue;
+                                }
+                                deletedMessage.dialog_id = dialogId;
+                                deletedMessage.message = TextUtils.isEmpty(deletedMessage.message)
+                                        ? "Сообщение удалено"
+                                        : deletedMessage.message + "\\n[удалено]";
+                                res.messages.add(deletedMessage);
+                                loadedIds.add(deletedMessage.id);
+                            } finally {
+                                deletedData.reuse();
+                            }
+                        }
+                    } catch (Exception e) {
+                        checkSQLException(e);
+                    } finally {
+                        if (deletedCursor != null) {
+                            deletedCursor.dispose();
+                        }
+                    }
+                    res.messages.sort((first, second) -> Integer.compare(first.id, second.id));
+                }
+
                 if (withEphemeralMessages && dialogId < 0) {
                     ArrayList<TL_ephemeral.EphemeralMessage> ephemeralMessages = getEphemeralMessagesInternal(dialogId, threadMessageId);
                     if (ephemeralMessages != null && !ephemeralMessages.isEmpty()) {
