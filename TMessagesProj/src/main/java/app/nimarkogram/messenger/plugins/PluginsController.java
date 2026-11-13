@@ -1443,7 +1443,7 @@ public class PluginsController implements PluginsHooks {
     }
 
     public static boolean isPluginEngineAvailable() {
-        if (isPluginEngineSupported() && AppConfig.pluginsEngine && !AppConfig.pluginsSafeMode) {
+        if (isPluginEngineSupported() && AppConfig.pluginsEngine && !AppConfig.pluginsSafeMode && !AppConfig.optimizationMode) {
             for (PluginsEngine pluginsEngine : engines.values()) {
                 if (pluginsEngine != null) {
                     try {
@@ -1583,7 +1583,7 @@ public class PluginsController implements PluginsHooks {
     }
 
     public void init(final boolean startWithSafeMode, final Runnable runnable) {
-        if (!isPluginEngineSupported() || !AppConfig.pluginsEngine) {
+        if (!isPluginEngineSupported() || !AppConfig.pluginsEngine || AppConfig.optimizationMode) {
             if (runnable != null) {
                 runnable.run();
             }
