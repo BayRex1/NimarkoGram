@@ -984,8 +984,11 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
     private void applyNimarkoBadge(TLRPC.User user, boolean animated) {
         currentNimarkoBadge = null;
         try {
-            app.nimarkogram.messenger.api.dto.BadgeDTO badge =
-                    app.nimarkogram.messenger.badges.BadgesController.getInstance().i(user);
+            long customStatusDocumentId =
+                    app.nimarkogram.messenger.badges.CustomStatusController.getDocumentId(currentAccount, user.id);
+            app.nimarkogram.messenger.api.dto.BadgeDTO badge = customStatusDocumentId != 0L
+                    ? new app.nimarkogram.messenger.api.dto.BadgeDTO(customStatusDocumentId, "Кастомный статус")
+                    : app.nimarkogram.messenger.badges.BadgesController.getInstance().i(user);
             if (badge == null || badge.getDocumentId() == 0L) {
                 if (nimarkoBadgeEmoji != null) {
                     nimarkoBadgeEmoji.set((Drawable) null, animated);
