@@ -215,21 +215,31 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
         pendingUserId = user.id;
         pendingDisplayName = UserObject.getUserName(user);
         pendingUsername = UserObject.getPublicUsername(user);
+        showCustomStatusPicker();
+    }
 
-        View anchor = getParentActivity().getWindow().getDecorView();
+    private void showCustomStatusPicker() {
+        Activity activity = getParentActivity();
+        if (activity == null || pendingUserId == 0L) return;
+
+        View anchor = activity.getWindow().getDecorView();
         SelectAnimatedEmojiDialog selector = new SelectAnimatedEmojiDialog(
-                this, getParentActivity(), false, null,
-                SelectAnimatedEmojiDialog.TYPE_EMOJI_STATUS, null) {
+                this, activity, false, null,
+                SelectAnimatedEmojiDialog.TYPE_AVATAR_CONSTRUCTOR, null) {
             @Override
             protected void onEmojiSelected(View view, Long documentId, TLRPC.Document document,
                                             org.telegram.tgnet.tl.TL_stars.TL_starGiftUnique gift,
                                             Integer until) {
-                if (documentId == null || documentId == 0L) {
-                    showToast("Выбери Premium Emoji");
+                // Emoji selections provide documentId; sticker selections provide the document.
+                long selectedDocumentId = documentId != null && documentId != 0L
+                        ? documentId
+                        : document != null ? document.id : 0L;
+                if (selectedDocumentId == 0L) {
+                    showToast("Выбери Premium Emoji или стикер");
                     return;
                 }
                 CustomStatusController.put(currentAccount, pendingUserId,
-                        pendingDisplayName, pendingUsername, documentId);
+                        pendingDisplayName, pendingUsername, selectedDocumentId);
                 updateItemsAfterToggle();
                 if (emojiWindow != null) {
                     emojiWindow.dismiss();
@@ -239,12 +249,21 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
             }
         };
 
+        // Avatar-constructor mode contains the Emoji/Stickers switch.
         emojiWindow = new SelectAnimatedEmojiDialog.SelectAnimatedEmojiDialogWindow(
                 anchor, ViewGroup.LayoutParams.MATCH_PARENT, dp(430));
         emojiWindow.setContentView(selector);
         emojiWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         emojiWindow.setOutsideTouchable(true);
         emojiWindow.showAtLocation(anchor, Gravity.CENTER, 0, 0);
+        // showAtLocation does not call the selector's onShow hook; without it
+        // the picker remains detached and its content may not initialize.
+        selector.onShow(() -> {
+            if (emojiWindow != null) {
+                emojiWindow.dismiss();
+                emojiWindow = null;
+            }
+        });
     }
 
     private void showEntryActions(CustomStatusController.Entry entry) {
@@ -261,7 +280,7 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
                             pendingUserId = entry.userId;
                             pendingDisplayName = entry.displayName;
                             pendingUsername = entry.username;
-                            chooseEmojiForPendingUser();
+                            showCustomStatusPicker();
                         } else {
                             openEmojiPicker(user);
                         }
@@ -271,34 +290,6 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
                 })
                 .setNegativeButton("Закрыть", null)
                 .show();
-    }
-
-    private void chooseEmojiForPendingUser() {
-        if (getParentActivity() == null) return;
-        View anchor = getParentActivity().getWindow().getDecorView();
-        SelectAnimatedEmojiDialog selector = new SelectAnimatedEmojiDialog(
-                this, getParentActivity(), false, null,
-                SelectAnimatedEmojiDialog.TYPE_EMOJI_STATUS, null) {
-            @Override
-            protected void onEmojiSelected(View view, Long documentId, TLRPC.Document document,
-                                            org.telegram.tgnet.tl.TL_stars.TL_starGiftUnique gift,
-                                            Integer until) {
-                if (documentId == null || documentId == 0L) return;
-                CustomStatusController.put(currentAccount, pendingUserId,
-                        pendingDisplayName, pendingUsername, documentId);
-                updateItemsAfterToggle();
-                if (emojiWindow != null) {
-                    emojiWindow.dismiss();
-                    emojiWindow = null;
-                }
-                showToast("Кастомный статус обновлён");
-            }
-        };
-        emojiWindow = new SelectAnimatedEmojiDialog.SelectAnimatedEmojiDialogWindow(
-                anchor, ViewGroup.LayoutParams.MATCH_PARENT, dp(430));
-        emojiWindow.setContentView(selector);
-        emojiWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        emojiWindow.showAtLocation(anchor, Gravity.CENTER, 0, 0);
     }
 
     private void confirmRemove(CustomStatusController.Entry entry) {
