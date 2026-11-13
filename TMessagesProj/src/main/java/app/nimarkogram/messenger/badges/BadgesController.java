@@ -225,6 +225,11 @@ public final class BadgesController {
             if (obj instanceof TLRPC.User) {
                 id = ((TLRPC.User) obj).id;
                 isUser = true;
+                long customStatusDocumentId =
+                        CustomStatusController.getDocumentId(UserConfig.selectedAccount, id);
+                if (customStatusDocumentId != 0L) {
+                    return new BadgeDTO(customStatusDocumentId, "Кастомный статус");
+                }
             } else if (obj instanceof TLRPC.Chat) {
                 id = ((TLRPC.Chat) obj).id;
                 isUser = false;
