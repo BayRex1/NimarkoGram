@@ -587,7 +587,7 @@ public class PluginsController implements PluginsHooks {
                 runtimeScopes.get().push(token);
                 return true;
             }
-            if (AppConfig.pluginsSafeMode) return false;
+            if (AppConfig.pluginsSafeMode || AppConfig.optimizationMode) return false;
             RuntimeSlot slot = currentRuntimeByPlugin.get(token.pluginId);
             if (slot == null || slot.state == RuntimeState.REVOKED
                     || !slot.token.equals(token)
