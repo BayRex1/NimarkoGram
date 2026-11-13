@@ -141,6 +141,7 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
             return;
         }
 
+        final String resolvedUsername = value;
         Activity activity = getParentActivity();
         if (activity == null) return;
 
@@ -151,7 +152,7 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
         resolvingDialog.show();
 
         TLRPC.TL_contacts_resolveUsername request = new TLRPC.TL_contacts_resolveUsername();
-        request.username = value;
+        request.username = resolvedUsername;
         ConnectionsManager.getInstance(currentAccount).sendRequest(request, (response, error) ->
                 AndroidUtilities.runOnUIThread(() -> {
                     if (resolvingDialog != null) {
@@ -159,11 +160,11 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
                         resolvingDialog = null;
                     }
                     if (error != null) {
-                        showToast("Telegram не смог найти @" + value + ": " + error.text);
+                        showToast("Telegram не смог найти @" + resolvedUsername + ": " + error.text);
                         return;
                     }
                     if (!(response instanceof TLRPC.TL_contacts_resolvedPeer)) {
-                        showToast("Telegram вернул неизвестный ответ при поиске @" + value);
+                        showToast("Telegram вернул неизвестный ответ при поиске @" + resolvedUsername);
                         return;
                     }
 
@@ -186,14 +187,14 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
                     // even when the peer reference is not populated as expected.
                     if (user == null && resolved.users != null) {
                         for (TLRPC.User candidate : resolved.users) {
-                            if (candidate != null && value.equalsIgnoreCase(candidate.username)) {
+                            if (candidate != null && resolvedUsername.equalsIgnoreCase(candidate.username)) {
                                 user = candidate;
                                 break;
                             }
                         }
                     }
                     if (user == null) {
-                        showToast("@" + value + " не найден как обычный пользователь Telegram.");
+                        showToast("@" + resolvedUsername + " не найден как обычный пользователь Telegram.");
                         return;
                     }
                     openEmojiPicker(user);
