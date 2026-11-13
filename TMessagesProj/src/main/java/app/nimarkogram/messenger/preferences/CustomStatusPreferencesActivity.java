@@ -273,7 +273,7 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
                 ? "Пользователь " + entry.userId : entry.displayName;
         new AlertDialog.Builder(activity)
                 .setTitle(name)
-                .setItems(new CharSequence[]{"Открыть Premium Emoji", "Удалить пользователя"}, (dialog, which) -> {
+                .setItems(new CharSequence[]{"Открыть Premium Emoji", "Изменить подпись", "Удалить пользователя"}, (dialog, which) -> {
                     if (which == 0) {
                         TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(entry.userId);
                         if (user == null) {
@@ -285,10 +285,41 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
                             openEmojiPicker(user);
                         }
                     } else if (which == 1) {
+                        editCustomText(entry);
+                    } else if (which == 2) {
                         confirmRemove(entry);
                     }
                 })
                 .setNegativeButton("Закрыть", null)
+                .show();
+    }
+
+    private void editCustomText(CustomStatusController.Entry entry) {
+        Activity activity = getParentActivity();
+        if (activity == null) return;
+        EditText input = new EditText(activity);
+        input.setSingleLine(true);
+        input.setHint("Например: Разработчик");
+        input.setText(entry.customText);
+        input.setSelection(input.length());
+        input.setPadding(dp(20), dp(12), dp(20), dp(12));
+        new AlertDialog.Builder(activity)
+                .setTitle("Текст статуса")
+                .setMessage("Своя подпись будет отображаться вместо «Кастомный статус» только у этого пользователя.")
+                .setView(input)
+                .setNegativeButton("Отмена", null)
+                .setNeutralButton("Сбросить", (dialog, which) -> {
+                    CustomStatusController.setCustomText(currentAccount, entry.userId, "Кастомный статус");
+                    updateItemsAfterToggle();
+                })
+                .setPositiveButton("Сохранить", (dialog, which) -> {
+                    String value = input.getText() == null ? "" : input.getText().toString().trim();
+                    if (value.isEmpty()) value = "Кастомный статус";
+                    if (value.length() > 48) value = value.substring(0, 48);
+                    CustomStatusController.setCustomText(currentAccount, entry.userId, value);
+                    updateItemsAfterToggle();
+                    showToast("Подпись сохранена");
+                })
                 .show();
     }
 
