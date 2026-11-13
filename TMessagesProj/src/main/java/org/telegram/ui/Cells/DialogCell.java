@@ -3589,6 +3589,14 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
         try {
             badge = app.nimarkogram.messenger.badges.BadgesController.getInstance().i(user != null ? user : chat);
             if (badge != null && badge.getDocumentId() == 0L) badge = null;
+            if (user != null) {
+                long customStatusDocumentId =
+                        app.nimarkogram.messenger.badges.CustomStatusController.getDocumentId(currentAccount, user.id);
+                if (customStatusDocumentId != 0L) {
+                    badge = new app.nimarkogram.messenger.api.dto.BadgeDTO(
+                            customStatusDocumentId, "Кастомный статус");
+                }
+            }
         } catch (Throwable ignored) {}
 
         if (chat != null) {
