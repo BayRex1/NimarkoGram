@@ -547,6 +547,35 @@ public class ConnectionsManager extends BaseController {
         final RequestDelegate onComplete = userOnComplete == null ? null
                 : releaseOwner == null ? (response, error) -> postHookCallback.run(response, error, null)
                 : new ManagedRequestDelegate(postHookCallback, releaseOwner);
+        // AyuGram Ghost Mode: suppress read receipts and presence/typing requests.
+        if (app.nimarkogram.messenger.ayugram.GhostModeConfig.isGhostModeEnabled()) {
+            if (object instanceof TLRPC.TL_messages_setTyping
+                    || object instanceof TLRPC.TL_messages_setEncryptedTyping) {
+                return;
+            }
+            if (object instanceof TLRPC.TL_account_updateStatus) {
+                ((TLRPC.TL_account_updateStatus) object).offline = true;
+            }
+            boolean readRequest = object instanceof TLRPC.TL_messages_readHistory
+                    || object instanceof TLRPC.TL_messages_readEncryptedHistory
+                    || object instanceof TLRPC.TL_messages_readDiscussion
+                    || object instanceof TLRPC.TL_messages_readMessageContents
+                    || object instanceof TLRPC.TL_channels_readHistory
+                    || object instanceof TLRPC.TL_channels_readMessageContents;
+            if (readRequest) {
+                TLRPC.TL_messages_affectedMessages fakeResponse = new TLRPC.TL_messages_affectedMessages();
+                fakeResponse.pts = -1;
+                fakeResponse.pts_count = 0;
+                if (onComplete != null) {
+                    try {
+                        onComplete.run(fakeResponse, null);
+                    } catch (Throwable t) {
+                        FileLog.e("Ghost Mode: read receipt callback failed", t);
+                    }
+                }
+                return;
+            }
+        }
         if (BuildVars.LOGS_ENABLED) {
             FileLog.d("send request " + object + " with token = " + requestToken);
         }
