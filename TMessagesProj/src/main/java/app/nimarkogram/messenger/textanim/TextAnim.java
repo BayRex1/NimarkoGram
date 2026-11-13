@@ -115,7 +115,7 @@ public final class TextAnim {
     public static void applySettings() {
         synchronized (installLock) {
             boolean wasSmoothCursorEnabled = smoothCursorEnabled;
-            masterEnabled = AppConfig.nimarkoTextAnim;
+            masterEnabled = AppConfig.nimarkoTextAnim && !AppConfig.optimizationMode;
             appearEnabled = AppConfig.nimarkoTextAnimAppear;
             smoothCursorEnabled = AppConfig.nimarkoTextAnimCursor;
             deleteEnabled = AppConfig.nimarkoTextAnimDelete;
@@ -205,7 +205,7 @@ public final class TextAnim {
                     ApplicationLoader.ensurePineInited();
                     if (ApplicationLoader.isPineAvailable()) {
                         synchronized (installLock) {
-                            if (AppConfig.nimarkoTextAnim && !installed) {
+                            if (AppConfig.nimarkoTextAnim && !AppConfig.optimizationMode && !installed) {
                                 install();
                             }
                         }
