@@ -73,9 +73,10 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
             String value = !TextUtils.isEmpty(entry.username)
                     ? "@" + entry.username + "  ·  ID " + entry.userId
                     : "ID " + entry.userId;
+            String statusInfo = entry.documentId == 0L ? "Premium Emoji не выбран" : "Premium Emoji установлен";
             items.add(asPlainSettingsRow(id,
                     TextUtils.isEmpty(entry.displayName) ? "Пользователь " + entry.userId : entry.displayName,
-                    value));
+                    value + "  ·  " + statusInfo));
         }
         if (entries.isEmpty()) {
             items.add(UItem.asShadow("Пока нет пользователей с назначенными статусами. Нажми «Добавить пользователя», чтобы назначить Premium Emoji."));
@@ -134,7 +135,7 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
                     showToast("Пользователь с таким ID пока не загружен. Попробуй найти его по @username.");
                     return;
                 }
-                openEmojiPicker(user);
+                addUserToList(user);
             } catch (NumberFormatException e) {
                 showToast("Некорректный ID пользователя");
             }
@@ -197,9 +198,16 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
                         showToast("@" + resolvedUsername + " не найден как обычный пользователь Telegram.");
                         return;
                     }
-                    openEmojiPicker(user);
-                    showToast("Пользователь найден. Теперь выбери Premium Emoji.");
+                    addUserToList(user);
                 }));
+    }
+
+    private void addUserToList(TLRPC.User user) {
+        if (user == null) return;
+        CustomStatusController.addPending(currentAccount, user.id,
+                UserObject.getUserName(user), UserObject.getPublicUsername(user));
+        updateItemsAfterToggle();
+        showToast("Пользователь добавлен в список. Открой его, чтобы выбрать Premium Emoji.");
     }
 
     private void openEmojiPicker(TLRPC.User user) {
@@ -246,7 +254,7 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
                 ? "Пользователь " + entry.userId : entry.displayName;
         new AlertDialog.Builder(activity)
                 .setTitle(name)
-                .setItems(new CharSequence[]{"Изменить статус", "Удалить пользователя"}, (dialog, which) -> {
+                .setItems(new CharSequence[]{"Открыть Premium Emoji", "Удалить пользователя"}, (dialog, which) -> {
                     if (which == 0) {
                         TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(entry.userId);
                         if (user == null) {
