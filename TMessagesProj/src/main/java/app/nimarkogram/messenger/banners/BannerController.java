@@ -11,6 +11,7 @@ import android.os.SystemClock;
 import android.util.AtomicFile;
 
 import app.nimarkogram.messenger.utils.InlineAuth;
+import app.nimarkogram.messenger.AppConfig;
 
 import androidx.annotation.StringRes;
 
@@ -164,7 +165,7 @@ public final class BannerController {
 
     public void ensureStarted() {
         if (started) {
-            if (BannerConfig.enabled) startStatusLoop();
+            if (BannerConfig.enabled && !AppConfig.optimizationMode) startStatusLoop();
             return;
         }
         synchronized (this) {
@@ -883,11 +884,11 @@ public final class BannerController {
     }
 
     private synchronized void startStatusLoop() {
-        if (!BannerConfig.enabled || ApplicationLoader.mainInterfacePaused || statusLoopThread != null) return;
+        if (!BannerConfig.enabled || AppConfig.optimizationMode || ApplicationLoader.mainInterfacePaused || statusLoopThread != null) return;
         Thread t = new Thread(() -> {
             try {
             try { Thread.sleep(2000); } catch (InterruptedException ie) { return; }
-                while (Thread.currentThread() == statusLoopThread && BannerConfig.enabled
+                while (Thread.currentThread() == statusLoopThread && BannerConfig.enabled && !AppConfig.optimizationMode
                         && !ApplicationLoader.mainInterfacePaused) {
                 fetchStatus();
                 reloadSettings();
@@ -1223,7 +1224,7 @@ public final class BannerController {
         usersNoBanner.remove(ownKey);
         reloadSettings();
         invalidate();
-        if (!BannerConfig.enabled) return;
+        if (!BannerConfig.enabled || AppConfig.optimizationMode) return;
         executor.submit(() -> {
             fetchStatus(operationScope);
             reloadSettings();
