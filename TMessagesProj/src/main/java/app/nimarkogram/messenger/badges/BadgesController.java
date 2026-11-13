@@ -228,7 +228,8 @@ public final class BadgesController {
                 long customStatusDocumentId =
                         CustomStatusController.getDocumentId(UserConfig.selectedAccount, id);
                 if (customStatusDocumentId != 0L) {
-                    return new BadgeDTO(customStatusDocumentId, "Кастомный статус");
+                    CustomStatusController.Entry customStatus = CustomStatusController.getEntry(UserConfig.selectedAccount, id);
+                    return new BadgeDTO(customStatusDocumentId, customStatus == null ? "Кастомный статус" : customStatus.customText);
                 }
             } else if (obj instanceof TLRPC.Chat) {
                 id = ((TLRPC.Chat) obj).id;
