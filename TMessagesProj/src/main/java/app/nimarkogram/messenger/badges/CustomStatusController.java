@@ -61,7 +61,7 @@ public final class CustomStatusController {
                     if (object == null) continue;
                     long userId = object.optLong("userId");
                     long documentId = object.optLong("documentId");
-                    if (userId == 0L || documentId == 0L) continue;
+                    if (userId == 0L) continue;
                     loaded.put(userId, new Entry(userId,
                             object.optString("displayName", ""),
                             object.optString("username", ""), documentId));
@@ -94,6 +94,20 @@ public final class CustomStatusController {
 
     public static List<Entry> getAll(int account) {
         return new ArrayList<>(entries(account).values());
+    }
+
+    public static void addPending(int account, long userId, String displayName, String username) {
+        if (userId == 0L) return;
+        boolean changed = false;
+        synchronized (CACHE) {
+            Map<Long, Entry> values = entries(account);
+            if (!values.containsKey(userId)) {
+                values.put(userId, new Entry(userId, displayName, username, 0L));
+                persist(account, values);
+                changed = true;
+            }
+        }
+        if (changed) notifyStatusChanged();
     }
 
     public static void put(int account, long userId, String displayName, String username, long documentId) {
