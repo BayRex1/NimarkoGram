@@ -1029,8 +1029,14 @@ public final class AppConfig {
     }
     public static void setSpringAnimation(int v) { springAnimation = v; getEditor().putInt("springAnimation", v).apply(); }
 
-    public static boolean isSpringAnimationEnabled() { return springAnimation == SPRING_SPRING; }
-    public static boolean isMaterialAnimationEnabled() { return springAnimation == SPRING_MATERIAL; }
+    public static boolean isSpringAnimationEnabled() { return !optimizationMode && springAnimation == SPRING_SPRING; }
+    public static boolean isMaterialAnimationEnabled() { return !optimizationMode && springAnimation == SPRING_MATERIAL; }
+
+    public static volatile boolean optimizationMode = getPreferences().getBoolean("optimizationMode", false);
+    public static void setOptimizationMode(boolean enabled) {
+        optimizationMode = enabled;
+        getEditor().putBoolean("optimizationMode", enabled).apply();
+    }
 
     public static boolean predictiveBack = getPreferences().getBoolean("predictiveBack", true);
     public static void togglePredictiveBack() { predictiveBack = !predictiveBack; getEditor().putBoolean("predictiveBack", predictiveBack).apply(); }
