@@ -408,6 +408,7 @@ public final class BannerController {
     }
 
     public Resolved resolve(long eid) {
+        if (AppConfig.optimizationMode) return new Resolved(null, false, false);
         long my = myId();
         CacheKey k = key(eid);
         String bf = null;
@@ -434,6 +435,7 @@ public final class BannerController {
     }
 
     public void maybeKickLoad(long eid) {
+        if (AppConfig.optimizationMode) return;
         CacheKey k = key(eid);
         if (!cachedBanners.containsKey(k) && shouldCheckBanner(k)) {
             loadBannerAsync(k);
