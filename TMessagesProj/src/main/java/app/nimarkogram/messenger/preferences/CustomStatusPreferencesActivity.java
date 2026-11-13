@@ -46,6 +46,7 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
     private String pendingDisplayName;
     private String pendingUsername;
     private SelectAnimatedEmojiDialog.SelectAnimatedEmojiDialogWindow emojiWindow;
+    private AlertDialog resolvingDialog;
 
     @Override
     protected CharSequence getTitle() {
@@ -140,24 +141,63 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
             return;
         }
 
+        Activity activity = getParentActivity();
+        if (activity == null) return;
+
+        resolvingDialog = new AlertDialog.Builder(activity)
+                .setMessage("Ищем пользователя…")
+                .create();
+        resolvingDialog.setCancelable(false);
+        resolvingDialog.show();
+
         TLRPC.TL_contacts_resolveUsername request = new TLRPC.TL_contacts_resolveUsername();
         request.username = value;
         ConnectionsManager.getInstance(currentAccount).sendRequest(request, (response, error) ->
                 AndroidUtilities.runOnUIThread(() -> {
-                    if (error != null || !(response instanceof TLRPC.TL_contacts_resolvedPeer)) {
-                        showToast("Не удалось найти пользователя. Проверь username.");
+                    if (resolvingDialog != null) {
+                        resolvingDialog.dismiss();
+                        resolvingDialog = null;
+                    }
+                    if (error != null) {
+                        showToast("Telegram не смог найти @" + value + ": " + error.text);
                         return;
                     }
+                    if (!(response instanceof TLRPC.TL_contacts_resolvedPeer)) {
+                        showToast("Telegram вернул неизвестный ответ при поиске @" + value);
+                        return;
+                    }
+
                     TLRPC.TL_contacts_resolvedPeer resolved = (TLRPC.TL_contacts_resolvedPeer) response;
-                    MessagesController.getInstance(currentAccount).putUsers(resolved.users, false);
-                    long userId = resolved.peer == null ? 0L : resolved.peer.user_id;
-                    TLRPC.User user = userId == 0L
-                            ? null : MessagesController.getInstance(currentAccount).getUser(userId);
+                    MessagesController controller = MessagesController.getInstance(currentAccount);
+                    if (resolved.users != null) {
+                        controller.putUsers(resolved.users, false);
+                    }
+                    if (resolved.chats != null) {
+                        controller.putChats(resolved.chats, false);
+                    }
+
+                    long userId = 0L;
+                    if (resolved.peer instanceof TLRPC.TL_peerUser) {
+                        userId = resolved.peer.user_id;
+                    }
+                    TLRPC.User user = userId == 0L ? null : controller.getUser(userId);
+
+                    // Some layer variants can return the user in the users vector
+                    // even when the peer reference is not populated as expected.
+                    if (user == null && resolved.users != null) {
+                        for (TLRPC.User candidate : resolved.users) {
+                            if (candidate != null && value.equalsIgnoreCase(candidate.username)) {
+                                user = candidate;
+                                break;
+                            }
+                        }
+                    }
                     if (user == null) {
-                        showToast("Этот username не принадлежит пользователю.");
+                        showToast("@" + value + " не найден как обычный пользователь Telegram.");
                         return;
                     }
                     openEmojiPicker(user);
+                    showToast("Пользователь найден. Теперь выбери Premium Emoji.");
                 }));
     }
 
@@ -273,6 +313,12 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
 
     @Override
     public void onFragmentDestroy() {
+        if (resolvingDialog != null) {
+            try {
+                resolvingDialog.dismiss();
+            } catch (Throwable ignored) {}
+            resolvingDialog = null;
+        }
         if (emojiWindow != null) {
             try {
                 emojiWindow.dismiss();
