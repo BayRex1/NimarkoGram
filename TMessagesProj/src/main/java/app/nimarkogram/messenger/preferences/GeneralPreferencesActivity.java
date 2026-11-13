@@ -57,6 +57,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.nimarkogram.messenger.AppConfig;
+import app.nimarkogram.messenger.textanim.TextAnim;
 import app.nimarkogram.messenger.utils.ConfigBackup;
 import app.nimarkogram.messenger.preferences.helpers.PopupHelper;
 import app.nimarkogram.messenger.preferences.helpers.SettingsHelper;
@@ -367,6 +368,7 @@ public class GeneralPreferencesActivity extends UniversalPreferencesActivity {
             });
         } else if (item.id == optimizationModeRow) {
             AppConfig.setOptimizationMode(!AppConfig.optimizationMode);
+            TextAnim.applySettings();
             item.checked = AppConfig.optimizationMode;
             SettingsHelper.updateCheckState(view, AppConfig.optimizationMode);
             updateItemsAfterToggle();
