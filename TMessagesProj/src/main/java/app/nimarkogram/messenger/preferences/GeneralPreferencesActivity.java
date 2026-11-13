@@ -92,6 +92,7 @@ public class GeneralPreferencesActivity extends UniversalPreferencesActivity {
 
     private static final int springAnimationRow = 1;
     private static final int predictiveBackRow = 3;
+    private static final int optimizationModeRow = 23;
 
     private static final int silenceNonContactsRow = 4;
     private static final int residentNotificationRow = 6;
@@ -129,7 +130,7 @@ public class GeneralPreferencesActivity extends UniversalPreferencesActivity {
 
     public static GeneralPreferencesActivity forSetting(int itemId) {
         int targetPage = switch (itemId) {
-            case springAnimationRow, predictiveBackRow,
+            case springAnimationRow, predictiveBackRow, optimizationModeRow,
                     useSystemEmojiRow, tabledModeRow -> PAGE_SYSTEM;
             case silenceNonContactsRow, residentNotificationRow, notificationReactionsRow,
                     notificationReactionEmojiRow, hideStoriesRow, archiveStoriesRow,
@@ -239,6 +240,9 @@ public class GeneralPreferencesActivity extends UniversalPreferencesActivity {
     }
 
     private void fillInterface(ArrayList<UItem> items) {
+        items.add(SettingsHelper.asSwitchCG(optimizationModeRow, "Режим оптимизации",
+                "Отключает плагины и часть тяжёлых визуальных эффектов. Для полного применения потребуется перезапуск.")
+                .setChecked(AppConfig.optimizationMode));
         items.add(asSettingsValue(springAnimationRow, IconBackgroundColors.BLUE,
                 R.drawable.msg_speed, getString(R.string.EP_NavigationAnimation), getSpringValue()));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -361,6 +365,12 @@ public class GeneralPreferencesActivity extends UniversalPreferencesActivity {
 
                 showRestartBulletin();
             });
+        } else if (item.id == optimizationModeRow) {
+            AppConfig.setOptimizationMode(!AppConfig.optimizationMode);
+            item.checked = AppConfig.optimizationMode;
+            SettingsHelper.updateCheckState(view, AppConfig.optimizationMode);
+            updateItemsAfterToggle();
+            showRestartBulletin();
         } else if (item.id == predictiveBackRow) {
             AppConfig.togglePredictiveBack();
             SettingsHelper.updateCheckState(view, AppConfig.predictiveBack);
