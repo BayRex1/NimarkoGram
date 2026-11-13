@@ -66,6 +66,7 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
     private static final int openToolsRow = 1_007;
     private static final int openAyuGramRow = 1_008;
     private static final int showDeletedMessagesRow = 90;
+    private static final int customStatusRow = 91;
 
     private final int page;
 
@@ -179,6 +180,9 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
                         "Сохраняет сообщения на этом устройстве и показывает их в переписке с отметкой «Удалено».")
                         .setChecked(AppConfig.showDeletedMessages));
                 items.add(UItem.asShadow("Сохранённые сообщения остаются в чате после повторного входа. Сообщения, удалённые до включения функции, восстановить нельзя."));
+                items.add(UItem.asHeader("Персонализация"));
+                items.add(asPlainSettingsRowWithSubtitle(customStatusRow, "Кастомный статус",
+                        "Назначай Premium Emoji выбранным пользователям. Статусы видны только тебе."));
             }
             default -> fillOverview(items);
         }
@@ -392,6 +396,11 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
             return;
         } else if (id == openToolsRow) {
             presentFragment(new ChatsPreferencesActivity(PAGE_TOOLS));
+            return;
+        }
+
+        if (id == customStatusRow) {
+            presentFragment(new CustomStatusPreferencesActivity());
             return;
         }
 
