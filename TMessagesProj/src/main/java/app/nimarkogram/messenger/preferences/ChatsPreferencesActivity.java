@@ -67,6 +67,8 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
     private static final int openAyuGramRow = 1_008;
     private static final int showDeletedMessagesRow = 90;
     private static final int customStatusRow = 91;
+    private static final int ghostModeRow = 92;
+    private static final int scheduleMessagesRow = 93;
 
     private final int page;
 
@@ -174,6 +176,16 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
                 fillTools(items);
             }
             case PAGE_AYUGRAM -> {
+                items.add(UItem.asHeader("Режим призрака"));
+                items.add(SettingsHelper.asSwitchCG(ghostModeRow,
+                        "Режим призрака",
+                        "Скрывает прочтение сообщений, статус «в сети» и действия вроде «печатает…».")
+                        .setChecked(app.nimarkogram.messenger.ayugram.GhostModeConfig.isGhostModeEnabled()));
+                items.add(SettingsHelper.asSwitchCG(scheduleMessagesRow,
+                        "Отложенная отправка",
+                        "Отправляет сообщения через небольшую задержку, чтобы не выдавать присутствие в сети. Работает только с включённым режимом призрака.")
+                        .setChecked(app.nimarkogram.messenger.ayugram.GhostModeConfig.useScheduledMessages));
+                items.add(UItem.asShadow("Текстовые сообщения отправляются примерно через 12 секунд. Для медиа задержка рассчитывается по размеру файла."));
                 items.add(UItem.asHeader("История сообщений"));
                 items.add(SettingsHelper.asSwitchCG(showDeletedMessagesRow,
                         "Сохранять удалённые сообщения",
@@ -401,6 +413,18 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
 
         if (id == customStatusRow) {
             presentFragment(new CustomStatusPreferencesActivity());
+            return;
+        }
+        if (id == ghostModeRow) {
+            app.nimarkogram.messenger.ayugram.GhostModeConfig.setGhostMode(
+                    !app.nimarkogram.messenger.ayugram.GhostModeConfig.isGhostModeEnabled());
+            updateItemsAfterToggle();
+            return;
+        }
+        if (id == scheduleMessagesRow) {
+            app.nimarkogram.messenger.ayugram.GhostModeConfig.setUseScheduledMessages(
+                    !app.nimarkogram.messenger.ayugram.GhostModeConfig.useScheduledMessages);
+            updateItemsAfterToggle();
             return;
         }
 
