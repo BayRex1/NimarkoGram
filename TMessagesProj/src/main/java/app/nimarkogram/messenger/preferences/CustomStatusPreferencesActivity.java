@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.ConnectionsManager;
+import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
@@ -91,6 +91,11 @@ public class CustomStatusPreferencesActivity extends UniversalPreferencesActivit
         }
         CustomStatusController.Entry entry = rows.get(item.id);
         if (entry != null) showEntryActions(entry);
+    }
+
+    @Override
+    public boolean onLongClick(UItem item, View view, int position, float x, float y) {
+        return false;
     }
 
     private void showAddUserDialog() {
