@@ -2242,6 +2242,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
         if (messages == null || messages.isEmpty()) {
             return 0;
         }
+        if (app.nimarkogram.messenger.ayugram.GhostModeConfig.shouldScheduleMessages(peer, scheduleDate, false)) {
+            scheduleDate = getConnectionsManager().getCurrentTime() + 12;
+        }
         int sendResult = 0;
         long myId = getUserConfig().getClientUserId();
         boolean isChannel = false;
@@ -4633,6 +4636,24 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
         HashMap<String, String> params = sendMessageParams.params;
         boolean notify = sendMessageParams.notify;
         int scheduleDate = sendMessageParams.scheduleDate;
+        if (app.nimarkogram.messenger.ayugram.GhostModeConfig.shouldScheduleMessages(
+                peer, scheduleDate, retryMessageObject != null)) {
+            long mediaSize = 0L;
+            try {
+                if (path != null) {
+                    java.io.File mediaFile = new java.io.File(path);
+                    if (mediaFile.isFile()) mediaSize = mediaFile.length();
+                }
+                if (document != null) mediaSize = Math.max(mediaSize, document.size);
+            } catch (Throwable ignored) {
+            }
+            int delaySeconds = 12;
+            if (mediaSize > 0L) {
+                delaySeconds = Math.max(12, (int) Math.ceil(
+                        mediaSize / (1024.0d * 1024.0d) * 4.5d));
+            }
+            scheduleDate = getConnectionsManager().getCurrentTime() + delaySeconds;
+        }
         int scheduleRepeatPeriod = sendMessageParams.scheduleRepeatPeriod;
         int ttl = sendMessageParams.ttl;
         Object parentObject = sendMessageParams.parentObject;
