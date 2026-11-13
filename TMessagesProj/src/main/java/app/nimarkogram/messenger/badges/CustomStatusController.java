@@ -34,12 +34,18 @@ public final class CustomStatusController {
         public final String displayName;
         public final String username;
         public final long documentId;
+        public final String customText;
 
         public Entry(long userId, String displayName, String username, long documentId) {
+            this(userId, displayName, username, documentId, "Кастомный статус");
+        }
+
+        public Entry(long userId, String displayName, String username, long documentId, String customText) {
             this.userId = userId;
             this.displayName = displayName == null ? "" : displayName;
             this.username = username == null ? "" : username;
             this.documentId = documentId;
+            this.customText = customText == null || customText.trim().isEmpty() ? "Кастомный статус" : customText.trim();
         }
     }
 
@@ -64,7 +70,8 @@ public final class CustomStatusController {
                     if (userId == 0L) continue;
                     loaded.put(userId, new Entry(userId,
                             object.optString("displayName", ""),
-                            object.optString("username", ""), documentId));
+                            object.optString("username", ""), documentId,
+                            object.optString("customText", "Кастомный статус")));
                 }
             } catch (Throwable ignored) {}
             CACHE.put(account, loaded);
@@ -81,10 +88,15 @@ public final class CustomStatusController {
                 object.put("displayName", entry.displayName);
                 object.put("username", entry.username);
                 object.put("documentId", entry.documentId);
+                object.put("customText", entry.customText);
                 array.put(object);
             }
             preferences(account).edit().putString(KEY_ENTRIES, array.toString()).apply();
         } catch (Throwable ignored) {}
+    }
+
+    public static Entry getEntry(int account, long userId) {
+        return entries(account).get(userId);
     }
 
     public static long getDocumentId(int account, long userId) {
@@ -114,7 +126,20 @@ public final class CustomStatusController {
         if (userId == 0L || documentId == 0L) return;
         synchronized (CACHE) {
             Map<Long, Entry> values = entries(account);
-            values.put(userId, new Entry(userId, displayName, username, documentId));
+            Entry old = values.get(userId);
+            String customText = old == null ? "Кастомный статус" : old.customText;
+            values.put(userId, new Entry(userId, displayName, username, documentId, customText));
+            persist(account, values);
+        }
+        notifyStatusChanged();
+    }
+
+    public static void setCustomText(int account, long userId, String customText) {
+        synchronized (CACHE) {
+            Map<Long, Entry> values = entries(account);
+            Entry old = values.get(userId);
+            if (old == null) return;
+            values.put(userId, new Entry(old.userId, old.displayName, old.username, old.documentId, customText));
             persist(account, values);
         }
         notifyStatusChanged();
