@@ -56,8 +56,6 @@ import java.util.Locale;
 
 public class AppUpdater {
 
-    private static final String ENDPOINT = "https://update.ettacent.dev/api/app-version?id=nimarkogram";
-
     public static final DispatchQueue otaQueue = new DispatchQueue("nimarkoOtaQueue");
 
     public static String downloadURL = null;
@@ -352,9 +350,7 @@ public class AppUpdater {
     public interface OnCheckFailed { void run(); }
 
     public static void checkOnLaunch(BaseFragment fragment) {
-        if (launchChecked || !UpdateConfig.getAutoOTA()) return;
-        launchChecked = true;
-        checkUpdates(fragment, false);
+        // OTA checks are disabled until NimarkoGram has its own update service.
     }
 
     public static void checkUpdates(BaseFragment fragment, boolean manual, OnUpdateNotFound onUpdateNotFound, Runnable onUpdateFound) {
@@ -362,140 +358,7 @@ public class AppUpdater {
     }
 
     public static void checkUpdates(BaseFragment fragment, boolean manual, OnUpdateNotFound onUpdateNotFound, Runnable onUpdateFound, OnCheckFailed onCheckFailed) {
-        long lastThrottle = UpdateConfig.getUpdateScheduleTimestamp();
-        if (System.currentTimeMillis() - lastThrottle < updateCheckInterval && !manual) {
-            return;
-        }
-        boolean startCheck = false;
-        boolean reopenActiveDownload = false;
-        synchronized (downloadBindingLock) {
-            boolean downloadOwned = downloading || downloadPaused || hasPersistedDownloadLocked();
-            if (!checkingForUpdates && !downloadOwned) {
-                checkingForUpdates = true;
-                startCheck = true;
-            } else {
-                reopenActiveDownload = manual && downloadOwned;
-            }
-        }
-        if (reopenActiveDownload) {
-            Update activeUpdate = getOrRestoreLastUpdate();
-            if (activeUpdate != null && fragment != null && fragment.getContext() != null) {
-                AndroidUtilities.runOnUIThread(() -> {
-                    if (onUpdateFound != null) {
-                        onUpdateFound.run();
-                        AndroidUtilities.runOnUIThread(() ->
-                                UpdaterSheet.showAlert(fragment, true, activeUpdate));
-                    } else {
-                        UpdaterSheet.showAlert(fragment, true, activeUpdate);
-                    }
-                });
-            }
-            return;
-        }
-        if (!startCheck) return;
-        otaQueue.postRunnable(() -> {
-            HttpURLConnection connection = null;
-            try {
-                UpdateConfig.setLastUpdateCheckTime(System.currentTimeMillis());
-                connection = (HttpURLConnection) new URI(ENDPOINT).toURL().openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("User-Agent", "NimarkoGram-OTA");
-                connection.setRequestProperty("Content-Type", "application/json");
-                connection.setConnectTimeout(15000);
-                connection.setReadTimeout(15000);
-
-                if (connection.getResponseCode() != 200) {
-                    if (onCheckFailed != null) AndroidUtilities.runOnUIThread(onCheckFailed::run);
-                    return;
-                }
-
-                long responseLength = connection.getContentLengthLong();
-                if (responseLength > MAX_RESPONSE_BYTES) throw new IOException("response body too large");
-                ByteArrayOutputStream responseBytes = new ByteArrayOutputStream(
-                        responseLength > 0 ? (int) responseLength : 4096);
-                try (InputStream input = connection.getInputStream()) {
-                    byte[] buffer = new byte[4096];
-                    int total = 0;
-                    int read;
-                    while ((read = input.read(buffer)) != -1) {
-                        total += read;
-                        if (total > MAX_RESPONSE_BYTES) throw new IOException("response body too large");
-                        responseBytes.write(buffer, 0, read);
-                    }
-                }
-
-                JSONObject obj = new JSONObject(responseBytes.toString(StandardCharsets.UTF_8.name()));
-                final String candidateVersion = obj.optString("version", "");
-                if (!isSafeVersion(candidateVersion)) {
-                    throw new IOException("invalid update version");
-                }
-                final int candidateVersionCode = obj.optInt("versionCode", 0);
-                final String candidateUrl = obj.optString("url", "");
-                if (!isHttps(candidateUrl) || candidateVersionCode <= 0) {
-                    throw new IOException("invalid update URL or version code");
-                }
-                final String candidateChangelog = obj.optString("changelog", "");
-                long sizeBytes = obj.optLong("size", 0);
-                if (sizeBytes < 0 || sizeBytes > MAX_APK_BYTES) {
-                    throw new IOException("invalid APK size: " + sizeBytes);
-                }
-                String candidateHash = obj.optString("sha256", null);
-                if (candidateHash != null && candidateHash.isEmpty()) candidateHash = null;
-                if (candidateHash != null && !SHA256_PATTERN.matcher(candidateHash).matches()) {
-                    throw new IOException("invalid sha256");
-                }
-                if (candidateHash != null) candidateHash = candidateHash.toLowerCase(Locale.ROOT);
-                if (sizeBytes <= 0 && candidateHash == null) {
-                    throw new IOException("update has neither size nor sha256");
-                }
-                final String candidateSize = sizeBytes > 0 ? AndroidUtilities.formatFileSize(sizeBytes) : "";
-                long dateMs = obj.optLong("date", 0);
-                final String candidateDate = dateMs > 0 ? LocaleController.formatDateTime(dateMs / 1000, true) : "";
-
-                JSONObject translations = obj.optJSONObject("changelogs");
-                Update update = new Update(candidateVersion, candidateVersionCode, candidateChangelog, candidateSize,
-                        candidateUrl, candidateDate, translations == null ? "" : translations.toString(), sizeBytes, candidateHash);
-                synchronized (downloadBindingLock) {
-                    applyUpdateMetadata(update);
-                lastUpdate = update;   // kept so the download notification can re-open the update sheet in-app
-                }
-                UpdateConfig.setLastUpdate(update.version, update.versionCode, update.downloadURL, update.changelog,
-                        update.size, update.uploadDate, update.getChangelogsJson(), update.sizeBytes, update.sha256);
-                boolean newer = update.isNew();
-                UpdateConfig.setUpdateAvailable(newer);
-                if (newer && fragment != null && fragment.getContext() != null) {
-                    checkDirs();
-                    AndroidUtilities.runOnUIThread(() -> {
-                        if (onUpdateFound != null) {
-                            onUpdateFound.run();
-                            AndroidUtilities.runOnUIThread(() ->
-                                    UpdaterSheet.showAlert(fragment, true, update));
-                        } else {
-                            UpdaterSheet.showAlert(fragment, true, update);
-                        }
-                    });
-                    UpdateConfig.setUpdateIsDownloading(false);
-                    if (version != null && !version.isEmpty()) UpdateConfig.setUpdateVersionName(version);
-                    UpdateConfig.setUpdateSize(size);
-                } else {
-                    if (onUpdateNotFound != null) AndroidUtilities.runOnUIThread(onUpdateNotFound::run);
-                    cleanOtaDir();
-                }
-            } catch (Exception e) {
-                FileLog.e(e);
-                if (onCheckFailed != null) AndroidUtilities.runOnUIThread(onCheckFailed::run);
-            } finally {
-                try {
-                    if (connection != null) connection.disconnect();
-                } catch (Exception e) {
-                    FileLog.e(e);
-                } finally {
-                    synchronized (downloadBindingLock) {
-                    checkingForUpdates = false;
-                    }
-                }
-            }
-        }, 200);
+        // OTA checks are disabled until NimarkoGram has its own update service.
     }
 
     private static volatile boolean downloadCanceled = false;
