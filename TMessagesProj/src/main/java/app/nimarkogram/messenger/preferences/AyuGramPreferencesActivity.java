@@ -37,7 +37,7 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
         header.setPadding(0, AndroidUtilities.dp(18), 0, AndroidUtilities.dp(14));
 
         ImageView logo = new ImageView(context);
-        logo.setImageResource(org.telegram.messenger.R.drawable.AyuGram);
+        logo.setImageResource(org.telegram.messenger.R.drawable.ayu_gram);
         logo.setScaleType(ImageView.ScaleType.FIT_CENTER);
         header.addView(logo, new LinearLayout.LayoutParams(AndroidUtilities.dp(88), AndroidUtilities.dp(88)));
 
