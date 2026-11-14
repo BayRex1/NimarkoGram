@@ -2231,7 +2231,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
         boolean forwardFromMyName,
         boolean hideCaption,
         boolean notify,
-        int finalScheduleDate,
+        int scheduleDate,
         int scheduleRepeatPeriod,
         MessageObject replyToTopMsg,
         int video_timestamp,
