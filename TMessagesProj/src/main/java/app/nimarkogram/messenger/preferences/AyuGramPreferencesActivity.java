@@ -40,7 +40,11 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
         items.add(asSettingsLink(CUSTOMIZATION, IconBackgroundColors.BLUE,
                 org.telegram.messenger.R.drawable.msg_customize, "Кастомизация",
                 "Удалённые сообщения и персональные статусы"));
-        items.add(UItem.asShadow("Версия функций AyuGram: 2026.11.04"));
+        items.add(UItem.asHeader("Ссылки"));
+        items.add(UItem.asButton(20, "Канал", "@ayugram"));
+        items.add(UItem.asButton(21, "Чаты", "@ayugramchat"));
+        items.add(UItem.asButton(22, "Перевод", "Crowdin"));
+        items.add(UItem.asButton(23, "Документация", "ayugram.one"));
     }
 
     @Override
