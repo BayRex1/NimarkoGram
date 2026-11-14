@@ -876,7 +876,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
         }
 
         items.add(SettingCell.Factory.of(900, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.msg_settings_solar, getString(R.string.MofGramSettings)));
-        items.add(SettingCell.Factory.of(901, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.AyuGram_ico, "Настройки AyuGram", "Режим призрака и персонализация."));
+        items.add(SettingCell.Factory.of(901, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.ayu_gram_ico, "Настройки AyuGram", "Режим призрака и персонализация."));
         items.add(UItem.asShadow(null));
 
         final boolean walletAvailable = getMessagesController().config.walletAvailable.get();
