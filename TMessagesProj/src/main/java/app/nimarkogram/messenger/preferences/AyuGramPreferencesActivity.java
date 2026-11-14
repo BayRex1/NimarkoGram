@@ -66,7 +66,7 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
 
     @Override
     public void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
-        items.add(UItem.asCustom(createAyuGramHeader(context), 164));
+        items.add(UItem.asCustom(createAyuGramHeader(getContext()), 164));
         items.add(asSettingsLink(GHOST, IconBackgroundColors.PURPLE,
                 org.telegram.messenger.R.drawable.ghost, "Режим Призрака",
                 "Настройки приватности и скрытия активности"));
