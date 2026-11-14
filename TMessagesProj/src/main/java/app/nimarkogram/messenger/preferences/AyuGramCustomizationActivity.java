@@ -47,4 +47,9 @@ public class AyuGramCustomizationActivity extends UniversalPreferencesActivity {
             presentFragment(new CustomStatusPreferencesActivity());
         }
     }
+
+    @Override
+    public boolean onLongClick(UItem item, View view, int position, float x, float y) {
+        return false;
+    }
 }
