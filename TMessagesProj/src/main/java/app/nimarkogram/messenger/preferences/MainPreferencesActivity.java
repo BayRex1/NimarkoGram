@@ -139,7 +139,7 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                 .setSearchable(this).setLinkAlias("nimarko_mogram", this));
         arrayList.add(SettingsActivity.SettingCell.Factory.of(ID_AYUGRAM,
                 IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom,
-                R.drawable.ghost, "Настройки AyuGram", "Режим призрака и персонализация.")
+                R.drawable.ayu_logo, "Настройки AyuGram", "Режим призрака и персонализация.")
                 .setSearchable(this).setLinkAlias("nimarko_ayugram", this));
         arrayList.add(category(ID_CAMERA, IconBackgroundColors.CYAN,
                 R.drawable.camera_solar, R.string.NM_Cat_Camera, R.string.NM_SettingsSummaryCamera, "nimarko_camera"));
