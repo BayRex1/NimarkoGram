@@ -53,7 +53,6 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
     public static final int ID_TEXTANIM       = 28;
     public static final int ID_PILLSTACK      = 29;
     public static final int ID_SOURCE_CODE    = 30;
-    public static final int ID_MOGRAM         = 32;
 
     private static final String SOURCE_REPOSITORY_URL = "https://github.com/BayRex1/NimarkoGram";
     private static final int SEARCH_MENU_ID = 1000;
@@ -132,10 +131,6 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                 R.drawable.msg_theme_solar, R.string.NM_Cat_Appearance, R.string.NM_SettingsSummaryAppearance, "nimarko_appearance"));
         arrayList.add(category(ID_CHATS, IconBackgroundColors.BLUE_DEEP,
                 R.drawable.msg_msgbubble3_solar, R.string.NM_Cat_Chats, R.string.NM_SettingsSummaryChats, "nimarko_chats"));
-        arrayList.add(SettingsActivity.SettingCell.Factory.of(ID_MOGRAM,
-                IconBackgroundColors.BLUE_DEEP.top, IconBackgroundColors.BLUE_DEEP.bottom,
-                R.drawable.avatar_nimarkogram, "Настройки MoGram", "Основные настройки клиента.")
-                .setSearchable(this).setLinkAlias("nimarko_mogram", this));
         arrayList.add(category(ID_CAMERA, IconBackgroundColors.CYAN,
                 R.drawable.camera_solar, R.string.NM_Cat_Camera, R.string.NM_SettingsSummaryCamera, "nimarko_camera"));
         arrayList.add(UItem.asShadow(null));
@@ -381,9 +376,6 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                 break;
             case ID_PILLSTACK:
                 presentFragment(new InfoCardsPreferencesActivity());
-                break;
-            case ID_MOGRAM:
-                presentFragment(new GeneralPreferencesActivity());
                 break;
             case ID_TEXTANIM:
                 presentFragment(new TextAnimPreferencesActivity());
