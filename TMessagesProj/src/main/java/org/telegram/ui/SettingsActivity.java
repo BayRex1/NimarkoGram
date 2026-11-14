@@ -875,8 +875,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             items.add(UItem.asShadow(null));
         }
 
-        items.add(SettingCell.Factory.of(900, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.msg_settings_solar, getString(R.string.MofGramSettings)));
-        items.add(SettingCell.Factory.of(901, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.ayu_gram_ico, "Настройки AyuGram"));
+        items.add(SettingCell.Factory.of(900, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.mof_gram_settings, getString(R.string.MofGramSettings)));
+        items.add(SettingCell.Factory.of(901, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.ayugram_ico, "Настройки AyuGram"));
         items.add(UItem.asShadow(null));
 
         final boolean walletAvailable = getMessagesController().config.walletAvailable.get();
@@ -1487,7 +1487,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                         app.nimarkogram.messenger.utils.ui.MonetHelper.getSettingsIconBackgroundColor(originalIconColorTop),
                         app.nimarkogram.messenger.utils.ui.MonetHelper.getSettingsIconBackgroundColor(originalIconColorBottom));
             }
-            if (currentIconResId == R.drawable.ayu_gram_ico) {
+            if (currentIconResId == R.drawable.ayugram_ico) {
                 iconView.clearColorFilter();
             } else {
                 iconView.setColorFilter(new PorterDuffColorFilter(
@@ -1724,7 +1724,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                     app.nimarkogram.messenger.utils.ui.MonetHelper.getSettingsIconBackgroundColor(originalIconColorTop),
                     app.nimarkogram.messenger.utils.ui.MonetHelper.getSettingsIconBackgroundColor(originalIconColorBottom));
             iconView.setImageDrawable(icon == 0 ? null : getContext().getResources().getDrawable(icon, getContext().getTheme()));
-            if (icon == R.drawable.ayu_gram_ico) {
+            if (icon == R.drawable.ayugram_ico) {
                 iconView.clearColorFilter();
             } else {
                 iconView.setColorFilter(new PorterDuffColorFilter(
