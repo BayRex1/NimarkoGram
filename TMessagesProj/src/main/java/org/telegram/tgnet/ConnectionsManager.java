@@ -553,8 +553,12 @@ public class ConnectionsManager extends BaseController {
                     || object instanceof TLRPC.TL_messages_setEncryptedTyping) {
                 return;
             }
-            if (object instanceof TLRPC.TL_account_updateStatus) {
-                ((TLRPC.TL_account_updateStatus) object).offline = true;
+            if ("TL_account_updateStatus".equals(object.getClass().getSimpleName())) {
+                try {
+                    object.getClass().getField("offline").setBoolean(object, true);
+                } catch (ReflectiveOperationException e) {
+                    FileLog.e("nimarko: failed to force offline status in Ghost Mode", e);
+                }
             }
             boolean readRequest = object instanceof TLRPC.TL_messages_readHistory
                     || object instanceof TLRPC.TL_messages_readEncryptedHistory
