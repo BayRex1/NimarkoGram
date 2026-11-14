@@ -876,7 +876,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
         }
 
         items.add(SettingCell.Factory.of(900, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.msg_settings_solar, getString(R.string.MofGramSettings)));
-        items.add(SettingCell.Factory.of(901, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.ayu_gram_ico, "Настройки AyuGram", "Режим призрака и персонализация."));
+        items.add(SettingCell.Factory.of(901, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.ayu_gram_ico, "Настройки AyuGram"));
         items.add(UItem.asShadow(null));
 
         final boolean walletAvailable = getMessagesController().config.walletAvailable.get();
@@ -1414,6 +1414,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
         private boolean hasIconColors;
         private boolean hasBackground = true;
         private boolean destructive;
+        private int currentIconResId;
 
         private boolean drawDividers;
         public SettingCell(Context context, Theme.ResourcesProvider resourcesProvider) {
@@ -1486,9 +1487,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                         app.nimarkogram.messenger.utils.ui.MonetHelper.getSettingsIconBackgroundColor(originalIconColorTop),
                         app.nimarkogram.messenger.utils.ui.MonetHelper.getSettingsIconBackgroundColor(originalIconColorBottom));
             }
-            iconView.setColorFilter(new PorterDuffColorFilter(
-                    app.nimarkogram.messenger.utils.ui.MonetHelper.getSettingsIconForegroundColor(Color.WHITE),
-                    PorterDuff.Mode.SRC_IN));
+            if (currentIconResId == R.drawable.ayu_gram_ico) {
+                iconView.clearColorFilter();
+            } else {
+                iconView.setColorFilter(new PorterDuffColorFilter(
+                        app.nimarkogram.messenger.utils.ui.MonetHelper.getSettingsIconForegroundColor(Color.WHITE),
+                        PorterDuff.Mode.SRC_IN));
+            }
         }
 
         private void setDrawDividers(boolean drawDividers) {
@@ -1703,6 +1708,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             boolean animateValue
         ) {
             this.destructive = destructive;
+            currentIconResId = icon;
             iconLayout.setVisibility(icon != 0 ? View.VISIBLE : View.GONE);
             titleView.setTranslationX(icon == 0 ? dp(2) : 0);
             subtitleView.setTranslationX(icon == 0 ? dp(2) : 0);
@@ -1718,13 +1724,17 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                     app.nimarkogram.messenger.utils.ui.MonetHelper.getSettingsIconBackgroundColor(originalIconColorTop),
                     app.nimarkogram.messenger.utils.ui.MonetHelper.getSettingsIconBackgroundColor(originalIconColorBottom));
             iconView.setImageDrawable(icon == 0 ? null : getContext().getResources().getDrawable(icon, getContext().getTheme()));
-            iconView.setColorFilter(new PorterDuffColorFilter(
-                    app.nimarkogram.messenger.utils.ui.MonetHelper.getSettingsIconForegroundColor(Color.WHITE),
-                    PorterDuff.Mode.SRC_IN));
+            if (icon == R.drawable.ayu_gram_ico) {
+                iconView.clearColorFilter();
+            } else {
+                iconView.setColorFilter(new PorterDuffColorFilter(
+                        app.nimarkogram.messenger.utils.ui.MonetHelper.getSettingsIconForegroundColor(Color.WHITE),
+                        PorterDuff.Mode.SRC_IN));
+            }
             titleView.setText(title);
-            subtitleView.setVisibility((twoLines = !TextUtils.isEmpty(subtitle)) ? View.VISIBLE : View.GONE);
+            twoLines = false;
+            subtitleView.setVisibility(View.GONE);
             if (!animateValue) subtitleView.resetFade();
-            subtitleView.setSubtitle(subtitle, animateValue);
             if (!animateValue || !TextUtils.equals(valueView.getText(), value)) {
                 setValue(value, animateValue);
             }
