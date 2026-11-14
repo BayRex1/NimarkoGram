@@ -147,7 +147,6 @@ public class SettingsRegistry {
             addBuiltIn("nimarko_infocards", MainPreferencesActivity.ID_PILLSTACK, R.string.NM_CARDS_Title);
             addBuiltIn("nimarko_debug", MainPreferencesActivity.ID_DEBUG, R.string.NM_HUB_Debug);
             addBuiltIn("nimarko_restart", MainPreferencesActivity.ID_RESTART, R.string.NM_HUB_Restart);
-            addBuiltIn("nimarko_updates", MainPreferencesActivity.ID_UPDATES, R.string.UP_CheckForUpdates);
             entriesCreated = true;
         }
     }
