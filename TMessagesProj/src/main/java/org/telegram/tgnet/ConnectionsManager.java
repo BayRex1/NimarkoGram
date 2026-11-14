@@ -553,12 +553,8 @@ public class ConnectionsManager extends BaseController {
                     || object instanceof TLRPC.TL_messages_setEncryptedTyping) {
                 return;
             }
-            if ("TL_account_updateStatus".equals(object.getClass().getSimpleName())) {
-                try {
-                    object.getClass().getField("offline").setBoolean(object, true);
-                } catch (ReflectiveOperationException e) {
-                    FileLog.e("nimarko: failed to force offline status in Ghost Mode", e);
-                }
+            if (object instanceof org.telegram.tgnet.tl.TL_account.updateStatus) {
+                ((org.telegram.tgnet.tl.TL_account.updateStatus) object).offline = true;
             }
             boolean readRequest = object instanceof TLRPC.TL_messages_readHistory
                     || object instanceof TLRPC.TL_messages_readEncryptedHistory
