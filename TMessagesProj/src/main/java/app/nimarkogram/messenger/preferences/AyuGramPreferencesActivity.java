@@ -31,6 +31,12 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
         items.add(asSettingsLink(GHOST, IconBackgroundColors.PURPLE,
                 org.telegram.messenger.R.drawable.ghost, "Режим Призрака",
                 "Настройки приватности и скрытия активности"));
+        items.add(asSettingsLink(10, IconBackgroundColors.BLUE,
+                org.telegram.messenger.R.drawable.msg_settings, "Шпион",
+                "Раздел будет добавлен позже"));
+        items.add(asSettingsLink(11, IconBackgroundColors.CYAN,
+                org.telegram.messenger.R.drawable.msg_settings, "Фильтры",
+                "Раздел будет добавлен позже"));
         items.add(asSettingsLink(CUSTOMIZATION, IconBackgroundColors.BLUE,
                 org.telegram.messenger.R.drawable.msg_customize, "Кастомизация",
                 "Удалённые сообщения и персональные статусы"));
