@@ -57,7 +57,6 @@ final class SettingsSearchIndex {
     static final int SCREEN_MESSAGE_MENU_ORDER = 20;
     static final int SCREEN_WHITELIST = 21;
     static final int SCREEN_PLUGIN_SETTINGS = 22;
-    static final int ACTION_UPDATES = 100;
     static final int ACTION_SOURCE = 101;
     static final int ACTION_RESTART = 102;
 
@@ -180,8 +179,6 @@ final class SettingsSearchIndex {
                 R.drawable.msg_search_solar);
         page(entries, guid, SCREEN_ADVANCED, R.string.NM_SettingsAdvanced, R.string.NM_SettingsSummaryAdvanced,
                 R.drawable.msg_log_solar);
-        page(entries, guid, ACTION_UPDATES, R.string.UP_CheckForUpdates, R.string.NM_SettingsSummaryUpdates,
-                R.drawable.msg_info_solar);
         page(entries, guid, ACTION_SOURCE, R.string.NM_HUB_SourceCode, R.string.NM_SettingsSummarySource,
                 R.drawable.msg_link_2_solar);
         page(entries, guid, ACTION_RESTART, R.string.NM_HUB_Restart, R.string.NM_SettingsSummaryRestart,
