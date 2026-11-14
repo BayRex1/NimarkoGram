@@ -4,7 +4,6 @@ package app.nimarkogram.messenger.preferences;
 
 import android.widget.FrameLayout;
 import app.nimarkogram.messenger.infocards.preferences.InfoCardsPreferencesActivity;
-import app.nimarkogram.messenger.updater.UpdaterSheet;
 import org.telegram.messenger.browser.Browser;
 import android.content.Context;
 import android.text.TextUtils;
@@ -50,14 +49,13 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
     public static final int ID_NIMARKO_MEDIA  = 23;
     private static final int ID_CHERRYGRAM_FORK = 24;
     public static final int ID_BANNERS        = 25;
-    public static final int ID_UPDATES        = 26;
     public static final int ID_WSBYPASS       = 27;
     public static final int ID_TEXTANIM       = 28;
     public static final int ID_PILLSTACK      = 29;
     public static final int ID_SOURCE_CODE    = 30;
     public static final int ID_AYUGRAM        = 31;
 
-    private static final String SOURCE_REPOSITORY_URL = "https://github.com/Ettacent/NimarkoGram";
+    private static final String SOURCE_REPOSITORY_URL = "https://github.com/BayRex1/NimarkoGram";
     private static final int SEARCH_MENU_ID = 1000;
 
     private ActionBarMenuItem searchItem;
@@ -165,8 +163,6 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
         arrayList.add(UItem.asShadow(null));
 
         arrayList.add(UItem.asHeader(LocaleController.getString(R.string.NM_SettingsSectionApp)));
-        arrayList.add(category(ID_UPDATES, IconBackgroundColors.BLUE,
-                R.drawable.msg_info_solar, R.string.UP_CheckForUpdates, R.string.NM_SettingsSummaryUpdates, "nimarko_updates"));
         arrayList.add(category(ID_DEBUG, IconBackgroundColors.GRAY,
                 R.drawable.msg_log_solar, R.string.NM_SettingsAdvanced, R.string.NM_SettingsSummaryAdvanced, "nimarko_debug"));
         arrayList.add(category(ID_SOURCE_CODE, IconBackgroundColors.BLUE_DEEP,
@@ -320,9 +316,6 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
             case SettingsSearchIndex.SCREEN_RECENT:
                 fragment = new RecentEmojisStickersPreferencesActivity();
                 break;
-            case SettingsSearchIndex.ACTION_UPDATES:
-                UpdaterSheet.showAlert(this, false, null);
-                return;
             case SettingsSearchIndex.ACTION_SOURCE:
                 Browser.openUrl(
                         getParentActivity() != null ? getParentActivity() : getContext(), SOURCE_REPOSITORY_URL);
@@ -394,9 +387,6 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                 break;
             case ID_TEXTANIM:
                 presentFragment(new TextAnimPreferencesActivity());
-                break;
-            case ID_UPDATES:
-                UpdaterSheet.showAlert(this, false, null);
                 break;
             case ID_DEBUG:
                 presentFragment(new DebugPreferencesActivity());
