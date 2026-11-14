@@ -135,7 +135,7 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
             case PAGE_REACTIONS -> getString(R.string.NM_SettingsSectionReactionsEffects);
             case PAGE_NOTIFICATIONS -> getString(R.string.Notifications);
             case PAGE_TOOLS -> getString(R.string.NM_SettingsSectionTools);
-            case PAGE_AYUGRAM -> "Функции AyuGram";
+            case PAGE_AYUGRAM -> "Режим призрака";
             default -> getString(R.string.FilterChats);
         };
     }
@@ -186,15 +186,7 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
                         "Отправляет сообщения через небольшую задержку, чтобы не выдавать присутствие в сети. Работает только с включённым режимом призрака.")
                         .setChecked(app.nimarkogram.messenger.ayugram.GhostModeConfig.useScheduledMessages));
                 items.add(UItem.asShadow("Текстовые сообщения отправляются примерно через 12 секунд. Для медиа задержка рассчитывается по размеру файла."));
-                items.add(UItem.asHeader("История сообщений"));
-                items.add(SettingsHelper.asSwitchCG(showDeletedMessagesRow,
-                        "Сохранять удалённые сообщения",
-                        "Сохраняет сообщения на этом устройстве и показывает их в переписке с отметкой «Удалено».")
-                        .setChecked(AppConfig.showDeletedMessages));
-                items.add(UItem.asShadow("Сохранённые сообщения остаются в чате после повторного входа. Сообщения, удалённые до включения функции, восстановить нельзя."));
-                items.add(UItem.asHeader("Персонализация"));
-                items.add(asPlainSettingsRowWithSubtitle(customStatusRow, "Кастомный статус",
-                        "Назначай Premium Emoji выбранным пользователям. Статусы видны только тебе."));
+
             }
             default -> fillOverview(items);
         }
