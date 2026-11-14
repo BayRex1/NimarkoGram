@@ -3,7 +3,6 @@ package app.nimarkogram.messenger.preferences;
 import android.content.Context;
 import android.view.View;
 
-import org.telegram.messenger.BuildVars;
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
 import org.telegram.ui.Components.IconBackgroundColors;
@@ -27,14 +26,15 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
 
     @Override
     public void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
-        items.add(UItem.asHeader("AyuGram"));
+        items.add(asSettingsLink(99, IconBackgroundColors.PURPLE,
+                org.telegram.messenger.R.drawable.ayu_logo, "AyuGram", "2026.11.04"));
         items.add(asSettingsLink(GHOST, IconBackgroundColors.PURPLE,
                 org.telegram.messenger.R.drawable.ghost, "Режим Призрака",
                 "Настройки приватности и скрытия активности"));
         items.add(asSettingsLink(CUSTOMIZATION, IconBackgroundColors.BLUE,
                 org.telegram.messenger.R.drawable.msg_customize, "Кастомизация",
                 "Удалённые сообщения и персональные статусы"));
-        items.add(UItem.asShadow("AyuGram · " + BuildVars.BUILD_VERSION_STRING));
+        items.add(UItem.asShadow("Версия функций AyuGram: 2026.11.04"));
     }
 
     @Override
