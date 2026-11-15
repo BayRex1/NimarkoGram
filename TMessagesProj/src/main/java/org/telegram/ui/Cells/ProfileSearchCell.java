@@ -864,14 +864,14 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
             statusDrawable.set(nimarkoBadge.getDocumentId(), animated);
             particles = true;
             statusDrawable.setColor(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider));
-        } else if (showStatus && user != null && !savedMessages
+        } else if (user != null && !savedMessages
                 && app.nimarkogram.messenger.badges.BadgesController.getInstance().isExteraArrow(user.id)) {
             Drawable arrow = getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
             arrow.setColorFilter(new PorterDuffColorFilter(
                     Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
             statusDrawable.set(arrow, animated);
             statusDrawable.setColor(null);
-        } else if (showStatus && chat != null && !savedMessages
+        } else if (chat != null && !savedMessages
                 && app.nimarkogram.messenger.badges.BadgesController.getInstance().isExteraChatArrow(chat.id)) {
             Drawable arrow = getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
             arrow.setColorFilter(new PorterDuffColorFilter(
