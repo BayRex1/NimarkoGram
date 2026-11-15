@@ -752,8 +752,9 @@ public class ProfileActivity2 extends BaseFragment implements
         controller.refresh();
         if (!controller.isExteraArrow(profileUser.id)) return;
         try {
+            if (getContext() == null) return;
             android.graphics.drawable.Drawable arrow =
-                    getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
+                    getContext().getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
             arrow.setColorFilter(new android.graphics.PorterDuffColorFilter(
                     Theme.getColor(Theme.key_chats_verifiedBackground, getResourceProvider()),
                     android.graphics.PorterDuff.Mode.MULTIPLY));
