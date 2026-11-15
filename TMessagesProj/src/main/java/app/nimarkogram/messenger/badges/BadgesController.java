@@ -82,6 +82,7 @@ public final class BadgesController {
             new ServerBadgeSnapshot(Collections.emptyMap(), Collections.emptyMap());
     // ExteraGram custom arrows are kept separately so manual and Nimarko assignments are never overwritten.
     private volatile Map<Long, BadgeEntry> exteraBadges = Collections.emptyMap();
+    private volatile Set<Long> exteraArrowUsers = Collections.emptySet();
     private final ScheduledExecutorService scheduler =
             Executors.newSingleThreadScheduledExecutor(r -> {
                 Thread t = new Thread(r, "nimarko-badges-refresh");
@@ -340,6 +341,10 @@ public final class BadgesController {
         }
     }
 
+    public boolean isExteraArrow(long userId) {
+        return userId > 0L && exteraArrowUsers.contains(userId);
+    }
+
     public BadgeDTO getBadgeForUser(long userId) {
         BadgeEntry e = getUserEntry(userId);
         return e != null ? e.getBadge() : null;
@@ -457,8 +462,10 @@ public final class BadgesController {
                             new BadgeEntry(e.getValue(), ProfileStatus.SUPPORTER, false));
                 }
                 Map<Long, BadgeEntry> immutable = Collections.unmodifiableMap(nextExtera);
-                if (!exteraBadges.equals(immutable)) {
+                Set<Long> nextArrowUsers = Collections.unmodifiableSet(new HashSet<>(extera.arrowUsers));
+                if (!exteraBadges.equals(immutable) || !exteraArrowUsers.equals(nextArrowUsers)) {
                     exteraBadges = immutable;
+                    exteraArrowUsers = nextArrowUsers;
                     changed = true;
                 }
             }
