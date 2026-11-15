@@ -750,6 +750,10 @@ public class ProfileActivity2 extends BaseFragment implements
         app.nimarkogram.messenger.badges.BadgesController controller = app.nimarkogram.messenger.badges.BadgesController.getInstance();
         controller.refresh();
         boolean show = isChat ? controller.isExteraChatArrow(peerId) : controller.isExteraArrow(peerId);
+        // The profile title normally occupies the full header width. In that mode
+        // SimpleTextView places its right drawable at the far edge, not beside the name.
+        // Use content width while the arrow is present so it is visible next to the title.
+        title.setWidthWrapContent(show);
         if (!show) return;
         try {
             if (getContext() == null) return;
