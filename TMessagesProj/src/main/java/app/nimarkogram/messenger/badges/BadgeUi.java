@@ -3,6 +3,8 @@
 package app.nimarkogram.messenger.badges;
 
 import android.text.TextUtils;
+import android.content.Context;
+import android.widget.Toast;
 
 import app.nimarkogram.messenger.api.dto.BadgeDTO;
 
@@ -21,6 +23,11 @@ public final class BadgeUi {
         if (badge == null) return null;
         CharSequence title = LocaleController.getString(R.string.NM_ProfileBadge);
         return TextUtils.isEmpty(badge.getText()) ? title : title + ": " + badge.getText();
+    }
+
+    public static void showExteraRole(Context context, ExteraBadgeRole role) {
+        if (context == null || role == null) return;
+        Toast.makeText(context, role.getTitle(), Toast.LENGTH_SHORT).show();
     }
 
     public static void showBulletin(int account, BadgeDTO badge) {

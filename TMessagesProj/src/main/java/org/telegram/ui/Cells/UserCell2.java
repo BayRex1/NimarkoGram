@@ -335,6 +335,8 @@ public class UserCell2 extends FrameLayout implements Theme.Colorable, Notificat
 
     private void updateExteraArrow(TLRPC.User user, TLRPC.Chat chat) {
         nameTextView.setRightDrawable(null);
+        nameTextView.setRightDrawableOnClick(null);
+        nameTextView.setRightDrawableContentDescription(null);
         exteraArrowDrawable = null;
         app.nimarkogram.messenger.badges.BadgesController controller = app.nimarkogram.messenger.badges.BadgesController.getInstance();
         boolean show = user != null ? controller.isExteraArrow(user.id) : chat != null && controller.isExteraChatArrow(chat.id);
@@ -343,6 +345,10 @@ public class UserCell2 extends FrameLayout implements Theme.Colorable, Notificat
             exteraArrowDrawable = getContext().getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
             exteraArrowDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
             nameTextView.setRightDrawable(exteraArrowDrawable);
+            app.nimarkogram.messenger.badges.ExteraBadgeRole role = user != null
+                    ? controller.getExteraUserRole(user.id) : controller.getExteraChatRole(chat.id);
+            nameTextView.setRightDrawableContentDescription(role == null ? "ExteraGram" : role.getTitle());
+            nameTextView.setRightDrawableOnClick(v -> app.nimarkogram.messenger.badges.BadgeUi.showExteraRole(getContext(), role));
         } catch (Throwable ignored) { exteraArrowDrawable = null; }
     }
 

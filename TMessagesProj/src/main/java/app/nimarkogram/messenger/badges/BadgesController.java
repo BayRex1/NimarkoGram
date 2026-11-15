@@ -8,6 +8,7 @@ import android.os.SystemClock;
 import android.text.TextUtils;
 
 import app.nimarkogram.messenger.api.dto.BadgeDTO;
+import app.nimarkogram.messenger.badges.ExteraBadgeRole;
 import app.nimarkogram.messenger.api.model.ProfileStatus;
 import app.nimarkogram.messenger.api.network.ApiClient;
 import com.google.gson.Gson;
@@ -84,6 +85,8 @@ public final class BadgesController {
     private volatile Map<Long, BadgeEntry> exteraBadges = Collections.emptyMap();
     private volatile Set<Long> exteraArrowUsers = Collections.emptySet();
     private volatile Set<Long> exteraArrowChats = Collections.emptySet();
+    private volatile Map<Long, ExteraBadgeRole> exteraUserRoles = Collections.emptyMap();
+    private volatile Map<Long, ExteraBadgeRole> exteraChatRoles = Collections.emptyMap();
     private final ScheduledExecutorService scheduler =
             Executors.newSingleThreadScheduledExecutor(r -> {
                 Thread t = new Thread(r, "nimarko-badges-refresh");
@@ -350,6 +353,14 @@ public final class BadgesController {
         return chatId > 0L && exteraArrowChats.contains(chatId);
     }
 
+    public ExteraBadgeRole getExteraUserRole(long userId) {
+        return exteraUserRoles.get(userId);
+    }
+
+    public ExteraBadgeRole getExteraChatRole(long chatId) {
+        return exteraChatRoles.get(chatId);
+    }
+
     public BadgeDTO getBadgeForUser(long userId) {
         BadgeEntry e = getUserEntry(userId);
         return e != null ? e.getBadge() : null;
@@ -469,11 +480,16 @@ public final class BadgesController {
                 Map<Long, BadgeEntry> immutable = Collections.unmodifiableMap(nextExtera);
                 Set<Long> nextArrowUsers = Collections.unmodifiableSet(new HashSet<>(extera.arrowUsers));
                 Set<Long> nextArrowChats = Collections.unmodifiableSet(new HashSet<>(extera.arrowChats));
+                Map<Long, ExteraBadgeRole> nextUserRoles = Collections.unmodifiableMap(new HashMap<>(extera.userRoles));
+                Map<Long, ExteraBadgeRole> nextChatRoles = Collections.unmodifiableMap(new HashMap<>(extera.chatRoles));
                 if (!exteraBadges.equals(immutable) || !exteraArrowUsers.equals(nextArrowUsers)
-                        || !exteraArrowChats.equals(nextArrowChats)) {
+                        || !exteraArrowChats.equals(nextArrowChats)
+                        || !exteraUserRoles.equals(nextUserRoles) || !exteraChatRoles.equals(nextChatRoles)) {
                     exteraBadges = immutable;
                     exteraArrowUsers = nextArrowUsers;
                     exteraArrowChats = nextArrowChats;
+                    exteraUserRoles = nextUserRoles;
+                    exteraChatRoles = nextChatRoles;
                     changed = true;
                 }
             }

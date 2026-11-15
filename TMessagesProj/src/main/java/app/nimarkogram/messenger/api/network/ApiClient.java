@@ -4,6 +4,7 @@ package app.nimarkogram.messenger.api.network;
 
 import app.nimarkogram.messenger.api.dto.BadgeDTO;
 import app.nimarkogram.messenger.api.dto.ProfileDTO;
+import app.nimarkogram.messenger.badges.ExteraBadgeRole;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -54,24 +55,32 @@ public final class ApiClient {
         public final Map<Long, BadgeDTO> badges;
         public final java.util.Set<Long> arrowUsers;
         public final java.util.Set<Long> arrowChats;
+        public final Map<Long, ExteraBadgeRole> userRoles;
+        public final Map<Long, ExteraBadgeRole> chatRoles;
 
-        private ExteraBadgeFetchResult(boolean success, Map<Long, BadgeDTO> badges, java.util.Set<Long> arrowUsers, java.util.Set<Long> arrowChats) {
+        private ExteraBadgeFetchResult(boolean success, Map<Long, BadgeDTO> badges, java.util.Set<Long> arrowUsers, java.util.Set<Long> arrowChats, Map<Long, ExteraBadgeRole> userRoles, Map<Long, ExteraBadgeRole> chatRoles) {
             this.success = success;
             this.badges = badges;
             this.arrowUsers = arrowUsers;
             this.arrowChats = arrowChats;
+            this.userRoles = userRoles;
+            this.chatRoles = chatRoles;
         }
     }
 
     private static final String EXTERA_PROFILES_URL =
             "https://api.exteragram.app/api/v1/profiles/compact";
 
-    private static void addIds(JsonObject root, String key, java.util.Set<Long> target) {
+    private static void addRoleIds(JsonObject root, String key, java.util.Set<Long> target,
+                                   Map<Long, ExteraBadgeRole> roles, ExteraBadgeRole role) {
         if (root == null || !root.has(key) || !root.get(key).isJsonArray()) return;
         for (JsonElement value : root.getAsJsonArray(key)) {
             try {
                 long id = value.getAsLong();
-                if (id > 0L) target.add(id);
+                if (id > 0L) {
+                    target.add(id);
+                    roles.put(id, role);
+                }
             } catch (Throwable ignored) {}
         }
     }
@@ -80,20 +89,23 @@ public final class ApiClient {
         Request req = new Request.Builder().url(EXTERA_PROFILES_URL).get().build();
         try (Response resp = CLIENT.newCall(req).execute()) {
             if (!resp.isSuccessful() || resp.body() == null) {
-                return new ExteraBadgeFetchResult(false, Collections.emptyMap(), Collections.emptySet(), Collections.emptySet());
+                return new ExteraBadgeFetchResult(false, Collections.emptyMap(), Collections.emptySet(), Collections.emptySet(), Collections.emptyMap(), Collections.emptyMap());
             }
             JsonObject root = GSON.fromJson(resp.body().charStream(), JsonObject.class);
             if (root == null || !root.has("customBadges")
                     || !root.get("customBadges").isJsonArray()) {
-                return new ExteraBadgeFetchResult(false, Collections.emptyMap(), Collections.emptySet(), Collections.emptySet());
+                return new ExteraBadgeFetchResult(false, Collections.emptyMap(), Collections.emptySet(), Collections.emptySet(), Collections.emptyMap(), Collections.emptyMap());
             }
             Map<Long, BadgeDTO> out = new HashMap<>();
             java.util.Set<Long> arrowUsers = new java.util.HashSet<>();
             java.util.Set<Long> arrowChats = new java.util.HashSet<>();
-            addIds(root, "developers", arrowUsers);
-            addIds(root, "supporters", arrowUsers);
-            addIds(root, "officialChannels", arrowChats);
-            addIds(root, "supporterChannels", arrowChats);
+            Map<Long, ExteraBadgeRole> userRoles = new HashMap<>();
+            Map<Long, ExteraBadgeRole> chatRoles = new HashMap<>();
+            // Apply broad supporter roles first so the more specific developer/official role wins on overlap.
+            addRoleIds(root, "supporters", arrowUsers, userRoles, ExteraBadgeRole.SUPPORTER);
+            addRoleIds(root, "developers", arrowUsers, userRoles, ExteraBadgeRole.DEVELOPER);
+            addRoleIds(root, "supporterChannels", arrowChats, chatRoles, ExteraBadgeRole.SUPPORTER_CHANNEL);
+            addRoleIds(root, "officialChannels", arrowChats, chatRoles, ExteraBadgeRole.OFFICIAL_CHANNEL);
             for (JsonElement item : root.getAsJsonArray("customBadges")) {
                 if (!item.isJsonObject()) continue;
                 JsonObject row = item.getAsJsonObject();
@@ -114,13 +126,14 @@ public final class ApiClient {
                     // Ignore an individual malformed entry; keep the remaining valid badges.
                 }
             }
-            return new ExteraBadgeFetchResult(true, out, arrowUsers, arrowChats);
+            return new ExteraBadgeFetchResult(true, out, arrowUsers, arrowChats,
+                    Collections.unmodifiableMap(userRoles), Collections.unmodifiableMap(chatRoles));
         } catch (IOException e) {
             FileLog.e("extera-badges: fetch failed", e);
-            return new ExteraBadgeFetchResult(false, Collections.emptyMap(), Collections.emptySet(), Collections.emptySet());
+            return new ExteraBadgeFetchResult(false, Collections.emptyMap(), Collections.emptySet(), Collections.emptySet(), Collections.emptyMap(), Collections.emptyMap());
         } catch (Throwable t) {
             FileLog.e("extera-badges: parse failed", t);
-            return new ExteraBadgeFetchResult(false, Collections.emptyMap(), Collections.emptySet(), Collections.emptySet());
+            return new ExteraBadgeFetchResult(false, Collections.emptyMap(), Collections.emptySet(), Collections.emptySet(), Collections.emptyMap(), Collections.emptyMap());
         }
     }
 

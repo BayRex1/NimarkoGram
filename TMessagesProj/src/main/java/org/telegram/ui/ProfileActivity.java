@@ -16229,7 +16229,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         Drawable arrow = ContextCompat.getDrawable(getParentActivity(), R.drawable.ic_status_arrow);
                         nameTextView[a].setRightDrawable(arrow == null ? null : arrow.mutate());
                         nameTextView[a].setRightDrawableTopPadding(-dp(0.5f));
-                        nameTextViewRightDrawableContentDescription = "ExteraGram";
+                        app.nimarkogram.messenger.badges.ExteraBadgeRole role = app.nimarkogram.messenger.badges.BadgesController.getInstance().getExteraUserRole(user.id);
+                        nameTextViewRightDrawableContentDescription = role == null ? "ExteraGram" : role.getTitle();
+                        nameTextView[a].setRightDrawableOnClick(v -> app.nimarkogram.messenger.badges.BadgeUi.showExteraRole(getContext(), role));
                     } else if (getMessagesController().isPremiumUser(user) && !app.nimarkogram.messenger.AppConfig.disablePremiumStatuses) {
                         rightIconIsStatus = false;
                         rightIconIsPremium = true;
@@ -16258,6 +16260,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         Drawable arrow = ContextCompat.getDrawable(getParentActivity(), R.drawable.ic_status_arrow);
                         nameTextView[a].setRightDrawable(arrow == null ? null : arrow.mutate());
                         nameTextView[a].setRightDrawableTopPadding(-dp(0.5f));
+                        app.nimarkogram.messenger.badges.ExteraBadgeRole role = app.nimarkogram.messenger.badges.BadgesController.getInstance().getExteraUserRole(user.id);
+                        nameTextView[a].setRightDrawableContentDescription(role == null ? "ExteraGram" : role.getTitle());
+                        nameTextView[a].setRightDrawableOnClick(v -> app.nimarkogram.messenger.badges.BadgeUi.showExteraRole(getContext(), role));
                     } else if (getMessagesController().isPremiumUser(user) && !app.nimarkogram.messenger.AppConfig.disablePremiumStatuses) {
                         rightIconIsStatus = false;
                         rightIconIsPremium = true;
@@ -16581,6 +16586,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         Drawable arrow = ContextCompat.getDrawable(getParentActivity(), R.drawable.ic_status_arrow);
                         nameTextView[a].setRightDrawable(arrow == null ? null : arrow.mutate());
                         nameTextView[a].setRightDrawableTopPadding(-dp(0.5f));
+                        app.nimarkogram.messenger.badges.ExteraBadgeRole role = app.nimarkogram.messenger.badges.BadgesController.getInstance().getExteraChatRole(chat.id);
+                        nameTextView[a].setRightDrawableContentDescription(role == null ? "ExteraGram" : role.getTitle());
+                        nameTextView[a].setRightDrawableOnClick(v -> app.nimarkogram.messenger.badges.BadgeUi.showExteraRole(getContext(), role));
                     }
                 } else if (!copyFromChatActivity) {
                     if (chat.scam || chat.fake) {
@@ -16600,6 +16608,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         Drawable arrow = ContextCompat.getDrawable(getParentActivity(), R.drawable.ic_status_arrow);
                         nameTextView[a].setRightDrawable(arrow == null ? null : arrow.mutate());
                         nameTextView[a].setRightDrawableTopPadding(-dp(0.5f));
+                        app.nimarkogram.messenger.badges.ExteraBadgeRole role = app.nimarkogram.messenger.badges.BadgesController.getInstance().getExteraChatRole(chat.id);
+                        nameTextView[a].setRightDrawableContentDescription(role == null ? "ExteraGram" : role.getTitle());
+                        nameTextView[a].setRightDrawableOnClick(v -> app.nimarkogram.messenger.badges.BadgeUi.showExteraRole(getContext(), role));
                     } else {
                         nameTextView[a].setRightDrawable(null);
                     }
