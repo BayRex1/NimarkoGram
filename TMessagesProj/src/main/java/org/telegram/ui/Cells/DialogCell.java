@@ -488,6 +488,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
     private int currentAccount;
     private CustomDialog customDialog;
     private long currentDialogId;
+    private boolean drawExteraArrow;
     private String customMessage;
     private int currentDialogFolderId;
     private long currentDialogCommunityId;
@@ -2492,7 +2493,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
             }
         }
 
-        boolean drawExteraArrow = currentDialogId < 0 && currentDialogFolderId == 0 && customDialog == null
+        drawExteraArrow = currentDialogId < 0 && currentDialogFolderId == 0 && customDialog == null
                 && app.nimarkogram.messenger.badges.BadgesController.getInstance().isExteraChatArrow(-currentDialogId);
         int timeWidth;
         if (drawTime) {
