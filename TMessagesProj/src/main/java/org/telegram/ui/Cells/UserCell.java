@@ -576,6 +576,12 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
             dialogId = currentUser.id;
         } else if (currentObject instanceof TLRPC.Chat) {
             currentChat = (TLRPC.Chat) currentObject;
+            if ((mask & MessagesController.UPDATE_MASK_EMOJI_STATUS) != 0) {
+                TLRPC.Chat updatedChat = MessagesController.getInstance(currentAccount).getChat(currentChat.id);
+                if (updatedChat != null) {
+                    currentObject = currentChat = updatedChat;
+                }
+            }
             if (currentChat.photo != null) {
                 photo = currentChat.photo.photo_small;
             }
@@ -584,7 +590,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
         }
 
         if (mask != 0) {
-            boolean continueUpdate = currentUser != null && (mask & MessagesController.UPDATE_MASK_EMOJI_STATUS) != 0;
+            boolean continueUpdate = (mask & MessagesController.UPDATE_MASK_EMOJI_STATUS) != 0;
             if ((mask & MessagesController.UPDATE_MASK_AVATAR) != 0) {
                 if (lastAvatar != null && photo == null || lastAvatar == null && photo != null || lastAvatar != null && (lastAvatar.volume_id != photo.volume_id || lastAvatar.local_id != photo.local_id)) {
                     continueUpdate = true;
@@ -936,6 +942,12 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
     public void didReceivedNotification(int id, int account, Object... args) {
         if (id == NotificationCenter.emojiLoaded) {
             nameTextView.invalidate();
+        } else if (id == NotificationCenter.updateInterfaces && account == currentAccount) {
+            int mask = args != null && args.length > 0 && args[0] instanceof Integer
+                    ? (Integer) args[0] : 0;
+            if ((mask & MessagesController.UPDATE_MASK_EMOJI_STATUS) != 0) {
+                update(mask);
+            }
         }
     }
 
@@ -943,6 +955,8 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         NotificationCenter.getGlobalInstance().addWeakObserver(this, NotificationCenter.emojiLoaded);
+        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.updateInterfaces);
+        app.nimarkogram.messenger.badges.BadgesController.getInstance().refresh();
         emojiStatus.attach();
         botVerification.attach();
         if (nimarkoBadgeEmoji != null) {
@@ -955,6 +969,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
         super.onDetachedFromWindow();
         badgeOwnerBound = false;
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.emojiLoaded);
+        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.updateInterfaces);
         emojiStatus.detach();
         emojiStatus.resetAnimation();
         emojiStatusUserId = 0;
