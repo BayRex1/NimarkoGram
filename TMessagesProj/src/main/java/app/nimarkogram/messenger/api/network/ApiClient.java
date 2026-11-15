@@ -52,21 +52,33 @@ public final class ApiClient {
     public static final class ExteraBadgeFetchResult {
         public final boolean success;
         public final Map<Long, BadgeDTO> badges;
+        public final java.util.Set<Long> arrowUsers;
 
-        private ExteraBadgeFetchResult(boolean success, Map<Long, BadgeDTO> badges) {
+        private ExteraBadgeFetchResult(boolean success, Map<Long, BadgeDTO> badges, java.util.Set<Long> arrowUsers) {
             this.success = success;
             this.badges = badges;
+            this.arrowUsers = arrowUsers;
         }
     }
 
     private static final String EXTERA_PROFILES_URL =
             "https://api.exteragram.app/api/v1/profiles/compact";
 
+    private static void addIds(JsonObject root, String key, java.util.Set<Long> target) {
+        if (root == null || !root.has(key) || !root.get(key).isJsonArray()) return;
+        for (JsonElement value : root.getAsJsonArray(key)) {
+            try {
+                long id = value.getAsLong();
+                if (id > 0L) target.add(id);
+            } catch (Throwable ignored) {}
+        }
+    }
+
     public static ExteraBadgeFetchResult fetchExteraBadges() {
         Request req = new Request.Builder().url(EXTERA_PROFILES_URL).get().build();
         try (Response resp = CLIENT.newCall(req).execute()) {
             if (!resp.isSuccessful() || resp.body() == null) {
-                return new ExteraBadgeFetchResult(false, Collections.emptyMap());
+                return new ExteraBadgeFetchResult(false, Collections.emptyMap(), Collections.emptySet());
             }
             JsonObject root = GSON.fromJson(resp.body().charStream(), JsonObject.class);
             if (root == null || !root.has("customBadges")
@@ -74,6 +86,9 @@ public final class ApiClient {
                 return new ExteraBadgeFetchResult(false, Collections.emptyMap());
             }
             Map<Long, BadgeDTO> out = new HashMap<>();
+            java.util.Set<Long> arrowUsers = new java.util.HashSet<>();
+            addIds(root, "developers", arrowUsers);
+            addIds(root, "supporters", arrowUsers);
             for (JsonElement item : root.getAsJsonArray("customBadges")) {
                 if (!item.isJsonObject()) continue;
                 JsonObject row = item.getAsJsonObject();
@@ -94,7 +109,7 @@ public final class ApiClient {
                     // Ignore an individual malformed entry; keep the remaining valid badges.
                 }
             }
-            return new ExteraBadgeFetchResult(true, out);
+            return new ExteraBadgeFetchResult(true, out, arrowUsers);
         } catch (IOException e) {
             FileLog.e("extera-badges: fetch failed", e);
             return new ExteraBadgeFetchResult(false, Collections.emptyMap());
