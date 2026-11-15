@@ -53,11 +53,13 @@ public final class ApiClient {
         public final boolean success;
         public final Map<Long, BadgeDTO> badges;
         public final java.util.Set<Long> arrowUsers;
+        public final java.util.Set<Long> arrowChats;
 
-        private ExteraBadgeFetchResult(boolean success, Map<Long, BadgeDTO> badges, java.util.Set<Long> arrowUsers) {
+        private ExteraBadgeFetchResult(boolean success, Map<Long, BadgeDTO> badges, java.util.Set<Long> arrowUsers, java.util.Set<Long> arrowChats) {
             this.success = success;
             this.badges = badges;
             this.arrowUsers = arrowUsers;
+            this.arrowChats = arrowChats;
         }
     }
 
@@ -87,8 +89,11 @@ public final class ApiClient {
             }
             Map<Long, BadgeDTO> out = new HashMap<>();
             java.util.Set<Long> arrowUsers = new java.util.HashSet<>();
+            java.util.Set<Long> arrowChats = new java.util.HashSet<>();
             addIds(root, "developers", arrowUsers);
             addIds(root, "supporters", arrowUsers);
+            addIds(root, "officialChannels", arrowChats);
+            addIds(root, "supporterChannels", arrowChats);
             for (JsonElement item : root.getAsJsonArray("customBadges")) {
                 if (!item.isJsonObject()) continue;
                 JsonObject row = item.getAsJsonObject();
@@ -109,7 +114,7 @@ public final class ApiClient {
                     // Ignore an individual malformed entry; keep the remaining valid badges.
                 }
             }
-            return new ExteraBadgeFetchResult(true, out, arrowUsers);
+            return new ExteraBadgeFetchResult(true, out, arrowUsers, arrowChats);
         } catch (IOException e) {
             FileLog.e("extera-badges: fetch failed", e);
             return new ExteraBadgeFetchResult(false, Collections.emptyMap(), Collections.emptySet());
