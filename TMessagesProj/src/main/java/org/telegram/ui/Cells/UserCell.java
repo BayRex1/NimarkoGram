@@ -769,6 +769,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
             nameTextView.setRightDrawableTopPadding(0);
         }
         applyNimarkoBadge(currentUser, animateBadges);
+        if (currentChat != null) applyExteraChatArrowFallback(currentChat);
         if (currentStatus != null) {
             statusTextView.setTextColor(statusColor);
             CharSequence status = currentStatus;
@@ -1004,6 +1005,22 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
         } catch (Throwable ignored) {}
     }
 
+    private void applyExteraChatArrowFallback(TLRPC.Chat chat) {
+        if (chat == null || !app.nimarkogram.messenger.badges.BadgesController.getInstance().isExteraChatArrow(chat.id)) return;
+        try {
+            Drawable arrow = getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
+            arrow.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
+            exteraArrowDrawable = arrow;
+            if (nameTextView.getRightDrawable() == null) {
+                exteraArrowSecondary = false;
+                nameTextView.setRightDrawable(arrow);
+            } else {
+                exteraArrowSecondary = true;
+                nameTextView.setRightDrawable2(arrow);
+            }
+        } catch (Throwable ignored) { }
+    }
+
     private void applyNimarkoBadge(TLRPC.User user, boolean animated) {
         if (exteraArrowDrawable != null) {
             if (nameTextView.getRightDrawable() == exteraArrowDrawable) {
@@ -1058,6 +1075,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
                 nameTextView.setRightDrawable2(nimarkoBadgeEmoji);
             }
             nameTextView.setRightDrawableTopPadding(-dp(0.5f));
+            applyExteraArrowFallback(user, animated);
         } catch (Throwable ignored) {}
     }
 
