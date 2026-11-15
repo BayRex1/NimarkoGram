@@ -94,6 +94,8 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
 
     private AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable nimarkoBadgeEmoji;
     private app.nimarkogram.messenger.api.dto.BadgeDTO currentNimarkoBadge;
+    private Drawable exteraArrowDrawable;
+    private boolean exteraArrowSecondary;
     private ImageView closeView;
     protected Theme.ResourcesProvider resourcesProvider;
 
@@ -989,10 +991,13 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
             arrow.setColorFilter(new PorterDuffColorFilter(
                     Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider),
                     PorterDuff.Mode.MULTIPLY));
+            exteraArrowDrawable = arrow;
             if (nameTextView.getRightDrawable() == null) {
+                exteraArrowSecondary = false;
                 nameTextView.setRightDrawable(arrow);
                 nameTextView.setRightDrawable2(null);
             } else {
+                exteraArrowSecondary = true;
                 nameTextView.setRightDrawable2(arrow);
             }
             currentNimarkoBadge = null;
@@ -1000,6 +1005,15 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
     }
 
     private void applyNimarkoBadge(TLRPC.User user, boolean animated) {
+        if (exteraArrowDrawable != null) {
+            if (nameTextView.getRightDrawable() == exteraArrowDrawable) {
+                nameTextView.setRightDrawable(null);
+            } else if (exteraArrowSecondary) {
+                nameTextView.setRightDrawable2(null);
+            }
+            exteraArrowDrawable = null;
+            exteraArrowSecondary = false;
+        }
         currentNimarkoBadge = null;
         try {
             long customStatusDocumentId =
