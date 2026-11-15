@@ -80,6 +80,8 @@ public final class BadgesController {
     }
     private volatile ServerBadgeSnapshot serverBadges =
             new ServerBadgeSnapshot(Collections.emptyMap(), Collections.emptyMap());
+    // ExteraGram custom arrows are kept separately so manual and Nimarko assignments are never overwritten.
+    private volatile Map<Long, BadgeEntry> exteraBadges = Collections.emptyMap();
     private final ScheduledExecutorService scheduler =
             Executors.newSingleThreadScheduledExecutor(r -> {
                 Thread t = new Thread(r, "nimarko-badges-refresh");
@@ -356,6 +358,11 @@ public final class BadgesController {
                 out.put(e.getKey(), e.getValue().getBadge());
             }
         }
+        for (Map.Entry<Long, BadgeEntry> e : exteraBadges.entrySet()) {
+            if (e.getValue() != null && e.getValue().getBadge() != null) {
+                out.put(e.getKey(), e.getValue().getBadge());
+            }
+        }
         for (Map.Entry<Long, BadgeEntry> e : apiBadgeSource.cache.entrySet()) {
             BadgeEntry entry = e.getValue() == null ? null : e.getValue().snapshot();
             if (entry != null && BadgePluginOwners.isActive(entry.getPluginOwner())
@@ -411,7 +418,9 @@ public final class BadgesController {
     private BadgeEntry getUserEntry(long userId) {
         noteBadgeConsumer();
         BadgeEntry plugin = visiblePluginEntry(userId);
-        return plugin != null ? plugin : serverBadges.users.get(userId);
+        if (plugin != null) return plugin;
+        BadgeEntry extera = exteraBadges.get(userId);
+        return extera != null ? extera : serverBadges.users.get(userId);
     }
 
     private static long pluginChatKey(long chatId) {
@@ -436,46 +445,68 @@ public final class BadgesController {
             return;
         }
         lastRefreshAtMs = now;
-        ServerBadgeSnapshot beforeServer = serverBadges;
+        boolean changed = false;
+
         try {
+            ApiClient.ExteraBadgeFetchResult extera = ApiClient.fetchExteraBadges();
+            if (extera.success) {
+                Map<Long, BadgeEntry> nextExtera = new HashMap<>();
+                for (Map.Entry<Long, BadgeDTO> e : extera.badges.entrySet()) {
+                    if (e.getKey() == null || e.getValue() == null) continue;
+                    nextExtera.put(e.getKey(),
+                            new BadgeEntry(e.getValue(), ProfileStatus.SUPPORTER, false));
+                }
+                Map<Long, BadgeEntry> immutable = Collections.unmodifiableMap(nextExtera);
+                if (!exteraBadges.equals(immutable)) {
+                    exteraBadges = immutable;
+                    changed = true;
+                }
+            }
+        } catch (Throwable t) {
+            FileLog.e("extera-badges: refresh failed", t);
+        }
 
+        try {
             ApiClient.BadgeFetchResult fetch = ApiClient.fetchNimarkoBadges();
-            if (!fetch.success) {
+            if (fetch.success) {
+                Map<Long, BadgeDTO> nimarko = fetch.badges != null ? fetch.badges : Collections.emptyMap();
+                Map<Long, BadgeEntry> nextUsers = new HashMap<>();
+                Map<Long, BadgeEntry> nextChats = new HashMap<>();
+                for (Map.Entry<Long, BadgeDTO> e : nimarko.entrySet()) {
+                    if (e.getKey() == null || e.getValue() == null) continue;
+                    long id = e.getKey();
+                    BadgeEntry entry = new BadgeEntry(e.getValue(), ProfileStatus.SUPPORTER, false);
+                    if (id < -1_000_000_000_000L) {
+                        long chatId = -id - 1_000_000_000_000L;
+                        nextChats.put(chatId, entry);
+                    } else {
+                        nextUsers.put(id, entry);
+                    }
+                }
 
-                return;
-            }
-            Map<Long, BadgeDTO> nimarko = fetch.badges != null ? fetch.badges : Collections.emptyMap();
-            Map<Long, BadgeEntry> nextUsers = new HashMap<>();
-            Map<Long, BadgeEntry> nextChats = new HashMap<>();
-            for (Map.Entry<Long, BadgeDTO> e : nimarko.entrySet()) {
-                if (e.getKey() == null || e.getValue() == null) continue;
-                long id = e.getKey();
-                BadgeEntry entry = new BadgeEntry(e.getValue(), ProfileStatus.SUPPORTER, false);
-                if (id < -1_000_000_000_000L) {
-                    long chatId = -id - 1_000_000_000_000L;
-                    nextChats.put(chatId, entry);
-                } else {
-                    nextUsers.put(id, entry);
+                ServerBadgeSnapshot beforeServer = serverBadges;
+                ServerBadgeSnapshot nextServer = new ServerBadgeSnapshot(
+                        Collections.unmodifiableMap(nextUsers),
+                        Collections.unmodifiableMap(nextChats));
+                if (!beforeServer.users.equals(nextServer.users)
+                        || !beforeServer.chats.equals(nextServer.chats)) {
+                    synchronized (persistLock) {
+                        serverBadges = nextServer;
+                        schedulePersistLocked();
+                    }
+                    changed = true;
+                } else if (cacheMigrationPending) {
+                    synchronized (persistLock) {
+                        schedulePersistLocked();
+                    }
                 }
             }
-
-            ServerBadgeSnapshot nextServer = new ServerBadgeSnapshot(
-                    Collections.unmodifiableMap(nextUsers),
-                    Collections.unmodifiableMap(nextChats));
-            if (beforeServer.users.equals(nextServer.users) && beforeServer.chats.equals(nextServer.chats)) {
-                synchronized (persistLock) {
-                    if (cacheMigrationPending) schedulePersistLocked();
-                }
-                return;
-            }
-            synchronized (persistLock) {
-                serverBadges = nextServer;
-                schedulePersistLocked();
-            }
-
-            apiBadgeSource.forceNotify();
         } catch (Throwable t) {
             FileLog.e("nimarko-badges: refresh failed", t);
+        }
+
+        if (changed) {
+            apiBadgeSource.forceNotify();
         }
     }
 
