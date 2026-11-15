@@ -981,6 +981,24 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
         badgeOwnerAccount = currentAccount;
         return animated;
     }
+    private void applyExteraArrowFallback(TLRPC.User user, boolean animated) {
+        if (user == null || !app.nimarkogram.messenger.badges.BadgesController
+                .getInstance().isExteraArrow(user.id)) return;
+        try {
+            Drawable arrow = getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
+            arrow.setColorFilter(new PorterDuffColorFilter(
+                    Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider),
+                    PorterDuff.Mode.MULTIPLY));
+            if (nameTextView.getRightDrawable() == null) {
+                nameTextView.setRightDrawable(arrow);
+                nameTextView.setRightDrawable2(null);
+            } else {
+                nameTextView.setRightDrawable2(arrow);
+            }
+            currentNimarkoBadge = null;
+        } catch (Throwable ignored) {}
+    }
+
     private void applyNimarkoBadge(TLRPC.User user, boolean animated) {
         currentNimarkoBadge = null;
         try {
@@ -1004,6 +1022,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
                     }
                 }
                 nameTextView.setRightDrawable2(null);
+                applyExteraArrowFallback(user, animated);
                 return;
             }
             currentNimarkoBadge = badge;
