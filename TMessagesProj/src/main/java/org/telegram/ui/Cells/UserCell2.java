@@ -40,7 +40,7 @@ import org.telegram.ui.Components.CheckBox;
 import org.telegram.ui.Components.CheckBoxSquare;
 import org.telegram.ui.Components.LayoutHelper;
 
-public class UserCell2 extends FrameLayout implements Theme.Colorable {
+public class UserCell2 extends FrameLayout implements Theme.Colorable, NotificationCenter.NotificationCenterDelegate {
 
     private Theme.ResourcesProvider resourcesProvider;
     private BackupImageView avatarImageView;
@@ -66,6 +66,7 @@ public class UserCell2 extends FrameLayout implements Theme.Colorable {
 
     private int statusColor;
     private int statusOnlineColor;
+    private android.graphics.drawable.Drawable exteraArrowDrawable;
 
     public UserCell2(Context context, int padding, int checkbox) {
         this(context, padding, checkbox, null);
@@ -133,6 +134,7 @@ public class UserCell2 extends FrameLayout implements Theme.Colorable {
         currentName = name;
         currentObject = object;
         currentDrawable = resId;
+        app.nimarkogram.messenger.badges.BadgesController.getInstance().refresh();
         update(0);
     }
 
@@ -215,6 +217,9 @@ public class UserCell2 extends FrameLayout implements Theme.Colorable {
                 if (lastAvatar != null && photo == null || lastAvatar == null && photo != null || lastAvatar != null && photo != null && (lastAvatar.volume_id != photo.volume_id || lastAvatar.local_id != photo.local_id)) {
                     continueUpdate = true;
                 }
+            }
+            if ((mask & MessagesController.UPDATE_MASK_EMOJI_STATUS) != 0) {
+                continueUpdate = true;
             }
             if (currentUser != null && !continueUpdate && (mask & MessagesController.UPDATE_MASK_STATUS) != 0) {
                 int newStatus = 0;
@@ -318,12 +323,44 @@ public class UserCell2 extends FrameLayout implements Theme.Colorable {
             avatarImageView.setImageDrawable(avatarDrawable);
         }
 
+        updateExteraArrow(currentUser, currentChat);
         avatarImageView.setRoundRadius(app.nimarkogram.messenger.AppConfig.getAvatarCornersForChat(48, currentChat != null && currentChat.forum));
 
         if (imageView.getVisibility() == VISIBLE && currentDrawable == 0 || imageView.getVisibility() == GONE && currentDrawable != 0) {
             imageView.setVisibility(currentDrawable == 0 ? GONE : VISIBLE);
             imageView.setImageResource(currentDrawable);
         }
+    }
+
+
+    private void updateExteraArrow(TLRPC.User user, TLRPC.Chat chat) {
+        nameTextView.setRightDrawable(null);
+        exteraArrowDrawable = null;
+        app.nimarkogram.messenger.badges.BadgesController controller = app.nimarkogram.messenger.badges.BadgesController.getInstance();
+        boolean show = user != null ? controller.isExteraArrow(user.id) : chat != null && controller.isExteraChatArrow(chat.id);
+        if (!show) return;
+        try {
+            exteraArrowDrawable = getContext().getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
+            exteraArrowDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
+            nameTextView.setRightDrawable(exteraArrowDrawable);
+        } catch (Throwable ignored) { exteraArrowDrawable = null; }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.updateInterfaces);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.updateInterfaces);
+        super.onDetachedFromWindow();
+    }
+
+    @Override
+    public void didReceivedNotification(int id, int account, Object... args) {
+        if (id == NotificationCenter.updateInterfaces && account == currentAccount) update(MessagesController.UPDATE_MASK_EMOJI_STATUS);
     }
 
     @Override
