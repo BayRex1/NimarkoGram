@@ -1018,6 +1018,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
                         } else {
                             nameTextView.setRightDrawable2(nimarkoBadgeEmoji);
                         }
+                        applyExteraArrowFallback(user, animated);
                         return;
                     }
                 }
