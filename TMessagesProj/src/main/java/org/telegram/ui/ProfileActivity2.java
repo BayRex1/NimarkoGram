@@ -741,10 +741,32 @@ public class ProfileActivity2 extends BaseFragment implements
         return false;
     }
 
+
+    private void updateExteraProfileArrow(TLRPC.User profileUser) {
+        if (title == null) return;
+        title.setRightDrawable(null);
+        title.setRightDrawable2(null);
+        if (profileUser == null) return;
+        app.nimarkogram.messenger.badges.BadgesController controller =
+                app.nimarkogram.messenger.badges.BadgesController.getInstance();
+        controller.refresh();
+        if (!controller.isExteraArrow(profileUser.id)) return;
+        try {
+            android.graphics.drawable.Drawable arrow =
+                    getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
+            arrow.setColorFilter(new android.graphics.PorterDuffColorFilter(
+                    Theme.getColor(Theme.key_chats_verifiedBackground, getResourceProvider()),
+                    android.graphics.PorterDuff.Mode.MULTIPLY));
+            title.setRightDrawable(arrow);
+        } catch (Throwable ignored) {
+        }
+    }
+
     public void updateInfo() {
 
         if (user != null) {
             title.setText(UserObject.getUserName(user));
+            updateExteraProfileArrow(user);
             if (self) {
                 subtitle.setText(getString(R.string.Online));
             } else if (dialogId == UserObject.VERIFY) {
