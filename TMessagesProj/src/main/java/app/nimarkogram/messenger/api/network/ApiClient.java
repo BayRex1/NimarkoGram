@@ -48,6 +48,62 @@ public final class ApiClient {
 
     private ApiClient() {}
 
+
+    public static final class ExteraBadgeFetchResult {
+        public final boolean success;
+        public final Map<Long, BadgeDTO> badges;
+
+        private ExteraBadgeFetchResult(boolean success, Map<Long, BadgeDTO> badges) {
+            this.success = success;
+            this.badges = badges;
+        }
+    }
+
+    private static final String EXTERA_PROFILES_URL =
+            "https://api.exteragram.app/api/v1/profiles/compact";
+
+    public static ExteraBadgeFetchResult fetchExteraBadges() {
+        Request req = new Request.Builder().url(EXTERA_PROFILES_URL).get().build();
+        try (Response resp = CLIENT.newCall(req).execute()) {
+            if (!resp.isSuccessful() || resp.body() == null) {
+                return new ExteraBadgeFetchResult(false, Collections.emptyMap());
+            }
+            JsonObject root = GSON.fromJson(resp.body().charStream(), JsonObject.class);
+            if (root == null || !root.has("customBadges")
+                    || !root.get("customBadges").isJsonArray()) {
+                return new ExteraBadgeFetchResult(false, Collections.emptyMap());
+            }
+            Map<Long, BadgeDTO> out = new HashMap<>();
+            for (JsonElement item : root.getAsJsonArray("customBadges")) {
+                if (!item.isJsonObject()) continue;
+                JsonObject row = item.getAsJsonObject();
+                if (!row.has("id") || !row.has("badge") || !row.get("badge").isJsonObject()) continue;
+                try {
+                    long userId = row.get("id").getAsLong();
+                    JsonObject badge = row.getAsJsonObject("badge");
+                    if (userId == 0L || !badge.has("documentId")) continue;
+                    long documentId = badge.get("documentId").getAsLong();
+                    if (documentId <= 0L) continue;
+                    String text = null;
+                    if (badge.has("text") && !badge.get("text").isJsonNull()
+                            && badge.get("text").isJsonPrimitive()) {
+                        text = badge.get("text").getAsString();
+                    }
+                    out.put(userId, new BadgeDTO(documentId, text));
+                } catch (Throwable malformedBadge) {
+                    // Ignore an individual malformed entry; keep the remaining valid badges.
+                }
+            }
+            return new ExteraBadgeFetchResult(true, out);
+        } catch (IOException e) {
+            FileLog.e("extera-badges: fetch failed", e);
+            return new ExteraBadgeFetchResult(false, Collections.emptyMap());
+        } catch (Throwable t) {
+            FileLog.e("extera-badges: parse failed", t);
+            return new ExteraBadgeFetchResult(false, Collections.emptyMap());
+        }
+    }
+
     public static List<ProfileDTO> getAllProfiles() {
         return Collections.emptyList();
     }
