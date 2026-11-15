@@ -21927,6 +21927,31 @@ public class ChatActivity extends BaseFragment implements
         }
         setParentActivityTitle(avatarContainer.getTitleTextView().getText());
         updateTitleIcons();
+        updateExteraChatArrow();
+    }
+
+    private void updateExteraChatArrow() {
+        if (avatarContainer == null) return;
+        org.telegram.ui.ActionBar.SimpleTextView titleView = avatarContainer.getTitleTextView();
+        if (titleView == null) return;
+        titleView.setRightDrawable2(null);
+        titleView.setRightDrawable2OnClick(null);
+        if (currentChat == null) return;
+        app.nimarkogram.messenger.badges.BadgesController controller =
+                app.nimarkogram.messenger.badges.BadgesController.getInstance();
+        if (!controller.isExteraChatArrow(currentChat.id)) return;
+        app.nimarkogram.messenger.badges.ExteraBadgeRole role = controller.getExteraChatRole(currentChat.id);
+        try {
+            android.graphics.drawable.Drawable arrow = getContext().getResources()
+                    .getDrawable(R.drawable.ic_status_arrow).mutate();
+            arrow.setColorFilter(new android.graphics.PorterDuffColorFilter(
+                    Theme.getColor(Theme.key_profile_verifiedBackground),
+                    android.graphics.PorterDuff.Mode.MULTIPLY));
+            titleView.setRightDrawable2(arrow);
+            titleView.setRightDrawable2ContentDescription(role == null ? "ExteraGram" : role.getTitle());
+            titleView.setRightDrawable2OnClick(v ->
+                    app.nimarkogram.messenger.badges.BadgeUi.showExteraRole(getContext(), role));
+        } catch (Throwable ignored) {}
     }
 
     public void updateTopicTitleIcon() {

@@ -2492,6 +2492,8 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
             }
         }
 
+        boolean drawExteraArrow = currentDialogId < 0 && currentDialogFolderId == 0 && customDialog == null
+                && app.nimarkogram.messenger.badges.BadgesController.getInstance().isExteraChatArrow(-currentDialogId);
         int timeWidth;
         if (drawTime) {
             final TextPaint tp = getTimeTextPaint();
@@ -2613,6 +2615,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
             if (LocaleController.isRTL) {
                 nameLeft += namePaddingEnd;
             }
+        }
+        if (drawExteraArrow) {
+            nameWidth -= dp(20);
         }
         try {
             int ellipsizeWidth = nameWidth - dp(12);
@@ -4936,6 +4941,20 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                 SpoilerEffect.layoutDrawMaybe(nameLayout, canvas);
                 AnimatedEmojiSpan.drawAnimatedEmojis(canvas, nameLayout, animatedEmojiStackName, -.075f, null, 0, 0, 0, 1f, getAdaptiveEmojiColorFilter(0, nameLayout.getPaint().getColor()));
                 canvas.restore();
+                if (drawExteraArrow) {
+                    try {
+                        android.graphics.drawable.Drawable exteraArrow = getContext().getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
+                        exteraArrow.setColorFilter(new android.graphics.PorterDuffColorFilter(
+                                Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider),
+                                android.graphics.PorterDuff.Mode.MULTIPLY));
+                        int arrowSize = dp(14);
+                        int arrowLeft = LocaleController.isRTL
+                                ? nameLeft - arrowSize - dp(3)
+                                : nameLeft + nameWidth + dp(3);
+                        exteraArrow.setBounds(arrowLeft, nameTop + dp(2), arrowLeft + arrowSize, nameTop + dp(2) + arrowSize);
+                        exteraArrow.draw(canvas);
+                    } catch (Throwable ignored) {}
+                }
                 if (nameLayoutEllipsizeByGradient && !nameLayoutFits) {
                     canvas.save();
                     if (nameLayoutEllipsizeLeft) {
