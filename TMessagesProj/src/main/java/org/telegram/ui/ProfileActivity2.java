@@ -355,7 +355,8 @@ public class ProfileActivity2 extends BaseFragment implements
         title.setPivotX(0);
         title.setEllipsizeByGradient(true);
         title.setScrollNonFitText(true);
-        container.addView(title, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.FILL_HORIZONTAL, 18.66f, 0, 18.66f, 0));
+        title.setRightDrawableOutside(true);
+        container.addView(title, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.LEFT, 18.66f, 0, 18.66f, 0));
 
         subtitle = new SimpleTextView(context);
         subtitle.setTextSize(14);
