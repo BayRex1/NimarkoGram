@@ -83,7 +83,7 @@ public final class ApiClient {
             JsonObject root = GSON.fromJson(resp.body().charStream(), JsonObject.class);
             if (root == null || !root.has("customBadges")
                     || !root.get("customBadges").isJsonArray()) {
-                return new ExteraBadgeFetchResult(false, Collections.emptyMap());
+                return new ExteraBadgeFetchResult(false, Collections.emptyMap(), Collections.emptySet());
             }
             Map<Long, BadgeDTO> out = new HashMap<>();
             java.util.Set<Long> arrowUsers = new java.util.HashSet<>();
@@ -112,10 +112,10 @@ public final class ApiClient {
             return new ExteraBadgeFetchResult(true, out, arrowUsers);
         } catch (IOException e) {
             FileLog.e("extera-badges: fetch failed", e);
-            return new ExteraBadgeFetchResult(false, Collections.emptyMap());
+            return new ExteraBadgeFetchResult(false, Collections.emptyMap(), Collections.emptySet());
         } catch (Throwable t) {
             FileLog.e("extera-badges: parse failed", t);
-            return new ExteraBadgeFetchResult(false, Collections.emptyMap());
+            return new ExteraBadgeFetchResult(false, Collections.emptyMap(), Collections.emptySet());
         }
     }
 
