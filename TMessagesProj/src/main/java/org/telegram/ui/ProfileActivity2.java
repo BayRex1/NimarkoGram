@@ -742,32 +742,29 @@ public class ProfileActivity2 extends BaseFragment implements
     }
 
 
-    private void updateExteraProfileArrow(TLRPC.User profileUser) {
+    private void updateExteraProfileArrow(long peerId, boolean isChat) {
         if (title == null) return;
         title.setRightDrawable(null);
         title.setRightDrawable2(null);
-        if (profileUser == null) return;
-        app.nimarkogram.messenger.badges.BadgesController controller =
-                app.nimarkogram.messenger.badges.BadgesController.getInstance();
+        if (peerId <= 0L) return;
+        app.nimarkogram.messenger.badges.BadgesController controller = app.nimarkogram.messenger.badges.BadgesController.getInstance();
         controller.refresh();
-        if (!controller.isExteraArrow(profileUser.id)) return;
+        boolean show = isChat ? controller.isExteraChatArrow(peerId) : controller.isExteraArrow(peerId);
+        if (!show) return;
         try {
             if (getContext() == null) return;
-            android.graphics.drawable.Drawable arrow =
-                    getContext().getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
-            arrow.setColorFilter(new android.graphics.PorterDuffColorFilter(
-                    Theme.getColor(Theme.key_chats_verifiedBackground, getResourceProvider()),
-                    android.graphics.PorterDuff.Mode.MULTIPLY));
+            android.graphics.drawable.Drawable arrow = getContext().getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
+            arrow.setColorFilter(new android.graphics.PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, getResourceProvider()), android.graphics.PorterDuff.Mode.MULTIPLY));
             title.setRightDrawable(arrow);
-        } catch (Throwable ignored) {
-        }
+        } catch (Throwable ignored) { }
     }
+
 
     public void updateInfo() {
 
         if (user != null) {
             title.setText(UserObject.getUserName(user));
-            updateExteraProfileArrow(user);
+            updateExteraProfileArrow(user.id, false);
             if (self) {
                 subtitle.setText(getString(R.string.Online));
             } else if (dialogId == UserObject.VERIFY) {
@@ -787,6 +784,7 @@ public class ProfileActivity2 extends BaseFragment implements
             }
         } else if (chat != null) {
             title.setText(chat.title);
+            updateExteraProfileArrow(chat.id, true);
             if (chat.megagroup) {
                 if (onlineCount > 1 && chatInfo != null && chatInfo.participants_count != 0) {
                     subtitle.setText(String.format("%s, %s", formatPluralString("Members", chatInfo.participants_count), formatPluralString("OnlineCount", Math.min(onlineCount, chatInfo.participants_count))));
