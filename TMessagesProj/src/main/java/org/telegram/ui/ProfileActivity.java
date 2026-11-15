@@ -16223,6 +16223,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         rightIconIsPremium = false;
                         nameTextView[a].setRightDrawable(getEmojiStatusDrawable(user.emoji_status, false, true, a));
                         nameTextViewRightDrawableContentDescription = LocaleController.getString(R.string.AccDescrPremium);
+                    } else if (app.nimarkogram.messenger.badges.BadgesController.getInstance().isExteraArrow(user.id)) {
+                        rightIconIsStatus = false;
+                        rightIconIsPremium = false;
+                        Drawable arrow = ContextCompat.getDrawable(getParentActivity(), R.drawable.ic_status_arrow);
+                        nameTextView[a].setRightDrawable(arrow == null ? null : arrow.mutate());
+                        nameTextView[a].setRightDrawableTopPadding(-dp(0.5f));
+                        nameTextViewRightDrawableContentDescription = "ExteraGram";
                     } else if (getMessagesController().isPremiumUser(user) && !app.nimarkogram.messenger.AppConfig.disablePremiumStatuses) {
                         rightIconIsStatus = false;
                         rightIconIsPremium = true;
@@ -16245,6 +16252,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         rightIconIsStatus = true;
                         rightIconIsPremium = false;
                         nameTextView[a].setRightDrawable(getEmojiStatusDrawable(user.emoji_status, true, true, a));
+                    } else if (app.nimarkogram.messenger.badges.BadgesController.getInstance().isExteraArrow(user.id)) {
+                        rightIconIsStatus = false;
+                        rightIconIsPremium = false;
+                        Drawable arrow = ContextCompat.getDrawable(getParentActivity(), R.drawable.ic_status_arrow);
+                        nameTextView[a].setRightDrawable(arrow == null ? null : arrow.mutate());
+                        nameTextView[a].setRightDrawableTopPadding(-dp(0.5f));
                     } else if (getMessagesController().isPremiumUser(user) && !app.nimarkogram.messenger.AppConfig.disablePremiumStatuses) {
                         rightIconIsStatus = false;
                         rightIconIsPremium = true;
@@ -16564,6 +16577,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                 Browser.openUrl(getContext(), "https://" + getMessagesController().linkPrefix + "/nft/" + slug);
                             });
                         }
+                    } else if (app.nimarkogram.messenger.badges.BadgesController.getInstance().isExteraChatArrow(chat.id)) {
+                        Drawable arrow = ContextCompat.getDrawable(getParentActivity(), R.drawable.ic_status_arrow);
+                        nameTextView[a].setRightDrawable(arrow == null ? null : arrow.mutate());
+                        nameTextView[a].setRightDrawableTopPadding(-dp(0.5f));
                     }
                 } else if (!copyFromChatActivity) {
                     if (chat.scam || chat.fake) {
@@ -16579,6 +16596,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     if (DialogObject.getEmojiStatusDocumentId(chat.emoji_status) != 0) {
                         nameTextView[a].setRightDrawable(getEmojiStatusDrawable(chat.emoji_status, false, true, a));
                         nameTextView[a].setRightDrawableOutside(true);
+                    } else if (app.nimarkogram.messenger.badges.BadgesController.getInstance().isExteraChatArrow(chat.id)) {
+                        Drawable arrow = ContextCompat.getDrawable(getParentActivity(), R.drawable.ic_status_arrow);
+                        nameTextView[a].setRightDrawable(arrow == null ? null : arrow.mutate());
+                        nameTextView[a].setRightDrawableTopPadding(-dp(0.5f));
                     } else {
                         nameTextView[a].setRightDrawable(null);
                     }
