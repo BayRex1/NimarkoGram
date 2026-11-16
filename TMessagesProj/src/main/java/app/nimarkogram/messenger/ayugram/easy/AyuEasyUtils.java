@@ -57,21 +57,10 @@ public class AyuEasyUtils {
         var helper = SendMessagesHelper.getInstance(currentAccount);
 
         AndroidUtilities.runOnUIThread(() -> {
-            helper.sendMessage(
-                    message,
-                    peer,
-                    replyToMsg,
-                    replyToTopMsg,
-                    webPage,
-                    searchLinks,
-                    entities,
-                    null,
-                    null,
-                    notify,
-                    0,
-                    null,
-                    false
-            );
+            helper.sendMessage(SendMessagesHelper.SendMessageParams.of(
+                    message, peer, replyToMsg, replyToTopMsg, webPage, searchLinks,
+                    entities, null, null, notify, 0, 0, null, false
+            ));
         });
 
         waiter.trySetSendingId(dialogId);
@@ -108,24 +97,10 @@ public class AyuEasyUtils {
         var params = createParams(groupId, isFinalInGroup);
 
         AndroidUtilities.runOnUIThread(() -> {
-            helper.sendMessage(
-                    document,
-                    null,
-                    path,
-                    peer,
-                    replyToMsg,
-                    replyToTopMsg,
-                    caption,
-                    entities,
-                    null,
-                    params,
-                    notify,
-                    0,
-                    0,
-                    null,
-                    null,
-                    false
-            );
+            helper.sendMessage(SendMessagesHelper.SendMessageParams.of(
+                    document, null, path, peer, replyToMsg, replyToTopMsg, caption,
+                    entities, null, params, notify, 0, 0, 0, null, null, false
+            ));
         });
 
         if (waitToSend) {
@@ -174,23 +149,10 @@ public class AyuEasyUtils {
         var params = createParams(groupId, isFinalInGroup);
 
         AndroidUtilities.runOnUIThread(() -> {
-            helper.sendMessage(
-                    photo,
-                    path,
-                    peer,
-                    replyToMsg,
-                    replyToTopMsg,
-                    caption,
-                    entities,
-                    null,
-                    params,
-                    notify,
-                    0,
-                    0,
-                    null,
-                    false,
-                    false
-            );
+            helper.sendMessage(SendMessagesHelper.SendMessageParams.of(
+                    photo, path, peer, replyToMsg, replyToTopMsg, caption, entities,
+                    null, params, notify, 0, 0, 0, null, false, false
+            ));
         });
 
         if (waitToSend) {
@@ -224,7 +186,7 @@ public class AyuEasyUtils {
         var helper = SendMessagesHelper.getInstance(currentAccount);
 
         AndroidUtilities.runOnUIThread(() -> {
-            helper.sendMessage(messages, peer, forwardFromMyName, hideCaption, notify, scheduleDate, replyToTopMsg);
+            helper.sendMessage(messages, peer, forwardFromMyName, hideCaption, notify, scheduleDate, 0, replyToTopMsg, -1, 0, 0, null);
         });
 
         waiter.trySetSendingId(dialogId);
