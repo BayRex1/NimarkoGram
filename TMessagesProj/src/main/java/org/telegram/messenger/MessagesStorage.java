@@ -5336,6 +5336,11 @@ public class MessagesStorage extends BaseController {
                     if (data != null) {
                         TLRPC.Message message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                         message.readAttachPath(data, getUserConfig().clientUserId);
+                        if (AyuConfig.saveMessagesHistory) {
+                            AyuSavePreferences savePreferences = new AyuSavePreferences(message, currentAccount);
+                            savePreferences.setDialogId(dialogId);
+                            AyuMessagesController.getInstance().onMessageEditedForce(savePreferences);
+                        }
                         data.reuse();
                         if (message.media != null) {
                             if (!addFilesToDelete(message, filesToDelete, idsToDelete, namesToDelete, true)) {
@@ -16341,6 +16346,11 @@ public class MessagesStorage extends BaseController {
                     if (data != null) {
                         TLRPC.Message message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                         message.readAttachPath(data, getUserConfig().clientUserId);
+                        if (AyuConfig.saveDeletedMessages) {
+                            AyuSavePreferences savePreferences = new AyuSavePreferences(message, currentAccount);
+                            savePreferences.setDialogId(did);
+                            AyuMessagesController.getInstance().onMessageDeleted(savePreferences);
+                        }
                         data.reuse();
                         addFilesToDelete(message, filesToDelete, idsToDelete, namesToDelete, false);
                     }
