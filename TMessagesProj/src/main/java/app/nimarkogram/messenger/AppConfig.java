@@ -2108,4 +2108,19 @@ public final class AppConfig {
     public static void setNotificationReactionEmoji(int account, String emoji) {
         getEditor().putString("notificationReactionEmoji_" + account, emoji).apply();
     }
+
+    // Profile identity display: 0 = hidden, 1 = Telegram API, 2 = Bot API.
+    public static final int PROFILE_ID_DC_HIDDEN = 0;
+    public static final int PROFILE_ID_DC_TELEGRAM = 1;
+    public static final int PROFILE_ID_DC_BOT = 2;
+    public static int profileIdDcMode = getPreferences().getInt("profileIdDcMode", PROFILE_ID_DC_HIDDEN);
+
+    public static void setProfileIdDcMode(int mode) {
+        if (mode < PROFILE_ID_DC_HIDDEN || mode > PROFILE_ID_DC_BOT) {
+            mode = PROFILE_ID_DC_HIDDEN;
+        }
+        profileIdDcMode = mode;
+        getEditor().putInt("profileIdDcMode", mode).apply();
+    }
+
 }
