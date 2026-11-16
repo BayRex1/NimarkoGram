@@ -503,14 +503,29 @@ public class ProfileActivity2 extends BaseFragment implements
     private static final int ID_PROFILE_DC = 13;
     private static final int ID_PROFILE_REGISTRATION = 14;
 
+    private long getProfileIdentityId() {
+        if (user != null) return user.id;
+        if (chat != null) {
+            if (AppConfig.profileIdDcMode == AppConfig.PROFILE_ID_DC_BOT) {
+                return chat.channel ? -1000000000000L - chat.id : -chat.id;
+            }
+            return chat.id;
+        }
+        return 0L;
+    }
+
     private void addProfileIdentityRows(ArrayList<UItem> items) {
-        if (user == null || AppConfig.profileIdDcMode == AppConfig.PROFILE_ID_DC_HIDDEN) return;
-        items.add(TextDetailCell.Factory.of(ID_PROFILE_USER_ID, "ID", String.valueOf(user.id)));
+        if (AppConfig.profileIdDcMode == AppConfig.PROFILE_ID_DC_HIDDEN) return;
+        long identityId = getProfileIdentityId();
+        if (identityId == 0L) return;
+        items.add(TextDetailCell.Factory.of(ID_PROFILE_USER_ID, "ID", String.valueOf(identityId)));
         if (AppConfig.profileIdDcMode == AppConfig.PROFILE_ID_DC_TELEGRAM) {
             int dcId = ConnectionsManager.getInstance(currentAccount).getCurrentDatacenterId();
-            items.add(TextDetailCell.Factory.of(ID_PROFILE_DC, "DC", dcId > 0 ? String.valueOf(dcId) : "—"));
+            items.add(TextDetailCell.Factory.of(ID_PROFILE_DC, "DC подключения", dcId > 0 ? String.valueOf(dcId) : "—"));
         }
-        items.add(UItem.asButton(ID_PROFILE_REGISTRATION, R.drawable.msg_calendar_solar, "Примерная дата регистрации", "Оценить"));
+        if (user != null) {
+            items.add(UItem.asButton(ID_PROFILE_REGISTRATION, R.drawable.msg_calendar_solar, "Примерная дата регистрации", "Оценить"));
+        }
     }
 
     private boolean isSection(View view) {
@@ -559,6 +574,8 @@ public class ProfileActivity2 extends BaseFragment implements
                 }
             }
         } else if (chat != null) {
+            addUsernameRow(items);
+            addProfileIdentityRows(items);
             if (chatInfo != null && (!TextUtils.isEmpty(chatInfo.about) || chatInfo.location instanceof TLRPC.TL_channelLocation) || ChatObject.isPublic(chat)) {
                 if (chatInfo != null) {
                     if (!TextUtils.isEmpty(chatInfo.about)) {
@@ -750,8 +767,8 @@ public class ProfileActivity2 extends BaseFragment implements
     }
 
     private void onClick(UItem item, View view, int position, float x, float y) {
-        if (item.id == ID_PROFILE_USER_ID && user != null) {
-            AndroidUtilities.addToClipboard(String.valueOf(user.id));
+        if (item.id == ID_PROFILE_USER_ID && (user != null || chat != null)) {
+            AndroidUtilities.addToClipboard(String.valueOf(getProfileIdentityId()));
         } else if (item.id == ID_PROFILE_REGISTRATION && user != null) {
             showRegistrationEstimate();
         } else if (item.id == ID_BIZ_HOURS) {
