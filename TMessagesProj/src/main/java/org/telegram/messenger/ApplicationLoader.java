@@ -347,6 +347,13 @@ public class ApplicationLoader extends Application {
             DownloadController.getInstance(a);
         }
         BillingController.getInstance().startConnection();
+
+        // AyuGram sync must start after UserConfig/Accounts have been loaded.
+        try {
+            app.nimarkogram.messenger.ayugram.sync.AyuSyncController.create();
+        } catch (Throwable t) {
+            FileLog.e("AyuGram sync startup failed", t);
+        }
     }
 
     public ApplicationLoader() {
@@ -1030,9 +1037,8 @@ public class ApplicationLoader extends Application {
 
         try {
             app.nimarkogram.messenger.ayugram.AyuConfig.loadConfig();
-            app.nimarkogram.messenger.ayugram.sync.AyuSyncController.create();
         } catch (Throwable t) {
-            FileLog.e("AyuGram startup integration failed", t);
+            FileLog.e("AyuGram config startup failed", t);
         }
 
         app.nimarkogram.messenger.utils.ui.SystemTextPaint.configure(
