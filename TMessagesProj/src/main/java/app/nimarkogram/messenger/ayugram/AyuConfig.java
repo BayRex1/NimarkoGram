@@ -25,6 +25,7 @@ public class AyuConfig {
 
     public static boolean sendReadPackets;
     public static boolean sendOnlinePackets;
+    public static boolean sendTypingPackets;
     public static boolean sendOfflinePacketAfterOnline;
     public static boolean sendUploadProgress;
     public static boolean useScheduledMessages;
@@ -72,6 +73,7 @@ public class AyuConfig {
             // ~ Ghost essentials
             sendReadPackets = preferences.getBoolean("sendReadPackets", true);
             sendOnlinePackets = preferences.getBoolean("sendOnlinePackets", true);
+            sendTypingPackets = preferences.getBoolean("sendTypingPackets", true);
             sendUploadProgress = preferences.getBoolean("sendUploadProgress", true);
             sendOfflinePacketAfterOnline = preferences.getBoolean("sendOfflinePacketAfterOnline", false);
 
@@ -129,11 +131,13 @@ public class AyuConfig {
     public static void setGhostMode(boolean enabled) {
         sendReadPackets = !enabled;
         sendOnlinePackets = !enabled;
+        sendTypingPackets = !enabled;
         sendUploadProgress = !enabled;
         sendOfflinePacketAfterOnline = enabled;
 
         AyuConfig.editor.putBoolean("sendReadPackets", AyuConfig.sendReadPackets).apply();
         AyuConfig.editor.putBoolean("sendOnlinePackets", AyuConfig.sendOnlinePackets).apply();
+        AyuConfig.editor.putBoolean("sendTypingPackets", AyuConfig.sendTypingPackets).apply();
         AyuConfig.editor.putBoolean("sendUploadProgress", AyuConfig.sendUploadProgress).apply();
         AyuConfig.editor.putBoolean("sendOfflinePacketAfterOnline", AyuConfig.sendOfflinePacketAfterOnline).apply();
     }

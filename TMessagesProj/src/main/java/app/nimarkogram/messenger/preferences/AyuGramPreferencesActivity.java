@@ -72,10 +72,10 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
                 "Настройки приватности и скрытия активности"));
         items.add(asSettingsLink(10, IconBackgroundColors.BLUE,
                 org.telegram.messenger.R.drawable.msg_settings, "Шпион",
-                "История удалённых сообщений — подключение в работе"));
+                "История удалённых и отредактированных сообщений"));
         items.add(asSettingsLink(11, IconBackgroundColors.CYAN,
                 org.telegram.messenger.R.drawable.msg_settings, "Фильтры",
-                "Фильтры сообщений, регулярные выражения и исключения"));
+                "Фильтры сообщений и регулярные выражения"));
         items.add(asSettingsLink(CUSTOMIZATION, IconBackgroundColors.BLUE,
                 org.telegram.messenger.R.drawable.msg_customize, "Кастомизация",
                 "Удалённые сообщения и персональные статусы"));
@@ -89,9 +89,11 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
     @Override
     public void onClick(UItem item, View view, int position, float x, float y) {
         if (item.id == GHOST) {
-            presentFragment(ChatsPreferencesActivity.forAyuGram());
+            presentFragment(new app.nimarkogram.messenger.ayugram.ui.preferences.AyuGramPreferencesActivity());
+        } else if (item.id == 10) {
+            presentFragment(new app.nimarkogram.messenger.ayugram.ui.preferences.MessageSavingPreferencesActivity());
         } else if (item.id == 11) {
-            presentFragment(new MessageFiltersPreferencesActivity());
+            presentFragment(new app.nimarkogram.messenger.ayugram.ui.preferences.RegexFiltersPreferencesActivity());
         } else if (item.id == CUSTOMIZATION) {
             presentFragment(new AyuGramCustomizationActivity());
         }

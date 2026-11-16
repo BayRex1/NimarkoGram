@@ -36,6 +36,9 @@ import org.telegram.SQLite.SQLiteDatabase;
 import org.telegram.SQLite.SQLiteException;
 import org.telegram.SQLite.SQLitePreparedStatement;
 import org.telegram.messenger.support.LongSparseIntArray;
+import app.nimarkogram.messenger.ayugram.AyuConfig;
+import app.nimarkogram.messenger.ayugram.messages.AyuMessagesController;
+import app.nimarkogram.messenger.ayugram.messages.AyuSavePreferences;
 import org.telegram.messenger.utils.EphemeralMessagesHelper;
 import org.telegram.tgnet.NativeByteBuffer;
 import org.telegram.tgnet.RequestDelegate;
@@ -15604,6 +15607,11 @@ public class MessagesStorage extends BaseController {
                         if (data != null) {
                             TLRPC.Message message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                             message.readAttachPath(data, currentUser);
+                            if (AyuConfig.saveDeletedMessages) {
+                                AyuSavePreferences savePreferences = new AyuSavePreferences(message, currentAccount);
+                                savePreferences.setDialogId(did);
+                                AyuMessagesController.getInstance().onMessageDeleted(savePreferences);
+                            }
                             if (deletedMessages != null) {
                                 deletedMessages.add(message);
                             }
@@ -17272,6 +17280,12 @@ public class MessagesStorage extends BaseController {
                                         sameMedia = MessageObject.getPhoto(oldMessage).id == MessageObject.getPhoto(message).id;
                                     } else if (MessageObject.getDocument(oldMessage) != null && MessageObject.getDocument(message) != null) {
                                         sameMedia = MessageObject.getDocument(oldMessage).id == MessageObject.getDocument(message).id;
+                                    }
+                                    if (AyuConfig.saveMessagesHistory
+                                            && (!TextUtils.equals(oldMessage.message, message.message) || !sameMedia)) {
+                                        AyuSavePreferences savePreferences = new AyuSavePreferences(oldMessage, currentAccount);
+                                        savePreferences.setDialogId(MessageObject.getDialogId(oldMessage));
+                                        AyuMessagesController.getInstance().onMessageEdited(savePreferences, message);
                                     }
                                     if (oldMessage.out && !message.out) {
                                         message.out = oldMessage.out;

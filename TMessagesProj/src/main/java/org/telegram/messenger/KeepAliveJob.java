@@ -21,6 +21,9 @@ public class KeepAliveJob extends JobIntentService {
     private static final Object sync = new Object();
 
     public static void startJob() {
+        if (!app.nimarkogram.messenger.ayugram.AyuConfig.keepAliveService) {
+            return;
+        }
         Utilities.globalQueue.postRunnable(() -> {
             if (startingJob || countDownLatch != null) {
                 return;

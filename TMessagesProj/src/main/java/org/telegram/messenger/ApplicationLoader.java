@@ -1028,6 +1028,13 @@ public class ApplicationLoader extends Application {
 
         super.onCreate();
 
+        try {
+            app.nimarkogram.messenger.ayugram.AyuConfig.loadConfig();
+            app.nimarkogram.messenger.ayugram.sync.AyuSyncController.create();
+        } catch (Throwable t) {
+            FileLog.e("AyuGram startup integration failed", t);
+        }
+
         app.nimarkogram.messenger.utils.ui.SystemTextPaint.configure(
                 nmRawResources().getConfiguration(), app.nimarkogram.messenger.AppConfig.systemFonts);
         try {
