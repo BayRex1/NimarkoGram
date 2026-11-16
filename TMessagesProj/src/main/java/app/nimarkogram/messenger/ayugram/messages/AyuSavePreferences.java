@@ -18,7 +18,7 @@ public class AyuSavePreferences {
     private final int accountId;
     private final long userId;
     private long dialogId = -1;
-    private int topicId = -1;
+    private long topicId = -1;
     private int messageId = -1;
     private int requestCatchTime = -1;
 
@@ -76,7 +76,7 @@ public class AyuSavePreferences {
         this.dialogId = dialogId;
     }
 
-    public int getTopicId() {
+    public long getTopicId() {
         return topicId;
     }
 
