@@ -564,7 +564,8 @@ public class ConnectionsManager extends BaseController {
                 || object instanceof TLRPC.TL_messages_readMessageContents
                 || object instanceof TLRPC.TL_channels_readHistory
                 || object instanceof TLRPC.TL_channels_readMessageContents;
-        if (suppressReadReceipts && readRequest) {
+        if (suppressReadReceipts && readRequest
+                && !app.nimarkogram.messenger.ayugram.utils.AyuState.getAllowReadPacket()) {
             TLRPC.TL_messages_affectedMessages fakeResponse = new TLRPC.TL_messages_affectedMessages();
             fakeResponse.pts = -1;
             fakeResponse.pts_count = 0;
@@ -574,6 +575,17 @@ public class ConnectionsManager extends BaseController {
                 } catch (Throwable t) {
                     FileLog.e("Ghost Mode: read receipt callback failed", t);
                 }
+            }
+            try {
+                android.util.Pair<Long, Integer> readInfo =
+                        app.nimarkogram.messenger.ayugram.utils.AyuGhostUtils
+                                .getDialogIdAndMessageIdFromRequest(object);
+                if (readInfo != null) {
+                    app.nimarkogram.messenger.ayugram.sync.AyuSyncController
+                            .getInstance().syncRead(currentAccount, readInfo.first, readInfo.second);
+                }
+            } catch (Throwable t) {
+                FileLog.e("Ghost Mode: cross-device read sync failed", t);
             }
             return;
         }
