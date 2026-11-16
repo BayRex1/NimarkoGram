@@ -15644,6 +15644,16 @@ public class MessagesStorage extends BaseController {
                 cursor.dispose();
                 cursor = null;
 
+                // Archive deleted message rows before Telegram removes them from messages_v2.
+                // messagesByDialogs was populated from the same pre-delete query above.
+                if (AyuConfig.saveDeletedMessages || app.nimarkogram.messenger.AppConfig.showDeletedMessages) {
+                    for (int archiveIndex = 0; archiveIndex < messagesByDialogs.size(); archiveIndex++) {
+                        long archiveDialogId = messagesByDialogs.keyAt(archiveIndex);
+                        ArrayList<Integer> archiveIds = messagesByDialogs.valueAt(archiveIndex);
+                        saveDeletedMessages(archiveDialogId, archiveIds);
+                    }
+                }
+
                 ArrayList<TopicKey> topicsToDelete = null;
 
                 if (dialogId != 0) {
