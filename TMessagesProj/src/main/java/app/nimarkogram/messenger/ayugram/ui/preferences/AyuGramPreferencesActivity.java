@@ -253,6 +253,9 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity implemen
             presentFragment(new MessageSavingPreferencesActivity());
         } else if (position == keepAliveServiceRow) {
             AyuConfig.editor.putBoolean("keepAliveService", AyuConfig.keepAliveService ^= true).apply();
+            MessagesController.getMainSettings(UserConfig.selectedAccount).edit()
+                    .putBoolean("keepAliveService", AyuConfig.keepAliveService).apply();
+            ApplicationLoader.startPushService();
             ((TextCheckCell) view).setChecked(AyuConfig.keepAliveService);
         } else if (position == disableAdsRow) {
             AyuConfig.editor.putBoolean("disableAds", AyuConfig.disableAds ^= true).apply();
