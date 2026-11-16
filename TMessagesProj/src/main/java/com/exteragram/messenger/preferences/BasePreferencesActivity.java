@@ -121,9 +121,6 @@ public abstract class BasePreferencesActivity extends BaseFragment {
         @Override public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             onBindViewHolder(holder, position, payloadChanged(holder));
         }
-        private boolean payloadChanged(RecyclerView.ViewHolder holder) {
-            return holder.getPayload() == payload;
-        }
         @NonNull @Override public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view;
             switch (viewType) {
