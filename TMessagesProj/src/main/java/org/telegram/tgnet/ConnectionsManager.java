@@ -548,7 +548,7 @@ public class ConnectionsManager extends BaseController {
                 : releaseOwner == null ? (response, error) -> postHookCallback.run(response, error, null)
                 : new ManagedRequestDelegate(postHookCallback, releaseOwner);
         // AyuGram Ghost Mode: apply each privacy option independently.
-        if (!app.nimarkogram.messenger.ayugram.AyuConfig.sendTypingPackets
+        if (!app.nimarkogram.messenger.ayugram.AyuConfig.sendUploadProgress
                 && (object instanceof TLRPC.TL_messages_setTyping
                 || object instanceof TLRPC.TL_messages_setEncryptedTyping)) {
             return;
