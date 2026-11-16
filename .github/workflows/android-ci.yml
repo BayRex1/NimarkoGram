@@ -61,9 +61,18 @@ jobs:
               if "$SDKMANAGER" --install "$package"; then
                 return 0
               fi
+
               if [ "$attempt" -lt 3 ]; then
-                echo "Installation failed; retrying after a short pause."
-                sleep 10
+                echo "Installation failed; removing incomplete SDK downloads before retry."
+                # sdkmanager can leave a truncated archive or a partially extracted
+                # NDK behind after a transient download/unzip failure.
+                rm -rf "$ANDROID_HOME/temp/"*
+                case "$package" in
+                  ndk\;*)
+                    rm -rf "$ANDROID_HOME/ndk/${package#ndk;}"
+                    ;;
+                esac
+                sleep 15
               fi
             done
             echo "Could not install $package after 3 attempts."
