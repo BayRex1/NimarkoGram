@@ -97,7 +97,7 @@ public class AyuConfig {
             saveReactions = preferences.getBoolean("saveReactions", true);
 
             // ~ Useful features
-            keepAliveService = preferences.getBoolean("keepAliveService", true);
+            keepAliveService = preferences.getBoolean("keepAliveService", MessagesController.getMainSettings(UserConfig.selectedAccount).getBoolean("keepAliveService", false));
             disableAds = preferences.getBoolean("disableAds", true);
             localPremium = preferences.getBoolean("localPremium", false);
             regexFiltersEnabled = preferences.getBoolean("regexFiltersEnabled", false);
