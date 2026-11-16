@@ -186,7 +186,7 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity implemen
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.premiumStatusChangedGlobal);
 
         getMediaDataController().loadPremiumPromo(false);
-        getMediaDataController().loadReactions(false, true);
+        getMediaDataController().loadReactions(false, null);
     }
 
     @Override
