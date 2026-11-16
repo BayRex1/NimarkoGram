@@ -8,7 +8,8 @@ if not path.is_file():
     raise SystemExit(f"Missing TLRPC source: {path}")
 data = path.read_text(encoding="utf-8")
 
-if "public boolean ayuNoforwards;" not in data:
+# Preserve Telegram's noforwards bit separately for AyuGram's forwarding rules.
+if "ayuNoforwards = hasFlag(flags, FLAG_26);" not in data:
     data, n = re.subn(
         r"noforwards = (?P<flags>[^;]+);",
         "noforwards = false;\n            ayuNoforwards = \\g<flags>;",
@@ -16,10 +17,21 @@ if "public boolean ayuNoforwards;" not in data:
     )
     if n == 0:
         raise SystemExit("Could not find the generated noforwards constructor assignment")
-    old = "public boolean noforwards;"
-    if old not in data:
-        raise SystemExit("Could not find the generated noforwards field")
-    data = data.replace(old, old + "\n        public boolean ayuNoforwards;", 1)
+
+# The flag is referenced through both Chat and Message base types.
+for class_name in ("Chat", "Message"):
+    match = re.search(
+        rf"(?:public )?static\s+(?:abstract\s+)?class\s+{class_name}\s+extends\s+[^\{{]+\{{",
+        data,
+    )
+    if not match:
+        raise SystemExit(f"Could not find the generated {class_name} base class")
+    body_end = data.find("class TL_", match.end())
+    if body_end < 0:
+        body_end = len(data)
+    body = data[match.end():body_end]
+    if "public boolean ayuNoforwards;" not in body:
+        data = data[:match.end()] + "\n        public boolean ayuNoforwards;" + data[match.end():]
 
 if "public boolean ayuDeleted;" not in data:
     old = "public boolean from_scheduled;"
@@ -27,17 +39,7 @@ if "public boolean ayuDeleted;" not in data:
         raise SystemExit("Could not find the generated from_scheduled field")
     data = data.replace(old, old + "\n        public boolean ayuDeleted;", 1)
 
-# TL_message inherits from this shared model; keep the flag available through
-# TLRPC.Message references used by the forwarding implementation.
-message_class = re.search(r"(?:public )?static\\s+(?:abstract\\s+)?class\\s+Message\\s+extends\\s+[^\\{]+\\{", data)
-if not message_class:
-    raise SystemExit("Could not find the generated Message base class")
-message_body = data[message_class.end():]
-if "public boolean ayuNoforwards;" not in message_body[:message_body.find("class TL_message") if "class TL_message" in message_body else len(message_body)]:
-    data = data[:message_class.end()] + "\\n        public boolean ayuNoforwards;" + data[message_class.end():]
-
-# AyuGram consumes these Telegram flags as its own state; clear the original
-# assignments so they are not represented twice in the UI model.
+# AyuGram consumes these Telegram flags as its own state.
 data = re.sub(r"restricted = [^;]+;", "restricted = false;", data)
 data = re.sub(r"history_deleted = [^;]+;", "history_deleted = false;", data)
 
