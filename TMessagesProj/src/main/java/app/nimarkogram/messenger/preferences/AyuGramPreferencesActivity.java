@@ -72,10 +72,10 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
                 "Настройки приватности и скрытия активности"));
         items.add(asSettingsLink(10, IconBackgroundColors.BLUE,
                 org.telegram.messenger.R.drawable.msg_settings, "Шпион",
-                "Раздел будет добавлен позже"));
+                "История удалённых сообщений на этом устройстве"));
         items.add(asSettingsLink(11, IconBackgroundColors.CYAN,
                 org.telegram.messenger.R.drawable.msg_settings, "Фильтры",
-                "Раздел будет добавлен позже"));
+                "Фильтры сообщений, регулярные выражения и исключения"));
         items.add(asSettingsLink(CUSTOMIZATION, IconBackgroundColors.BLUE,
                 org.telegram.messenger.R.drawable.msg_customize, "Кастомизация",
                 "Удалённые сообщения и персональные статусы"));
@@ -90,6 +90,8 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
     public void onClick(UItem item, View view, int position, float x, float y) {
         if (item.id == GHOST) {
             presentFragment(ChatsPreferencesActivity.forAyuGram());
+        } else if (item.id == 11) {
+            presentFragment(new MessageFiltersPreferencesActivity());
         } else if (item.id == CUSTOMIZATION) {
             presentFragment(new AyuGramCustomizationActivity());
         }
