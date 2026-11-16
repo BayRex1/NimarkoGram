@@ -234,6 +234,19 @@ public final class AppConfig {
     public static volatile boolean silenceNonContacts = getPreferences().getBoolean("silenceNonContacts", false);
     public static volatile boolean showDeletedMessages = getPreferences().getBoolean("showDeletedMessages", false);
 
+    public static volatile boolean translucentDeletedMessages = getPreferences().getBoolean("translucentDeletedMessages", false);
+    public static volatile int deletedMessageMarkStyle = getPreferences().getInt("deletedMessageMarkStyle", 0);
+
+    public static void setTranslucentDeletedMessages(boolean enabled) {
+        translucentDeletedMessages = enabled;
+        getEditor().putBoolean("translucentDeletedMessages", enabled).apply();
+    }
+
+    public static void setDeletedMessageMarkStyle(int style) {
+        deletedMessageMarkStyle = Math.max(0, Math.min(2, style));
+        getEditor().putInt("deletedMessageMarkStyle", deletedMessageMarkStyle).apply();
+    }
+
     public static void toggleShowDeletedMessages() {
         showDeletedMessages = !showDeletedMessages;
         getEditor().putBoolean("showDeletedMessages", showDeletedMessages).apply();
