@@ -13,6 +13,7 @@ package org.telegram.messenger;
 import static app.nimarkogram.messenger.CrashContext.initializationPhase;
 
 import app.nimarkogram.messenger.CrashContext.PineInitPhase;
+import app.nimarkogram.messenger.ayugram.sync.AyuSyncController;
 import app.nimarkogram.messenger.utils.AppMotionBlur;
 import app.nimarkogram.messenger.utils.UiAnimationClock;
 import app.nimarkogram.messenger.utils.UiAnimationLifecycle;
@@ -350,7 +351,7 @@ public class ApplicationLoader extends Application {
 
         // AyuGram sync must start after UserConfig/Accounts have been loaded.
         try {
-            app.nimarkogram.messenger.ayugram.sync.AyuSyncController.create();
+            AyuSyncController.create();
         } catch (Throwable t) {
             FileLog.e("AyuGram sync startup failed", t);
         }
