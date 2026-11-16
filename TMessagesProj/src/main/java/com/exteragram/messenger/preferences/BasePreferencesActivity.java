@@ -119,7 +119,7 @@ public abstract class BasePreferencesActivity extends BaseFragment {
         }
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, boolean payloadChanged) { }
         @Override public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            onBindViewHolder(holder, position, payloadChanged(holder));
+            onBindViewHolder(holder, position, false);
         }
         @NonNull @Override public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view;
@@ -134,7 +134,7 @@ public abstract class BasePreferencesActivity extends BaseFragment {
                 case 13: view = new SlideChooseView(mContext); view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite)); break;
                 case 18: view = new TextCheckCell2(mContext); view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite)); break;
                 case 19:
-                    CheckBoxCell cell = new CheckBoxCell(mContext, 4, 21, getResourceProvider());
+                    CheckBoxCell cell = new CheckBoxCell(mContext, 4, 21, resourcesProvider);
                     cell.getCheckBoxRound().setDrawBackgroundAsArc(14);
                     cell.getCheckBoxRound().setColor(Theme.key_switch2TrackChecked, Theme.key_radioBackground, Theme.key_checkboxCheck);
                     cell.setEnabled(true);
