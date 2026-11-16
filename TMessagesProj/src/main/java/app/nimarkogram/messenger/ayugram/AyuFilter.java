@@ -32,7 +32,11 @@ public class AyuFilter {
 
         patterns = new ArrayList<>();
         for (var filter : filters) {
-            patterns.add(Pattern.compile(filter, flags));
+            try {
+                patterns.add(Pattern.compile(filter, flags));
+            } catch (java.util.regex.PatternSyntaxException ignored) {
+                // Ignore invalid stored filters instead of crashing message rendering.
+            }
         }
 
         filteredCache = new LongSparseArray<>();
