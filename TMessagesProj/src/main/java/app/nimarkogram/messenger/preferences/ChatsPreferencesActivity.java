@@ -184,7 +184,7 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
                 items.add(SettingsHelper.asSwitchCG(scheduleMessagesRow,
                         "Отложенная отправка",
                         "Отправляет сообщения через небольшую задержку, чтобы не выдавать присутствие в сети. Работает только с включённым режимом призрака.")
-                        .setChecked(app.nimarkogram.messenger.ayugram.GhostModeConfig.useScheduledMessages));
+                        .setChecked(app.nimarkogram.messenger.ayugram.GhostModeConfig.isUseScheduledMessages()));
                 items.add(UItem.asShadow("Текстовые сообщения отправляются примерно через 12 секунд. Для медиа задержка рассчитывается по размеру файла."));
 
             }
