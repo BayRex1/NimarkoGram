@@ -15,6 +15,7 @@ public class AyuGramCustomizationActivity extends UniversalPreferencesActivity {
     private static final int CUSTOM_STATUS = 2;
     private static final int TRANSLUCENT_DELETED = 3;
     private static final int DELETED_MARK_STYLE = 4;
+    private static final int LOCAL_PREMIUM = 5;
 
     private static final String[] DELETED_MARKS = {"Корзина", "Крестик", "Глаз"};
 
@@ -44,6 +45,12 @@ public class AyuGramCustomizationActivity extends UniversalPreferencesActivity {
                 DELETED_MARKS[Math.max(0, Math.min(2, AppConfig.deletedMessageMarkStyle))]));
         items.add(UItem.asShadow("Сохранённые сообщения остаются на устройстве. Сообщения, удалённые до включения сохранения, восстановить нельзя."));
 
+        items.add(UItem.asHeader("Полезные функции"));
+        items.add(SettingsHelper.asSwitchCG(LOCAL_PREMIUM,
+                "Локальный Telegram Premium",
+                "Локальное отображение Premium-эмодзи без изменения подписки Telegram.")
+                .setChecked(AppConfig.localPremiumEmojis));
+
         items.add(UItem.asHeader("Персонализация"));
         items.add(asPlainSettingsRowWithSubtitle(CUSTOM_STATUS, "Кастомный статус",
                 "Назначай Premium Emoji выбранным пользователям. Статусы видны только тебе."));
@@ -53,13 +60,16 @@ public class AyuGramCustomizationActivity extends UniversalPreferencesActivity {
     public void onClick(UItem item, View view, int position, float x, float y) {
         if (item.id == DELETED_MESSAGES) {
             AppConfig.toggleShowDeletedMessages();
-            updateCheckState(view, AppConfig.showDeletedMessages);
+            SettingsHelper.updateCheckState(view, AppConfig.showDeletedMessages);
         } else if (item.id == TRANSLUCENT_DELETED) {
             AppConfig.setTranslucentDeletedMessages(!AppConfig.translucentDeletedMessages);
-            updateCheckState(view, AppConfig.translucentDeletedMessages);
+            SettingsHelper.updateCheckState(view, AppConfig.translucentDeletedMessages);
         } else if (item.id == DELETED_MARK_STYLE) {
             AppConfig.setDeletedMessageMarkStyle((AppConfig.deletedMessageMarkStyle + 1) % DELETED_MARKS.length);
             SettingsHelper.updateButtonValue(view, DELETED_MARKS[AppConfig.deletedMessageMarkStyle]);
+        } else if (item.id == LOCAL_PREMIUM) {
+            AppConfig.toggleLocalPremiumEmojis();
+            SettingsHelper.updateCheckState(view, AppConfig.localPremiumEmojis);
         } else if (item.id == CUSTOM_STATUS) {
             presentFragment(new CustomStatusPreferencesActivity());
         }
