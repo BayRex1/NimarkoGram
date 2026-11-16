@@ -251,6 +251,11 @@ public final class AppConfig {
         showDeletedMessages = !showDeletedMessages;
         getEditor().putBoolean("showDeletedMessages", showDeletedMessages).apply();
     }
+
+    public static void setShowDeletedMessages(boolean enabled) {
+        showDeletedMessages = enabled;
+        getEditor().putBoolean("showDeletedMessages", enabled).apply();
+    }
     public static volatile boolean inAppNotifications = getPreferences().getBoolean("inAppNotifications", true);
 
     public static void toggleInAppNotifications() {
