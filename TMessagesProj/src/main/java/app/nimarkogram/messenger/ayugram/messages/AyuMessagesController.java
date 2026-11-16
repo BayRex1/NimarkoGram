@@ -11,7 +11,7 @@ package app.nimarkogram.messenger.ayugram.messages;
 
 import android.os.Environment;
 import android.text.TextUtils;
-import com.google.android.exoplayer2.util.Log;
+import android.util.Log;
 import app.nimarkogram.messenger.ayugram.AyuConfig;
 import app.nimarkogram.messenger.ayugram.AyuConstants;
 import app.nimarkogram.messenger.ayugram.database.AyuData;
