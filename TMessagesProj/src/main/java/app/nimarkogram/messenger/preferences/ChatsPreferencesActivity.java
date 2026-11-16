@@ -415,7 +415,7 @@ public class ChatsPreferencesActivity extends UniversalPreferencesActivity {
         }
         if (id == scheduleMessagesRow) {
             app.nimarkogram.messenger.ayugram.GhostModeConfig.setUseScheduledMessages(
-                    !app.nimarkogram.messenger.ayugram.GhostModeConfig.useScheduledMessages);
+                    !app.nimarkogram.messenger.ayugram.GhostModeConfig.isUseScheduledMessages());
             updateItemsAfterToggle();
             return;
         }
