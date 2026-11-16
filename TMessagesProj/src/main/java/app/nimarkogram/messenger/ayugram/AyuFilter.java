@@ -83,7 +83,7 @@ public class AyuFilter {
             }
         }
 
-        res = isFiltered(ChatUtils.getMessageText(msg, group));
+        res = isFiltered(ChatUtils.getInstance().getMessageText(msg, group));
 
         if (cached == null) {
             cached = new HashMap<>();
