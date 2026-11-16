@@ -27,6 +27,15 @@ if "public boolean ayuDeleted;" not in data:
         raise SystemExit("Could not find the generated from_scheduled field")
     data = data.replace(old, old + "\n        public boolean ayuDeleted;", 1)
 
+# TL_message inherits from this shared model; keep the flag available through
+# TLRPC.Message references used by the forwarding implementation.
+message_class = re.search(r"(?:public )?static\\s+(?:abstract\\s+)?class\\s+Message\\s+extends\\s+[^\\{]+\\{", data)
+if not message_class:
+    raise SystemExit("Could not find the generated Message base class")
+message_body = data[message_class.end():]
+if "public boolean ayuNoforwards;" not in message_body[:message_body.find("class TL_message") if "class TL_message" in message_body else len(message_body)]:
+    data = data[:message_class.end()] + "\\n        public boolean ayuNoforwards;" + data[message_class.end():]
+
 # AyuGram consumes these Telegram flags as its own state; clear the original
 # assignments so they are not represented twice in the UI model.
 data = re.sub(r"restricted = [^;]+;", "restricted = false;", data)
