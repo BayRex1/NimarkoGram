@@ -67,6 +67,9 @@ jobs:
             exit 1
           fi
 
+      - name: Apply AyuGram TL compatibility patch
+        run: python3 tools/ayugram/patch_tlrpc.py
+
       - name: Build MofGram standalone APK
         run: ./gradlew --no-daemon --stacktrace :TMessagesProj_AppStandalone:assembleAfatStandalone
 
