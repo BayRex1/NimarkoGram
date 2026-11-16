@@ -72,7 +72,7 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
                 "Настройки приватности и скрытия активности"));
         items.add(asSettingsLink(10, IconBackgroundColors.BLUE,
                 org.telegram.messenger.R.drawable.msg_settings, "Шпион",
-                "История удалённых сообщений на этом устройстве"));
+                "История удалённых сообщений — подключение в работе"));
         items.add(asSettingsLink(11, IconBackgroundColors.CYAN,
                 org.telegram.messenger.R.drawable.msg_settings, "Фильтры",
                 "Фильтры сообщений, регулярные выражения и исключения"));
