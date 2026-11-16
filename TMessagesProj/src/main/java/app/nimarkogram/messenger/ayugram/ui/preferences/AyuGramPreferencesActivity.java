@@ -309,7 +309,7 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity implemen
             AyuMessagesController.getInstance().clean();
 
             // reset size
-            ((TextCell) view).setValue("…");
+            ((TextCell) view).setValue("…", false);
 
             BulletinFactory.of(this).createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.ClearAyuDatabaseNotification)).show();
         } else if (position == eraseLocalDatabaseBtnRow) {
