@@ -106,7 +106,7 @@ public class AyuForwarder {
         }
 
         for (var message : messages) {
-            var textExtracted = ChatUtils.getMessageText(message, null);
+            var textExtracted = ChatUtils.getInstance().getMessageText(message, null);
             var text = textExtracted == null ? "" : textExtracted.toString();
             var mediaDownloadable = AyuUtils.isMediaDownloadable(message, false);
             var groupId = message.getGroupId();
