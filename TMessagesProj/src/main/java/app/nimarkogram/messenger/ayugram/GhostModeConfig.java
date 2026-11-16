@@ -8,6 +8,7 @@ public final class GhostModeConfig {
     private GhostModeConfig() { }
     public static boolean isGhostModeEnabled() { return AyuConfig.isGhostModeActive(); }
     public static void setGhostMode(boolean enabled) { AyuConfig.setGhostMode(enabled); }
+    public static boolean isUseScheduledMessages() { return AyuConfig.useScheduledMessages; }
     public static void setUseScheduledMessages(boolean enabled) {
         AyuConfig.editor.putBoolean("useScheduledMessages", AyuConfig.useScheduledMessages = enabled).apply();
     }
