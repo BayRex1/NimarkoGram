@@ -39,7 +39,7 @@ public class AyuMessageCell extends ChatMessageCell {
 
             // ..open media otherwise
             if (!TextUtils.isEmpty(editedMessage.mediaPath)) {
-                AndroidUtilities.openForView(getMessageObject().getDocument(), activity, null);
+                AndroidUtilities.openForView(getMessageObject().getDocument(), false, activity);
             }
         });
 
