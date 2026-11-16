@@ -9,7 +9,7 @@
 
 package app.nimarkogram.messenger.ayugram.sync;
 
-import com.google.android.exoplayer2.util.Log;
+import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import app.nimarkogram.messenger.ayugram.AyuConfig;

@@ -12,7 +12,7 @@ package app.nimarkogram.messenger.ayugram;
 import android.text.TextUtils;
 import android.util.LongSparseArray;
 import com.exteragram.messenger.utils.ChatUtils;
-import com.google.android.exoplayer2.util.Log;
+import android.util.Log;
 import app.nimarkogram.messenger.ayugram.easy.AyuEasyUtils;
 import org.telegram.messenger.*;
 import org.telegram.tgnet.TLRPC;
