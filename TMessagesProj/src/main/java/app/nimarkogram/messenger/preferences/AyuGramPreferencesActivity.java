@@ -79,6 +79,9 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
         items.add(asSettingsLink(CUSTOMIZATION, IconBackgroundColors.BLUE,
                 org.telegram.messenger.R.drawable.msg_customize, "Кастомизация",
                 "Удалённые сообщения и персональные статусы"));
+        items.add(asSettingsLink(12, IconBackgroundColors.PURPLE,
+                org.telegram.messenger.R.drawable.msg_settings, "Полный набор AyuGram",
+                "Все оригинальные настройки, синхронизация и дополнительные функции"));
         items.add(UItem.asHeader("Ссылки"));
         items.add(UItem.asButton(20, "Канал", "@ayugram"));
         items.add(UItem.asButton(21, "Чаты", "@ayugramchat"));
@@ -96,6 +99,8 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
             presentFragment(new app.nimarkogram.messenger.ayugram.ui.preferences.RegexFiltersPreferencesActivity());
         } else if (item.id == CUSTOMIZATION) {
             presentFragment(new AyuGramCustomizationActivity());
+        } else if (item.id == 12) {
+            presentFragment(new app.nimarkogram.messenger.ayugram.ui.preferences.AyuGramPreferencesActivity());
         }
     }
 
