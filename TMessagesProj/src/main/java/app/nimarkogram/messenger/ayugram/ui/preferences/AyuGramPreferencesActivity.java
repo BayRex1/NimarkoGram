@@ -255,6 +255,8 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity implemen
             AyuConfig.editor.putBoolean("keepAliveService", AyuConfig.keepAliveService ^= true).apply();
             MessagesController.getMainSettings(UserConfig.selectedAccount).edit()
                     .putBoolean("keepAliveService", AyuConfig.keepAliveService).apply();
+            ApplicationLoader.applicationContext.getSharedPreferences("Notifications", Context.MODE_PRIVATE)
+                    .edit().putBoolean("pushService", AyuConfig.keepAliveService).apply();
             ApplicationLoader.startPushService();
             ((TextCheckCell) view).setChecked(AyuConfig.keepAliveService);
         } else if (position == disableAdsRow) {
