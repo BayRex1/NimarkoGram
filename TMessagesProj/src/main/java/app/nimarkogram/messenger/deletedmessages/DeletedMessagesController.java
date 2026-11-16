@@ -59,7 +59,8 @@ public final class DeletedMessagesController {
     }
 
     public static synchronized void onNotification(int account, int eventId, Object... args) {
-        if (!AppConfig.showDeletedMessages) {
+        if (!AppConfig.showDeletedMessages
+                && !app.nimarkogram.messenger.ayugram.AyuConfig.saveDeletedMessages) {
             return;
         }
         if (eventId == NotificationCenter.didReceiveNewMessages
@@ -249,7 +250,8 @@ public final class DeletedMessagesController {
     }
 
     public static synchronized void restoreDeletedMessages(int account, long dialogId, ArrayList<MessageObject> target) {
-        if (target == null || !AppConfig.showDeletedMessages) return;
+        if (target == null || (!AppConfig.showDeletedMessages
+                && !app.nimarkogram.messenger.ayugram.AyuConfig.saveDeletedMessages)) return;
         SharedPreferences prefs = preferences();
         if (prefs == null) return;
         Set<Integer> existingIds = new HashSet<>();
