@@ -510,7 +510,7 @@ public class ProfileActivity2 extends BaseFragment implements
             int dcId = ConnectionsManager.getInstance(currentAccount).getCurrentDatacenterId();
             items.add(TextDetailCell.Factory.of(ID_PROFILE_DC, "DC", dcId > 0 ? String.valueOf(dcId) : "—"));
         }
-        items.add(UItem.asButton(ID_PROFILE_REGISTRATION, "📅 Примерная дата регистрации", "Посмотреть оценку"));
+        items.add(UItem.asButton(ID_PROFILE_REGISTRATION, R.drawable.msg_calendar_solar, "Примерная дата регистрации", "Оценить"));
     }
 
     private boolean isSection(View view) {
