@@ -44,6 +44,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AndroidUtilities;
+import app.nimarkogram.messenger.AppConfig;
+import org.telegram.tgnet.ConnectionsManager;
+import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.messenger.BirthdayController;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.DialogObject;
@@ -496,6 +499,20 @@ public class ProfileActivity2 extends BaseFragment implements
     private static final int ID_BIZ_LOCATION = 10;
     private static final int ID_NOTE = 11;
 
+    private static final int ID_PROFILE_USER_ID = 12;
+    private static final int ID_PROFILE_DC = 13;
+    private static final int ID_PROFILE_REGISTRATION = 14;
+
+    private void addProfileIdentityRows(ArrayList<UItem> items) {
+        if (user == null || AppConfig.profileIdDcMode == AppConfig.PROFILE_ID_DC_HIDDEN) return;
+        items.add(TextDetailCell.Factory.of(ID_PROFILE_USER_ID, "ID", String.valueOf(user.id)));
+        if (AppConfig.profileIdDcMode == AppConfig.PROFILE_ID_DC_TELEGRAM) {
+            int dcId = ConnectionsManager.getInstance(currentAccount).getCurrentDatacenterId();
+            items.add(TextDetailCell.Factory.of(ID_PROFILE_DC, "DC", dcId > 0 ? String.valueOf(dcId) : "—"));
+        }
+        items.add(UItem.asButton(ID_PROFILE_REGISTRATION, "📅 Примерная дата регистрации", "Посмотреть оценку"));
+    }
+
     private boolean isSection(View view) {
         if (view == null) return false;
         final int id = view.getId();
@@ -511,6 +528,7 @@ public class ProfileActivity2 extends BaseFragment implements
         if (user != null) {
             addPhoneRow(items);
             addUsernameRow(items);
+            addProfileIdentityRows(items);
             if (userInfo != null) {
                 if (userInfo.birthday != null) {
                     final boolean today = BirthdayController.isToday(userInfo);
@@ -732,7 +750,11 @@ public class ProfileActivity2 extends BaseFragment implements
     }
 
     private void onClick(UItem item, View view, int position, float x, float y) {
-        if (item.id == ID_BIZ_HOURS) {
+        if (item.id == ID_PROFILE_USER_ID && user != null) {
+            AndroidUtilities.addToClipboard(String.valueOf(user.id));
+        } else if (item.id == ID_PROFILE_REGISTRATION && user != null) {
+            showRegistrationEstimate();
+        } else if (item.id == ID_BIZ_HOURS) {
             hoursExpanded = !hoursExpanded;
             listView.adapter.update(true);
         }
@@ -1169,4 +1191,13 @@ public class ProfileActivity2 extends BaseFragment implements
     }
 
 
+
+    private void showRegistrationEstimate() {
+        if (getParentActivity() == null || user == null) return;
+        new AlertDialog.Builder(getParentActivity())
+                .setTitle("Дата регистрации")
+                .setMessage("Telegram не предоставляет дату создания аккаунта через API. По одному только ID нельзя надёжно вычислить дату регистрации, поэтому NimarkoGram не будет показывать выдуманную оценку. Для приблизительной даты нужны публичные данные, например самое раннее известное сообщение пользователя.")
+                .setPositiveButton("Понятно", null)
+                .show();
+    }
 }
