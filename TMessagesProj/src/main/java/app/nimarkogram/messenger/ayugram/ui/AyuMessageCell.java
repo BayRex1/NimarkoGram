@@ -24,7 +24,7 @@ public class AyuMessageCell extends ChatMessageCell {
     private EditedMessage editedMessage;
 
     public AyuMessageCell(Context context, Activity activity, BaseFragment fragment) {
-        super(context);
+        super(context, 0);
 
         setFullyDraw(true);
         isChat = false;
@@ -39,7 +39,7 @@ public class AyuMessageCell extends ChatMessageCell {
 
             // ..open media otherwise
             if (!TextUtils.isEmpty(editedMessage.mediaPath)) {
-                AndroidUtilities.openForView(getMessageObject(), activity, null);
+                AndroidUtilities.openForView(getMessageObject().getDocument(), activity, null);
             }
         });
 
