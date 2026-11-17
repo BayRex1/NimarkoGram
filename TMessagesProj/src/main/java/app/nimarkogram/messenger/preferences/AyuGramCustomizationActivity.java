@@ -62,11 +62,11 @@ public class AyuGramCustomizationActivity extends UniversalPreferencesActivity {
             AppConfig.toggleLocalPremium();
             UserConfig userConfig = UserConfig.getInstance(UserConfig.selectedAccount);
             if (userConfig.getCurrentUser() != null) {
-                userConfig.getMessagesController().updatePremium(userConfig.isPremium());
+                org.telegram.messenger.AccountInstance.getInstance(UserConfig.selectedAccount).getMessagesController().updatePremium(userConfig.isPremium());
                 NotificationCenter.getInstance(UserConfig.selectedAccount).postNotificationName(NotificationCenter.currentUserPremiumStatusChanged);
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.premiumStatusChangedGlobal);
-                userConfig.getMediaDataController().loadPremiumPromo(false);
-                userConfig.getMediaDataController().loadReactions(false, null);
+                org.telegram.messenger.AccountInstance.getInstance(UserConfig.selectedAccount).getMediaDataController().loadPremiumPromo(false);
+                org.telegram.messenger.AccountInstance.getInstance(UserConfig.selectedAccount).getMediaDataController().loadReactions(false, null);
             }
             SettingsHelper.updateCheckState(view, AppConfig.localPremium);
         } else if (item.id == KEEP_ALIVE) {
