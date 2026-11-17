@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.View;
 
 import app.nimarkogram.messenger.AppConfig;
+import org.telegram.messenger.NotificationCenter;
+import org.telegram.messenger.UserConfig;
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
 import org.telegram.messenger.R;
@@ -14,6 +16,8 @@ import java.util.ArrayList;
 public class AyuGramCustomizationActivity extends UniversalPreferencesActivity {
     private static final int DELETED_MESSAGES = 1;
     private static final int CUSTOM_STATUS = 2;
+    private static final int LOCAL_PREMIUM = 3;
+    private static final int KEEP_ALIVE = 4;
 
     @Override
     protected CharSequence getTitle() {
@@ -36,6 +40,15 @@ public class AyuGramCustomizationActivity extends UniversalPreferencesActivity {
         items.add(UItem.asShadow("Сохранённые сообщения остаются в чате после повторного входа. Сообщения, удалённые до включения функции, восстановить нельзя."));
         items.add(asPlainSettingsRowWithSubtitle(CUSTOM_STATUS, "Кастомный статус",
                 "Назначай Premium Emoji выбранным пользователям. Статусы видны только тебе."));
+        items.add(SettingsHelper.asSwitchCG(LOCAL_PREMIUM,
+                "Локальный Telegram Premium",
+                "Включает клиентские Premium-функции только на этом устройстве. Серверные ограничения не снимает.")
+                .setChecked(AppConfig.localPremium));
+        items.add(UItem.asShadow("Не рекомендуется включать при активной подписке Telegram Premium: возможны конфликты функций."));
+        items.add(SettingsHelper.asSwitchCG(KEEP_ALIVE,
+                "Работать в фоне",
+                "Разрешает фоновую задачу для обработки push-уведомлений. Отключение может задерживать их обработку.")
+                .setChecked(AppConfig.keepAliveService));
     }
 
     @Override
@@ -45,6 +58,20 @@ public class AyuGramCustomizationActivity extends UniversalPreferencesActivity {
             updateCheckState(view, AppConfig.showDeletedMessages);
         } else if (item.id == CUSTOM_STATUS) {
             presentFragment(new CustomStatusPreferencesActivity());
+        } else if (item.id == LOCAL_PREMIUM) {
+            AppConfig.toggleLocalPremium();
+            UserConfig userConfig = UserConfig.getInstance(UserConfig.selectedAccount);
+            if (userConfig.getCurrentUser() != null) {
+                org.telegram.messenger.AccountInstance.getInstance(UserConfig.selectedAccount).getMessagesController().updatePremium(userConfig.isPremium());
+                NotificationCenter.getInstance(UserConfig.selectedAccount).postNotificationName(NotificationCenter.currentUserPremiumStatusChanged);
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.premiumStatusChangedGlobal);
+                org.telegram.messenger.AccountInstance.getInstance(UserConfig.selectedAccount).getMediaDataController().loadPremiumPromo(false);
+                org.telegram.messenger.AccountInstance.getInstance(UserConfig.selectedAccount).getMediaDataController().loadReactions(false, null);
+            }
+            SettingsHelper.updateCheckState(view, AppConfig.localPremium);
+        } else if (item.id == KEEP_ALIVE) {
+            AppConfig.toggleKeepAliveService();
+            SettingsHelper.updateCheckState(view, AppConfig.keepAliveService);
         }
     }
 
