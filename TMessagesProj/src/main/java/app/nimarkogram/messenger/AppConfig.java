@@ -456,6 +456,19 @@ public final class AppConfig {
         return wsInstallId;
     }
 
+    // AyuGram compatibility options
+    public static boolean localPremium = getPreferences().getBoolean("localPremium", false);
+    public static void toggleLocalPremium() {
+        localPremium = !localPremium;
+        getEditor().putBoolean("localPremium", localPremium).apply();
+    }
+
+    public static boolean keepAliveService = getPreferences().getBoolean("keepAliveService", true);
+    public static void toggleKeepAliveService() {
+        keepAliveService = !keepAliveService;
+        getEditor().putBoolean("keepAliveService", keepAliveService).apply();
+    }
+
     public static boolean localPremiumEmojis = getPreferences().getBoolean("localPremiumEmojis", true);
     public static void toggleLocalPremiumEmojis() {
         localPremiumEmojis = !localPremiumEmojis;
