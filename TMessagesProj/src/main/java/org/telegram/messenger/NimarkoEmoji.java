@@ -89,10 +89,5 @@ public final class NimarkoEmoji {
         @Override public void setAlpha(int alpha){ paint.setAlpha(alpha); }
         @Override public void setColorFilter(ColorFilter filter){ paint.setColorFilter(filter); }
         @Override public int getOpacity(){ return PixelFormat.TRANSLUCENT; }
-        @Override public void setVisible(boolean visible, boolean restart){
-            super.setVisible(visible,restart);
-            if(!visible){ unscheduleSelf(this); scheduled=false; }
-            else if(restart) start=SystemClock.uptimeMillis();
-        }
     }
 }
