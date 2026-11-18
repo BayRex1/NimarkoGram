@@ -7,6 +7,10 @@ on:
         description: "Release tag"
         required: true
         default: "v1.0.0"
+      publish:
+        description: "Publish GitHub release (true/false)"
+        required: true
+        default: "false"
   push:
     tags:
       - "v*"
@@ -86,7 +90,14 @@ jobs:
           cp "$APK" MofGram-1.0.0.apk
           echo "Signer:"; "$(find "$ANDROID_HOME/build-tools/36.0.0" -name apksigner | head -n 1)" verify --print-certs MofGram-1.0.0.apk | head -3
 
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MofGram-1.0.0-apk
+          path: MofGram-1.0.0.apk
+
       - name: Publish GitHub release
+        if: github.event_name == 'push' || github.event.inputs.publish == 'true'
         shell: bash
         run: |
           TAG="${{ github.event.inputs.tag || github.ref_name }}"
