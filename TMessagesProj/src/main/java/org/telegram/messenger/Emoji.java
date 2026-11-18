@@ -526,7 +526,17 @@ public class Emoji {
             for (int i = 0; i < length; i++) {
                 c = cs.charAt(i);
                 notOnlyEmoji = false;
-                if (c >= 0xD83C && c <= 0xD83E || (buf != 0 && (buf & 0xFFFFFFFF00000000L) == 0 && (buf & 0xFFFF) == 0xD83C && (c >= 0xDDE6 && c <= 0xDDFF))) {
+                if (c == NimarkoEmoji.SEAHORSE_CODE.charAt(0)) {
+                    if (startIndex != -1) {
+                        emojiCode.setLength(0);
+                    }
+                    startIndex = i;
+                    startLength = 1;
+                    emojiCode.setLength(0);
+                    emojiCode.append(c);
+                    doneEmoji = true;
+                    resetStartIndex = false;
+                } else if (c >= 0xD83C && c <= 0xD83E || (buf != 0 && (buf & 0xFFFFFFFF00000000L) == 0 && (buf & 0xFFFF) == 0xD83C && (c >= 0xDDE6 && c <= 0xDDFF))) {
                     if (startIndex == -1) {
                         startIndex = i;
                     } else if (resetStartIndex) {
@@ -688,7 +698,10 @@ public class Emoji {
     }
 
     public static CharSequence replaceEmoji(CharSequence cs, Paint.FontMetricsInt fontMetrics, boolean createNew, int[] emojiOnly, int alignment, float scale, int minusLimit) {
-        if (SharedConfig.useSystemEmoji || cs == null || cs.length() == 0) {
+        // Keep the local NimarkoGram emoji renderable even when Android system emoji are enabled.
+        // Other emoji still use the system font in that mode.
+        boolean containsLocalEmoji = cs != null && cs.toString().indexOf(NimarkoEmoji.SEAHORSE_CODE) >= 0;
+        if ((SharedConfig.useSystemEmoji && !containsLocalEmoji) || cs == null || cs.length() == 0) {
             return cs;
         }
         Spannable s;
@@ -710,6 +723,9 @@ public class Emoji {
         for (int i = 0; i < emojis.size(); ++i) {
             try {
                 EmojiSpanRange emojiRange = emojis.get(i);
+                if (SharedConfig.useSystemEmoji && !NimarkoEmoji.isSeahorse(emojiRange.code)) {
+                    continue;
+                }
                 if (animatedEmojiSpans != null && animatedEmojiSpans.length > 0) {
                     boolean hasAnimated = false;
                     for (int j = 0; j < animatedEmojiSpans.length; ++j) {
