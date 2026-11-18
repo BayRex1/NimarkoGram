@@ -79,6 +79,9 @@ jobs:
           RELEASE_KEY_PASSWORD=$RELEASE_KEY_PASSWORD
           EOF2
 
+      - name: Apply AyuGram TLRPC compatibility patch
+        run: python tools/ayugram/patch_tlrpc.py
+
       - name: Build signed standalone APK
         run: ./gradlew --no-daemon --stacktrace :TMessagesProj_AppStandalone:assembleAfatStandalone
 
