@@ -247,6 +247,11 @@ public class Emoji {
     }
 
     public static EmojiDrawable getEmojiDrawable(CharSequence code) {
+        if (NimarkoEmoji.isSeahorse(code)) {
+            EmojiDrawable drawable = new NimarkoEmoji.SeahorseDrawable();
+            drawable.setBounds(0, 0, drawImgSize, drawImgSize);
+            return drawable;
+        }
         DrawableInfo info = getDrawableInfo(code);
         if (info == null) {
             if (code != null) {
@@ -284,6 +289,7 @@ public class Emoji {
     }
 
     public static boolean isValidEmoji(CharSequence code) {
+        if (NimarkoEmoji.isSeahorse(code)) return true;
         if (TextUtils.isEmpty(code)) {
             return false;
         }
@@ -298,6 +304,12 @@ public class Emoji {
     }
 
     public static Drawable getEmojiBigDrawable(String code) {
+        if (NimarkoEmoji.isSeahorse(code)) {
+            EmojiDrawable drawable = new NimarkoEmoji.SeahorseDrawable();
+            drawable.setBounds(0, 0, bigImgSize, bigImgSize);
+            drawable.fullSize = true;
+            return drawable;
+        }
         EmojiDrawable ed = null;
         CompoundEmoji.CompoundEmojiDrawable compoundEmojiDrawable = CompoundEmoji.getCompoundEmojiDrawable(code);
         if (compoundEmojiDrawable != null) {
