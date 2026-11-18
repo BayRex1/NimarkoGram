@@ -6,12 +6,11 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.Rect;
 import java.io.InputStream;
 
 /** Static local seahorse emoji rendered from the app's bundled PNG asset. */
 public final class NimarkoEmoji {
-    public static final String SEAHORSE_CODE = "\\uE000";
+    public static final String SEAHORSE_CODE = "\uE000";
     private static volatile Bitmap seahorseBitmap;
 
     private NimarkoEmoji() {}
