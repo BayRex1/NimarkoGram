@@ -11,6 +11,7 @@ package org.telegram.messenger;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Arrays;
 
 public class EmojiData {
 
@@ -538,6 +539,11 @@ public class EmojiData {
     }
 
     static {
+        // NimarkoGram local custom emoji marker (BMP private-use area).
+        data[0] = Arrays.copyOf(data[0], data[0].length + 1);
+        data[0][data[0].length - 1] = NimarkoEmoji.SEAHORSE_CODE;
+        dataColored[0] = Arrays.copyOf(dataColored[0], dataColored[0].length + 1);
+        dataColored[0][dataColored[0].length - 1] = NimarkoEmoji.SEAHORSE_CODE;
         for (int a = 0; a < emojiToFE0F.length; a++) {
             emojiToFE0FMap.put(emojiToFE0F[a], true);
         }
