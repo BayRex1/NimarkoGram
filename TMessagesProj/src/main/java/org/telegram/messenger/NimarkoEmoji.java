@@ -15,7 +15,7 @@ import android.os.SystemClock;
 
 /** Local animated seahorse emoji. The private-use marker is never sent as a Unicode emoji. */
 public final class NimarkoEmoji {
-    public static final String SEAHORSE_CODE = "\\uE000";
+    public static final String SEAHORSE_CODE = "\uE000";
 
     private NimarkoEmoji() {}
 
