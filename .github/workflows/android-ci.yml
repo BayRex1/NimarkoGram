@@ -1,4 +1,5 @@
-name: MofGram Android CI
+# MofGram Android CI
+# Keep this workflow change on the PR branch to retrigger pull_request validation.
 
 on:
   push:
@@ -64,8 +65,6 @@ jobs:
 
               if [ "$attempt" -lt 3 ]; then
                 echo "Installation failed; removing incomplete SDK downloads before retry."
-                # sdkmanager can leave a truncated archive or a partially extracted
-                # NDK behind after a transient download/unzip failure.
                 rm -rf "$ANDROID_HOME/temp/"*
                 case "$package" in
                   ndk\;*)
