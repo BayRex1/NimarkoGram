@@ -120,9 +120,9 @@ public final class NimarkoEmoji {
             body.cubicTo(32, 8, 35, 8, 38, 8);
             body.close();
 
-            // Dark contour gives the form a polished sticker-like edge.
-            stroke(canvas, body, 0x803F2635, 2.1f);
+            // Layered contour and specular rim create a rounded, polished finish.
             fill(canvas, body, 0xFFFFE89B, 0xFFFFA63F, 0xFFE65B38);
+            stroke(canvas, body, 0x803F2635, 1.8f);
             stroke(canvas, body, 0x66FFF1C2, .65f);
 
             // Belly plate with individual curved ridges.
