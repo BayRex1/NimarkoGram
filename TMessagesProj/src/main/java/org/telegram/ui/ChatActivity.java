@@ -41331,15 +41331,35 @@ public class ChatActivity extends BaseFragment implements
                 cell.setDelegate(getChatMessageCellDelegate());
                 view = cell;
             } else if (viewType == 11) {
-                TextView giftView = new TextView(mContext);
-                giftView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-                giftView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, themeDelegate));
-                giftView.setPadding(dp(16), dp(12), dp(16), dp(12));
+                LinearLayout giftView = new LinearLayout(mContext);
+                giftView.setOrientation(LinearLayout.HORIZONTAL);
                 giftView.setGravity(Gravity.CENTER_VERTICAL);
-                giftView.setMaxLines(2);
+                giftView.setPadding(dp(12), dp(8), dp(12), dp(8));
                 giftView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(dp(14),
                         Theme.getColor(Theme.key_windowBackgroundGray, themeDelegate),
                         Theme.getColor(Theme.key_listSelector, themeDelegate)));
+                org.telegram.ui.Components.RLottieImageView giftIcon = new org.telegram.ui.Components.RLottieImageView(mContext);
+                giftIcon.setAutoRepeat(true);
+                giftView.addView(giftIcon, new LinearLayout.LayoutParams(dp(52), dp(52)));
+                LinearLayout giftTexts = new LinearLayout(mContext);
+                giftTexts.setOrientation(LinearLayout.VERTICAL);
+                giftTexts.setGravity(Gravity.CENTER_VERTICAL);
+                LinearLayout.LayoutParams giftTextParams = new LinearLayout.LayoutParams(0, RecyclerView.LayoutParams.WRAP_CONTENT, 1f);
+                giftTextParams.leftMargin = dp(12);
+                giftView.addView(giftTexts, giftTextParams);
+                TextView giftTitle = new TextView(mContext);
+                giftTitle.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+                giftTitle.setTypeface(AndroidUtilities.bold());
+                giftTitle.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, themeDelegate));
+                giftTitle.setMaxLines(1);
+                giftTitle.setEllipsize(TextUtils.TruncateAt.END);
+                giftTexts.addView(giftTitle);
+                TextView giftSender = new TextView(mContext);
+                giftSender.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+                giftSender.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2, themeDelegate));
+                giftSender.setMaxLines(1);
+                giftSender.setEllipsize(TextUtils.TruncateAt.END);
+                giftTexts.addView(giftSender);
                 view = giftView;
             }
             view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
@@ -41357,9 +41377,15 @@ public class ChatActivity extends BaseFragment implements
                     TLRPC.User senderUser = getMessagesController().getUser(Long.parseLong(transfer.fromId));
                     if (senderUser != null) sender = UserObject.getUserName(senderUser);
                 } catch (Exception ignored) { }
-                ((TextView) holder.itemView).setText("🎁  "
-                        + (TextUtils.isEmpty(transfer.giftTitle) ? "MoGram Gift" : transfer.giftTitle)
-                        + "\nОтправитель: " + sender);
+                LinearLayout giftRow = (LinearLayout) holder.itemView;
+                org.telegram.ui.Components.RLottieImageView giftIcon =
+                        (org.telegram.ui.Components.RLottieImageView) giftRow.getChildAt(0);
+                LinearLayout giftTexts = (LinearLayout) giftRow.getChildAt(1);
+                ((TextView) giftTexts.getChildAt(0)).setText(
+                        TextUtils.isEmpty(transfer.giftTitle) ? "MoGram Gift" : transfer.giftTitle);
+                ((TextView) giftTexts.getChildAt(1)).setText("Отправитель: " + sender);
+                app.nimarkogram.messenger.gifts.MoGramGiftAnimation.bind(mContext, giftIcon,
+                        transfer.id, transfer.giftFileUrl, 52);
             } else if (position == botInfoRow || position == botInfoEmptyRow) {
                 BotHelpCell helpView = (BotHelpCell) holder.itemView;
                 if (UserObject.isReplyUser(currentUser)) {
