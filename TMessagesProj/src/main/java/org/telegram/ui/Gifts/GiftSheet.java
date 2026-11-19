@@ -984,6 +984,23 @@ public class GiftSheet extends BottomSheetWithRecyclerListView implements Notifi
             } else {
                 items.add(UItem.asSpace(dp(16)));
             }
+            // MoGram gifts are exposed from the native gift sheet instead of requiring
+            // users to discover a separate profile-only entry point.
+            TextView moGramGiftsEntry = new TextView(getContext());
+            moGramGiftsEntry.setText("MoGram Gifts  ·  " + getString(R.string.NM_MogramGiftsSend));
+            moGramGiftsEntry.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+            moGramGiftsEntry.setTypeface(AndroidUtilities.bold());
+            moGramGiftsEntry.setGravity(Gravity.CENTER);
+            moGramGiftsEntry.setTextColor(Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider));
+            moGramGiftsEntry.setPadding(dp(12), dp(14), dp(12), dp(14));
+            moGramGiftsEntry.setBackground(Theme.createSimpleSelectorRoundRectDrawable(dp(12),
+                Theme.getColor(Theme.key_windowBackgroundGray, resourcesProvider),
+                Theme.getColor(Theme.key_listSelector, resourcesProvider)));
+            moGramGiftsEntry.setOnClickListener(v ->
+                new app.nimarkogram.messenger.gifts.MoGramGiftSheet(getContext(), currentAccount, dialogId).show()
+            );
+            items.add(UItem.asCustom(moGramGiftsEntry));
+            items.add(UItem.asSpace(dp(8)));
             items.add(UItem.asCustom(starsHeaderView));
             boolean hasResale = false;
             final TreeSet<Long> prices = new TreeSet<>();
