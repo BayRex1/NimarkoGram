@@ -74,6 +74,7 @@ public class AyuGramCustomizationActivity extends UniversalPreferencesActivity {
             String[] marks = {"🗑️", "✕", "◉"};
             int next = (getDeletedMarkIndex() + 1) % marks.length;
             AyuConfig.editor.putString("deletedMarkText", marks[next]).apply();
+            AppConfig.setDeletedMessageMarkStyle(next);
             SettingsHelper.updateButtonValue(view, DELETED_MARKS[next]);
         } else if (item.id == LOCAL_PREMIUM) {
             AyuConfig.editor.putBoolean("localPremium", AyuConfig.localPremium = !AyuConfig.localPremium).apply();
@@ -92,10 +93,7 @@ public class AyuGramCustomizationActivity extends UniversalPreferencesActivity {
     }
 
     private int getDeletedMarkIndex() {
-        String mark = AyuConfig.getDeletedMark();
-        if ("✕".equals(mark) || "×".equals(mark)) return 1;
-        if ("◉".equals(mark) || "👁".equals(mark)) return 2;
-        return 0;
+        return Math.max(0, Math.min(2, AppConfig.deletedMessageMarkStyle));
     }
 
     @Override
