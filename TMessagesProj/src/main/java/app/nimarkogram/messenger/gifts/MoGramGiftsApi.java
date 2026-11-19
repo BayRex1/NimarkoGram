@@ -40,13 +40,15 @@ public final class MoGramGiftsApi {
     }
 
     public static final class Transfer {
+        public final String id;
         public final String fromId;
         public final String toId;
         public final String createdAt;
         public final String giftTitle;
         public final String giftFileUrl;
 
-        Transfer(String fromId, String toId, String createdAt, String giftTitle, String giftFileUrl) {
+        Transfer(String id, String fromId, String toId, String createdAt, String giftTitle, String giftFileUrl) {
+            this.id = id;
             this.fromId = fromId;
             this.toId = toId;
             this.createdAt = createdAt;
@@ -124,17 +126,39 @@ public final class MoGramGiftsApi {
         return list;
     }
 
-    public static void send(long fromId, String giftId, long toId) throws Exception {
+    public static Transfer send(long fromId, String giftId, long toId) throws Exception {
         JSONObject body = new JSONObject();
         body.put("from_id", String.valueOf(fromId));
         body.put("gift_id", giftId);
         body.put("to_id", String.valueOf(toId));
-        http("POST", "/v1/gifts/send", body.toString());
+        JSONObject response = new JSONObject(http("POST", "/v1/gifts/send", body.toString()));
+        return parseTransfer(response.optJSONObject("transfer"));
     }
 
     /** Gifts this user received (from, to and gift title are in every row). */
     public static List<Transfer> fetchReceived(long userId) throws Exception {
         return fetchTransfers("/v1/users/" + userId + "/gifts?limit=20");
+    }
+
+    /** New gifts since the last acknowledged transfer ID; used by the in-client inbox poller. */
+    public static List<Transfer> fetchInbox(long userId, String afterId) throws Exception {
+        String path = "/v1/users/" + userId + "/gifts/inbox?limit=100";
+        if (afterId != null && !afterId.isEmpty()) {
+            path += "&after=" + java.net.URLEncoder.encode(afterId, "UTF-8");
+        }
+        return fetchTransfers(path);
+    }
+
+    private static Transfer parseTransfer(JSONObject o) throws Exception {
+        if (o == null) return null;
+        JSONObject gift = o.optJSONObject("gift");
+        return new Transfer(
+                o.optString("id"),
+                o.optString("from_id"),
+                o.optString("to_id"),
+                o.optString("created_at"),
+                gift != null ? gift.optString("title") : "",
+                gift != null ? gift.optString("file_url") : "");
     }
 
     private static List<Transfer> fetchTransfers(String path) throws Exception {
@@ -144,14 +168,7 @@ public final class MoGramGiftsApi {
             return list;
         }
         for (int i = 0; i < arr.length(); i++) {
-            JSONObject o = arr.getJSONObject(i);
-            JSONObject gift = o.optJSONObject("gift");
-            list.add(new Transfer(
-                    o.optString("from_id"),
-                    o.optString("to_id"),
-                    o.optString("created_at"),
-                    gift != null ? gift.optString("title") : "",
-                    gift != null ? gift.optString("file_url") : ""));
+            list.add(parseTransfer(arr.getJSONObject(i)));
         }
         return list;
     }
