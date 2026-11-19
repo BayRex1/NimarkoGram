@@ -735,7 +735,7 @@ public class ProfileGiftsContainer extends FrameLayout implements NotificationCe
                     moGramHeader.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
                     moGramHeader.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
                     moGramHeader.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
-                    moGramHeader.setPadding(dp(8), dp(10), dp(8), dp(6));
+                    moGramHeader.setPadding(dp(8), dp(14), dp(8), dp(8));
                     items.add(UItem.asCustom(moGramHeader).setSpanCount(columns));
                     for (app.nimarkogram.messenger.gifts.MoGramGiftsApi.Transfer transfer : moGramTransfers) {
                         String sender = transfer.fromId;
@@ -743,18 +743,45 @@ public class ProfileGiftsContainer extends FrameLayout implements NotificationCe
                             TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(Long.parseLong(transfer.fromId));
                             if (user != null) sender = UserObject.getUserName(user);
                         } catch (Exception ignored) { }
-                        TextView giftRow = new TextView(getContext());
-                        giftRow.setText("🎁  " + transfer.giftTitle + "  ·  " + sender);
-                        giftRow.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-                        giftRow.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
-                        giftRow.setPadding(dp(12), dp(10), dp(12), dp(10));
-                        giftRow.setBackground(Theme.createSimpleSelectorRoundRectDrawable(dp(10),
+
+                        LinearLayout giftCard = new LinearLayout(getContext());
+                        giftCard.setOrientation(LinearLayout.HORIZONTAL);
+                        giftCard.setGravity(Gravity.CENTER_VERTICAL);
+                        giftCard.setPadding(dp(14), dp(12), dp(14), dp(12));
+                        giftCard.setBackground(Theme.createSimpleSelectorRoundRectDrawable(dp(14),
                             Theme.getColor(Theme.key_windowBackgroundGray, resourcesProvider),
                             Theme.getColor(Theme.key_listSelector, resourcesProvider)));
-                        giftRow.setOnClickListener(v ->
+
+                        TextView giftIcon = new TextView(getContext());
+                        giftIcon.setText("🎁");
+                        giftIcon.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 28);
+                        giftCard.addView(giftIcon, new LinearLayout.LayoutParams(dp(42), LayoutHelper.WRAP_CONTENT));
+
+                        LinearLayout giftTexts = new LinearLayout(getContext());
+                        giftTexts.setOrientation(LinearLayout.VERTICAL);
+                        giftTexts.setGravity(Gravity.CENTER_VERTICAL);
+                        TextView giftTitle = new TextView(getContext());
+                        giftTitle.setText(TextUtils.isEmpty(transfer.giftTitle) ? "MoGram Gift" : transfer.giftTitle);
+                        giftTitle.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+                        giftTitle.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
+                        giftTitle.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
+                        giftTitle.setMaxLines(1);
+                        giftTitle.setEllipsize(TextUtils.TruncateAt.END);
+                        TextView giftSender = new TextView(getContext());
+                        giftSender.setText("Отправитель: " + sender);
+                        giftSender.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+                        giftSender.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2, resourcesProvider));
+                        giftSender.setMaxLines(1);
+                        giftSender.setEllipsize(TextUtils.TruncateAt.END);
+                        giftTexts.addView(giftTitle, new LinearLayout.LayoutParams(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+                        LinearLayout.LayoutParams senderParams = new LinearLayout.LayoutParams(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT);
+                        senderParams.topMargin = dp(3);
+                        giftTexts.addView(giftSender, senderParams);
+                        giftCard.addView(giftTexts, new LinearLayout.LayoutParams(0, LayoutHelper.WRAP_CONTENT, 1f));
+                        giftCard.setOnClickListener(v ->
                             new app.nimarkogram.messenger.gifts.MoGramGiftSheet(getContext(), currentAccount, parent.dialogId).show()
                         );
-                        items.add(UItem.asCustom(giftRow).setSpanCount(columns));
+                        items.add(UItem.asCustom(giftCard).setSpanCount(columns));
                     }
                 }
                 int spanCountLeft = columns;
