@@ -104,4 +104,4 @@ jobs:
         shell: bash
         run: |
           TAG="${{ github.event.inputs.tag || github.ref_name }}"
-          gh release create "$TAG" MofGram-1.0.0.apk --title "1.0.0" --notes "NimarkoGram / MofGram 1.0.0 (signed release APK). APK version is unchanged (13.2.1 build)."
+          gh release create "$TAG" MofGram-1.0.0.apk --target "$GITHUB_SHA" --title "1.0.0" --notes "NimarkoGram / MofGram 1.0.0 (signed release APK). APK version is unchanged (13.2.1 build)."
