@@ -40649,6 +40649,10 @@ public class ChatActivity extends BaseFragment implements
         private int loadingDownRow = -5;
         private int userPhotoTimeRow = -5;
         private int userNameTimeRow = -5;
+        private int moGramGiftsStartRow = -5;
+        private final ArrayList<app.nimarkogram.messenger.gifts.MoGramGiftsApi.Transfer> moGramInboxGifts = new ArrayList<>();
+        private String moGramInboxAfterId;
+        private boolean moGramInboxAttached;
 
         private int botForumStartThreadRow = -5;
 
@@ -40676,6 +40680,59 @@ public class ChatActivity extends BaseFragment implements
             mContext = context;
             isBot = currentUser != null && currentUser.bot;
             setHasStableIds(true);
+        }
+
+        @Override
+        public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
+            moGramInboxAttached = true;
+            loadMoGramGiftInbox();
+        }
+
+        @Override
+        public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+            moGramInboxAttached = false;
+            AndroidUtilities.cancelRunOnUIThread(moGramInboxPollRunnable);
+            super.onDetachedFromRecyclerView(recyclerView);
+        }
+
+        private final Runnable moGramInboxPollRunnable = this::loadMoGramGiftInbox;
+
+        private void loadMoGramGiftInbox() {
+            if (!moGramInboxAttached || chatMode != MODE_DEFAULT || currentUser == null
+                    || currentUser.bot || currentUser.id <= 0 || getUserConfig().getClientUserId() <= 0) return;
+            final long accountUserId = getUserConfig().getClientUserId();
+            new Thread(() -> {
+                try {
+                    ArrayList<app.nimarkogram.messenger.gifts.MoGramGiftsApi.Transfer> received =
+                            new ArrayList<>(app.nimarkogram.messenger.gifts.MoGramGiftsApi.fetchInbox(accountUserId, moGramInboxAfterId));
+                    AndroidUtilities.runOnUIThread(() -> {
+                        if (!moGramInboxAttached) return;
+                        boolean changed = false;
+                        String newestId = moGramInboxAfterId;
+                        for (app.nimarkogram.messenger.gifts.MoGramGiftsApi.Transfer transfer : received) {
+                            if (transfer == null || transfer.id == null || transfer.id.isEmpty()) continue;
+                            newestId = transfer.id;
+                            if (String.valueOf(currentUser.id).equals(transfer.fromId)
+                                    && String.valueOf(accountUserId).equals(transfer.toId)) {
+                                boolean exists = false;
+                                for (app.nimarkogram.messenger.gifts.MoGramGiftsApi.Transfer old : moGramInboxGifts) {
+                                    if (transfer.id.equals(old.id)) { exists = true; break; }
+                                }
+                                if (!exists) { moGramInboxGifts.add(transfer); changed = true; }
+                            }
+                        }
+                        moGramInboxAfterId = newestId;
+                        if (changed) updateRowsSafe();
+                        AndroidUtilities.runOnUIThread(moGramInboxPollRunnable, 15000);
+                    });
+                } catch (Exception e) {
+                    FileLog.e("MoGram chat gift inbox poll failed", e);
+                    AndroidUtilities.runOnUIThread(() -> {
+                        if (moGramInboxAttached) AndroidUtilities.runOnUIThread(moGramInboxPollRunnable, 30000);
+                    });
+                }
+            }, "MoGramGiftInbox").start();
         }
 
         public void checkRemoveBotForumRowsStartThreadRow(boolean afterSend) {
@@ -40809,6 +40866,12 @@ public class ChatActivity extends BaseFragment implements
                     botInfoRow = rowCount++;
                 }
             }
+            moGramGiftsStartRow = -5;
+            if (chatMode == MODE_DEFAULT && currentUser != null && !currentUser.bot
+                    && !UserObject.isReplyUser(currentUser) && !moGramInboxGifts.isEmpty()) {
+                moGramGiftsStartRow = rowCount;
+                rowCount += moGramInboxGifts.size();
+            }
         }
 
         @Override
@@ -40860,6 +40923,9 @@ public class ChatActivity extends BaseFragment implements
                 return 9;
             } else if (position == hintRow2) {
                 return 10;
+            } else if (moGramGiftsStartRow >= 0 && position >= moGramGiftsStartRow
+                    && position < moGramGiftsStartRow + moGramInboxGifts.size()) {
+                return 100000L + moGramInboxGifts.get(position - moGramGiftsStartRow).id.hashCode();
             }
             return 5;
         }
@@ -41257,6 +41323,17 @@ public class ChatActivity extends BaseFragment implements
                 ChatMessageUnsupportedCell cell = new ChatMessageUnsupportedCell(mContext, themeDelegate);
                 cell.setDelegate(getChatMessageCellDelegate());
                 view = cell;
+            } else if (viewType == 11) {
+                TextView giftView = new TextView(mContext);
+                giftView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+                giftView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, themeDelegate));
+                giftView.setPadding(dp(16), dp(12), dp(16), dp(12));
+                giftView.setGravity(Gravity.CENTER_VERTICAL);
+                giftView.setMaxLines(2);
+                giftView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(dp(14),
+                        Theme.getColor(Theme.key_windowBackgroundGray, themeDelegate),
+                        Theme.getColor(Theme.key_listSelector, themeDelegate)));
+                view = giftView;
             }
             view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
             return new RecyclerListView.Holder(view);
@@ -41264,7 +41341,19 @@ public class ChatActivity extends BaseFragment implements
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            if (position == botInfoRow || position == botInfoEmptyRow) {
+            if (moGramGiftsStartRow >= 0 && position >= moGramGiftsStartRow
+                    && position < moGramGiftsStartRow + moGramInboxGifts.size()) {
+                app.nimarkogram.messenger.gifts.MoGramGiftsApi.Transfer transfer =
+                        moGramInboxGifts.get(position - moGramGiftsStartRow);
+                String sender = transfer.fromId;
+                try {
+                    TLRPC.User senderUser = getMessagesController().getUser(Long.parseLong(transfer.fromId));
+                    if (senderUser != null) sender = UserObject.getUserName(senderUser);
+                } catch (Exception ignored) { }
+                ((TextView) holder.itemView).setText("🎁  "
+                        + (TextUtils.isEmpty(transfer.giftTitle) ? "MoGram Gift" : transfer.giftTitle)
+                        + "\nОтправитель: " + sender);
+            } else if (position == botInfoRow || position == botInfoEmptyRow) {
                 BotHelpCell helpView = (BotHelpCell) holder.itemView;
                 if (UserObject.isReplyUser(currentUser)) {
                     helpView.setText(false, LocaleController.getString(R.string.RepliesChatInfo));
