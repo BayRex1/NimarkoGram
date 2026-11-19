@@ -70,18 +70,9 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
         items.add(asSettingsLink(GHOST, IconBackgroundColors.PURPLE,
                 org.telegram.messenger.R.drawable.ghost, "Режим Призрака",
                 "Настройки приватности и скрытия активности"));
-        items.add(asSettingsLink(10, IconBackgroundColors.BLUE,
-                org.telegram.messenger.R.drawable.msg_settings, "Шпион",
-                "История удалённых и отредактированных сообщений"));
-        items.add(asSettingsLink(11, IconBackgroundColors.CYAN,
-                org.telegram.messenger.R.drawable.msg_settings, "Фильтры",
-                "Фильтры сообщений и регулярные выражения"));
         items.add(asSettingsLink(CUSTOMIZATION, IconBackgroundColors.BLUE,
                 org.telegram.messenger.R.drawable.msg_customize, "Кастомизация",
                 "Удалённые сообщения и персональные статусы"));
-        items.add(asSettingsLink(12, IconBackgroundColors.PURPLE,
-                org.telegram.messenger.R.drawable.msg_settings, "Полный набор AyuGram",
-                "Все оригинальные настройки, синхронизация и дополнительные функции"));
         items.add(UItem.asHeader("Ссылки"));
         items.add(UItem.asButton(20, "Канал", "@ayugram"));
         items.add(UItem.asButton(21, "Чаты", "@ayugramchat"));
@@ -93,13 +84,8 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
     public void onClick(UItem item, View view, int position, float x, float y) {
         if (item.id == GHOST) {
             presentFragment(new app.nimarkogram.messenger.ayugram.ui.preferences.AyuGramPreferencesActivity());
-        } else if (item.id == 10) {
-            presentFragment(new app.nimarkogram.messenger.ayugram.ui.preferences.MessageSavingPreferencesActivity());
-        } else if (item.id == 11) {
-            presentFragment(new app.nimarkogram.messenger.ayugram.ui.preferences.RegexFiltersPreferencesActivity());
         } else if (item.id == CUSTOMIZATION) {
             presentFragment(new AyuGramCustomizationActivity());
-        } else if (item.id == 12) {
             presentFragment(new app.nimarkogram.messenger.ayugram.ui.preferences.AyuGramPreferencesActivity());
         }
     }
