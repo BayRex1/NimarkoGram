@@ -752,10 +752,11 @@ public class ProfileGiftsContainer extends FrameLayout implements NotificationCe
                             Theme.getColor(Theme.key_windowBackgroundGray, resourcesProvider),
                             Theme.getColor(Theme.key_listSelector, resourcesProvider)));
 
-                        TextView giftIcon = new TextView(getContext());
-                        giftIcon.setText("🎁");
-                        giftIcon.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 28);
-                        giftCard.addView(giftIcon, new LinearLayout.LayoutParams(dp(42), LayoutHelper.WRAP_CONTENT));
+                        org.telegram.ui.Components.RLottieImageView giftIcon = new org.telegram.ui.Components.RLottieImageView(getContext());
+                        giftIcon.setAutoRepeat(true);
+                        giftCard.addView(giftIcon, new LinearLayout.LayoutParams(dp(56), dp(56)));
+                        app.nimarkogram.messenger.gifts.MoGramGiftAnimation.bind(getContext(), giftIcon,
+                                transfer.id, transfer.giftFileUrl, 56);
 
                         LinearLayout giftTexts = new LinearLayout(getContext());
                         giftTexts.setOrientation(LinearLayout.VERTICAL);
