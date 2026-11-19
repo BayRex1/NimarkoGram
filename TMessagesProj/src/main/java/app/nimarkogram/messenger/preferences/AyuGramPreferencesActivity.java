@@ -68,11 +68,8 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
     public void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
         items.add(UItem.asCustom(createAyuGramHeader(getContext()), 164));
         items.add(asSettingsLink(GHOST, IconBackgroundColors.PURPLE,
-                org.telegram.messenger.R.drawable.ghost, "Режим Призрака",
-                "Настройки приватности и скрытия активности"));
-        items.add(asSettingsLink(CUSTOMIZATION, IconBackgroundColors.BLUE,
-                org.telegram.messenger.R.drawable.msg_customize, "Кастомизация",
-                "Удалённые сообщения и персональные статусы"));
+                org.telegram.messenger.R.drawable.ghost, "Настройки AyuGram",
+                "Режим призрака, шпион, фильтры и другие функции"));
         items.add(UItem.asHeader("Ссылки"));
         items.add(UItem.asButton(20, "Канал", "@ayugram"));
         items.add(UItem.asButton(21, "Чаты", "@ayugramchat"));
@@ -83,9 +80,6 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
     @Override
     public void onClick(UItem item, View view, int position, float x, float y) {
         if (item.id == GHOST) {
-            presentFragment(new app.nimarkogram.messenger.ayugram.ui.preferences.AyuGramPreferencesActivity());
-        } else if (item.id == CUSTOMIZATION) {
-            presentFragment(new AyuGramCustomizationActivity());
             presentFragment(new app.nimarkogram.messenger.ayugram.ui.preferences.AyuGramPreferencesActivity());
         }
     }
