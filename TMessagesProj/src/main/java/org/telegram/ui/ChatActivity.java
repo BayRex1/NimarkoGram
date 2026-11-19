@@ -41981,6 +41981,9 @@ public class ChatActivity extends BaseFragment implements
                 return 7;
             } else if (position == botForumStartThreadRow) {
                 return 8;
+            } else if (moGramGiftsStartRow >= 0 && position >= moGramGiftsStartRow
+                    && position < moGramGiftsStartRow + moGramInboxGifts.size()) {
+                return 11;
             }
             return 4;
         }
