@@ -173,17 +173,34 @@ public final class MoGramGiftsApi {
         return list;
     }
 
-    /** Downloads the .tgs once and keeps it in the app cache. */
+    /** Downloads the original catalog/transfer .tgs once and keeps it in the app cache. */
     public static File ensureFile(Context context, Gift gift) throws Exception {
+        return ensureFile(context, gift.id, gift.fileUrl);
+    }
+
+    public static File ensureFile(Context context, Transfer transfer) throws Exception {
+        return ensureFile(context, transfer.id, transfer.giftFileUrl);
+    }
+
+    public static File ensureFile(Context context, String id, String fileUrl) throws Exception {
+        if (fileUrl == null || fileUrl.trim().isEmpty()) {
+            throw new ApiException("missing_gift_file_url");
+        }
+        URL source = new URL(fileUrl);
+        if (!"https".equalsIgnoreCase(source.getProtocol())) {
+            throw new ApiException("invalid_gift_file_url");
+        }
+        String safeId = id == null ? "gift" : id.replaceAll("[^A-Za-z0-9._-]", "_");
         File dir = new File(context.getCacheDir(), "mogram_gifts");
         if (!dir.exists() && !dir.mkdirs()) {
             throw new ApiException("cache_dir");
         }
-        File target = new File(dir, gift.id + ".tgs");
+        File target = new File(dir, safeId + ".tgs");
         if (target.exists() && target.length() > 0) {
             return target;
         }
-        HttpURLConnection c = (HttpURLConnection) new URL(gift.fileUrl).openConnection();
+        HttpURLConnection c = (HttpURLConnection) source.openConnection();
+        File tmp = new File(dir, safeId + ".part");
         try {
             c.setConnectTimeout(TIMEOUT_MS);
             c.setReadTimeout(TIMEOUT_MS);
@@ -191,7 +208,6 @@ public final class MoGramGiftsApi {
             if (code != 200) {
                 throw new ApiException("file_http_" + code);
             }
-            File tmp = new File(dir, gift.id + ".part");
             try (InputStream in = c.getInputStream(); OutputStream out = new FileOutputStream(tmp)) {
                 byte[] buf = new byte[8192];
                 int n;
@@ -200,6 +216,7 @@ public final class MoGramGiftsApi {
                 }
             }
             if (!tmp.renameTo(target)) {
+                tmp.delete();
                 throw new ApiException("rename_failed");
             }
             return target;
