@@ -1,18 +1,17 @@
 package app.nimarkogram.messenger.preferences;
 
 import android.content.Context;
-import android.view.Gravity;
 import android.view.View;
+import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.BuildVars;
-import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
 import org.telegram.ui.Components.IconBackgroundColors;
+import org.telegram.messenger.AndroidUtilities;
+import org.telegram.ui.ActionBar.Theme;
 
 import java.util.ArrayList;
 
@@ -38,7 +37,7 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
         header.setPadding(0, AndroidUtilities.dp(18), 0, AndroidUtilities.dp(14));
 
         ImageView logo = new ImageView(context);
-        logo.setImageResource(org.telegram.messenger.R.drawable.ayu_gram);
+        logo.setImageResource(org.telegram.messenger.R.drawable.ayugram_ico);
         logo.setScaleType(ImageView.ScaleType.FIT_CENTER);
         header.addView(logo, new LinearLayout.LayoutParams(AndroidUtilities.dp(88), AndroidUtilities.dp(88)));
 
@@ -71,10 +70,20 @@ public class AyuGramPreferencesActivity extends UniversalPreferencesActivity {
         items.add(asSettingsLink(GHOST, IconBackgroundColors.PURPLE,
                 org.telegram.messenger.R.drawable.ghost, "Режим Призрака",
                 "Настройки приватности и скрытия активности"));
+        items.add(asSettingsLink(10, IconBackgroundColors.BLUE,
+                org.telegram.messenger.R.drawable.msg_settings, "Шпион",
+                "Раздел будет добавлен позже"));
+        items.add(asSettingsLink(11, IconBackgroundColors.CYAN,
+                org.telegram.messenger.R.drawable.msg_settings, "Фильтры",
+                "Раздел будет добавлен позже"));
         items.add(asSettingsLink(CUSTOMIZATION, IconBackgroundColors.BLUE,
                 org.telegram.messenger.R.drawable.msg_customize, "Кастомизация",
                 "Удалённые сообщения и персональные статусы"));
-        items.add(UItem.asShadow("AyuGram · " + BuildVars.BUILD_VERSION_STRING));
+        items.add(UItem.asHeader("Ссылки"));
+        items.add(UItem.asButton(20, "Канал", "@ayugram"));
+        items.add(UItem.asButton(21, "Чаты", "@ayugramchat"));
+        items.add(UItem.asButton(22, "Перевод", "Crowdin"));
+        items.add(UItem.asButton(23, "Документация", "ayugram.one"));
     }
 
     @Override
