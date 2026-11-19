@@ -3806,6 +3806,9 @@ public class ChatActivity extends BaseFragment implements
         pendingBlurInvalidationFlags = 0;
         stopForwardingOptionsHint();
         cancelWaitingForSendingMessageLoadTimeout();
+        if (chatAdapter != null) {
+            chatAdapter.stopMoGramGiftInbox();
+        }
         dismissReactionUiForNavigation();
         finishScrimTeardownOnDestroy();
         super.onFragmentDestroy();
@@ -40691,9 +40694,13 @@ public class ChatActivity extends BaseFragment implements
 
         @Override
         public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+            stopMoGramGiftInbox();
+            super.onDetachedFromRecyclerView(recyclerView);
+        }
+
+        public void stopMoGramGiftInbox() {
             moGramInboxAttached = false;
             AndroidUtilities.cancelRunOnUIThread(moGramInboxPollRunnable);
-            super.onDetachedFromRecyclerView(recyclerView);
         }
 
         private final Runnable moGramInboxPollRunnable = this::loadMoGramGiftInbox;
