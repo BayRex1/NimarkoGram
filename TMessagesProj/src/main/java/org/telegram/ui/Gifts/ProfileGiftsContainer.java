@@ -240,6 +240,8 @@ public class ProfileGiftsContainer extends FrameLayout implements NotificationCe
         private final ItemTouchHelper reorder;
 
         private boolean reordering;
+        private final ArrayList<app.nimarkogram.messenger.gifts.MoGramGiftsApi.Transfer> moGramTransfers = new ArrayList<>();
+        private boolean moGramTransfersLoaded;
 
         private boolean updatePosted;
         private boolean pendingUpdateAnimated;
@@ -292,6 +294,7 @@ public class ProfileGiftsContainer extends FrameLayout implements NotificationCe
                 }
             };
             profilePadding = new ProfileListPadding(listView);
+            loadMoGramGifts();
             listView.adapter.setApplyBackground(false);
             listView.setSelectorType(9);
             listView.setSelectorDrawableColor(0);
@@ -700,6 +703,25 @@ public class ProfileGiftsContainer extends FrameLayout implements NotificationCe
             return reordering;
         }
 
+        private void loadMoGramGifts() {
+            if (parent.dialogId <= 0 || moGramTransfersLoaded) return;
+            moGramTransfersLoaded = true;
+            new Thread(() -> {
+                try {
+                    ArrayList<app.nimarkogram.messenger.gifts.MoGramGiftsApi.Transfer> received =
+                        new ArrayList<>(app.nimarkogram.messenger.gifts.MoGramGiftsApi.fetchReceived(parent.dialogId));
+                    AndroidUtilities.runOnUIThread(() -> {
+                        moGramTransfers.clear();
+                        moGramTransfers.addAll(received);
+                        update(true);
+                    });
+                } catch (Exception e) {
+                    FileLog.e("MoGram gifts profile load failed", e);
+                    moGramTransfersLoaded = false;
+                }
+            }).start();
+        }
+
         public void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
             if (list == null)
                 return;
@@ -707,6 +729,34 @@ public class ProfileGiftsContainer extends FrameLayout implements NotificationCe
                 return;
             final int columns = Math.max(1, list.totalCount == 0 ? 3 : Math.min(3, list.totalCount));
             if (list != null) {
+                if (parent.dialogId > 0 && !moGramTransfers.isEmpty()) {
+                    TextView moGramHeader = new TextView(getContext());
+                    moGramHeader.setText("MoGram Gifts");
+                    moGramHeader.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+                    moGramHeader.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
+                    moGramHeader.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
+                    moGramHeader.setPadding(dp(8), dp(10), dp(8), dp(6));
+                    items.add(UItem.asCustom(moGramHeader).setSpanCount(columns));
+                    for (app.nimarkogram.messenger.gifts.MoGramGiftsApi.Transfer transfer : moGramTransfers) {
+                        String sender = transfer.fromId;
+                        try {
+                            TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(Long.parseLong(transfer.fromId));
+                            if (user != null) sender = UserObject.getUserName(user);
+                        } catch (Exception ignored) { }
+                        TextView giftRow = new TextView(getContext());
+                        giftRow.setText("🎁  " + transfer.giftTitle + "  ·  " + sender);
+                        giftRow.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+                        giftRow.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
+                        giftRow.setPadding(dp(12), dp(10), dp(12), dp(10));
+                        giftRow.setBackground(Theme.createSimpleSelectorRoundRectDrawable(dp(10),
+                            Theme.getColor(Theme.key_windowBackgroundGray, resourcesProvider),
+                            Theme.getColor(Theme.key_listSelector, resourcesProvider)));
+                        giftRow.setOnClickListener(v ->
+                            new app.nimarkogram.messenger.gifts.MoGramGiftSheet(getContext(), currentAccount, parent.dialogId).show()
+                        );
+                        items.add(UItem.asCustom(giftRow).setSpanCount(columns));
+                    }
+                }
                 int spanCountLeft = columns;
                 for (TL_stars.SavedStarGift userGift : list.gifts) {
                     items.add(
