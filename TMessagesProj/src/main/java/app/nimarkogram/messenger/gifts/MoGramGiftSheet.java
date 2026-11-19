@@ -1,6 +1,6 @@
 package app.nimarkogram.messenger.gifts;
 
-import android.content.Context;
+import android.content.Context;\nimport android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -115,8 +115,21 @@ public class MoGramGiftSheet extends BottomSheet {
         for (MoGramGiftsApi.Transfer t : transfers) {
             String from = displayName(t.fromId);
             String to = displayName(t.toId);
-            TextView historyRow = makeText(from + " → " + to + ": " + t.giftTitle, 15, false);
+            LinearLayout historyRow = new LinearLayout(ctx);
+            historyRow.setOrientation(LinearLayout.HORIZONTAL);
+            historyRow.setGravity(Gravity.CENTER_VERTICAL);
             historyRow.setPadding(AndroidUtilities.dp(8), AndroidUtilities.dp(8), AndroidUtilities.dp(8), AndroidUtilities.dp(8));
+            RLottieImageView historyIcon = new RLottieImageView(ctx);
+            historyIcon.setAutoRepeat(true);
+            historyRow.addView(historyIcon, new LinearLayout.LayoutParams(AndroidUtilities.dp(48), AndroidUtilities.dp(48)));
+            MoGramGiftAnimation.bind(ctx, historyIcon, t.id, t.giftFileUrl, 48);
+            LinearLayout historyTexts = new LinearLayout(ctx);
+            historyTexts.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams historyTextParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+            historyTextParams.leftMargin = AndroidUtilities.dp(10);
+            historyRow.addView(historyTexts, historyTextParams);
+            historyTexts.addView(makeText(TextUtils.isEmpty(t.giftTitle) ? "MoGram Gift" : t.giftTitle, 15, true));
+            historyTexts.addView(makeText(from + " → " + to, 12, false));
             historyList.addView(historyRow);
         }
     }
