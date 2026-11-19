@@ -675,6 +675,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private final static int nm_option_get_profile_background = app.nimarkogram.messenger.utils.ProfileActivityHelper.OPTION_GET_PROFILE_BACKGROUND;
     private final static int nm_option_apply_profile_background = app.nimarkogram.messenger.utils.ProfileActivityHelper.OPTION_APPLY_PROFILE_BACKGROUND;
     private final static int nm_option_user_info = app.nimarkogram.messenger.utils.ProfileActivityHelper.OPTION_USER_INFO;
+    private final static int nm_option_mogram_gifts = app.nimarkogram.messenger.utils.ProfileActivityHelper.OPTION_MOGRAM_GIFTS;
 
     // C1: plugin-registered "Plugins (N)" item in the profile overflow (PROFILE_ACTION_MENU).
     private final static int nimarko_plugins_menu = 1092;
@@ -4477,6 +4478,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     app.nimarkogram.messenger.utils.ProfileActivityHelper
                             .getInstance(currentAccount)
                             .applyProfileBackground(ProfileActivity.this, getDialogId());
+                } else if (id == nm_option_mogram_gifts) {
+                    // NimarkoGram: MoGram gifts sheet (send catalog gift + history).
+                    showDialog(new app.nimarkogram.messenger.gifts.MoGramGiftSheet(getContext(), currentAccount, userId));
                 } else if (id == nm_option_user_info) {
                     // NimarkoGram: minimal DC + registration-month dialog.
                     // CG parity: when the dialog is a chat (not a user), fall back
@@ -17308,7 +17312,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 {start_secret_chat, enable_no_forwards, disable_no_forwards, bot_privacy},
                 {app.nimarkogram.messenger.utils.ProfileActivityHelper.OPTION_GET_PROFILE_BACKGROUND,
                         app.nimarkogram.messenger.utils.ProfileActivityHelper.OPTION_APPLY_PROFILE_BACKGROUND},
-                {app.nimarkogram.messenger.utils.ProfileActivityHelper.OPTION_USER_INFO, add_shortcut},
+                {app.nimarkogram.messenger.utils.ProfileActivityHelper.OPTION_USER_INFO, add_shortcut,
+                        app.nimarkogram.messenger.utils.ProfileActivityHelper.OPTION_MOGRAM_GIFTS},
                 {app.nimarkogram.messenger.utils.ProfileActivityHelper.OPTION_RESTART}
         };
         ArrayList<ArrayList<View>> groups = new ArrayList<>();
