@@ -137,7 +137,8 @@ public final class MoGramStarGifts {
                 continue;
             }
             long id = telegramIdFor(g.id);
-            TL_stars.StarGift sg = new TL_stars.StarGift();
+            // The catalog cell only draws the sticker for TL_starGift (the regular gift type), not the base class.
+            TL_stars.TL_starGift sg = new TL_stars.TL_starGift();
             sg.id = id;
             sg.gift_id = id;
             sg.stars = g.priceStars;
