@@ -81,7 +81,7 @@ public final class MoGramStarGifts {
                     sg.title = g.title;
                     sg.limited = false;
                     sg.sold_out = false;
-                    sg.sticker = animationDocument(id, file);
+                    sg.sticker = animationDocument(account, id, file);
                     built.add(sg);
                     map.put(id, g);
                 }
@@ -98,7 +98,7 @@ public final class MoGramStarGifts {
         }).start();
     }
 
-    private static TLRPC.Document animationDocument(long id, File file) {
+    private static TLRPC.Document animationDocument(int account, long id, File file) throws java.io.IOException {
         TLRPC.TL_document doc = new TLRPC.TL_document();
         doc.id = id;
         doc.access_hash = 0;
@@ -110,6 +110,13 @@ public final class MoGramStarGifts {
         doc.file_name = file.getName();
         doc.attributes.add(new TLRPC.TL_documentAttributeAnimated());
         doc.localPath = file.getAbsolutePath();
+        // ImageLoader looks for the animation in the cache folder under Telegram's own name,
+        // so copy the .tgs there. Without this the catalog cell stays empty.
+        File cacheFile = org.telegram.messenger.FileLoader.getInstance(account).getPathToAttach(doc, true);
+        if (cacheFile != null && (!cacheFile.exists() || cacheFile.length() != file.length())) {
+            cacheFile.getParentFile().mkdirs();
+            java.nio.file.Files.copy(file.toPath(), cacheFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        }
         return doc;
     }
 
