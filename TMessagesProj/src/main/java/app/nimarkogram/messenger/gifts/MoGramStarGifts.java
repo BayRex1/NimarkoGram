@@ -124,6 +124,10 @@ public final class MoGramStarGifts {
         doc.dc_id = 0;
         doc.file_name = file.getName();
         doc.attributes.add(new TLRPC.TL_documentAttributeAnimated());
+        // Telegram only treats a .tgs document as an animated sticker when it has a thumb entry.
+        TLRPC.TL_photoSizeEmpty thumb = new TLRPC.TL_photoSizeEmpty();
+        thumb.type = "m";
+        doc.thumbs.add(thumb);
         doc.localPath = file.getAbsolutePath();
         // ImageLoader looks for the animation in the cache folder under Telegram's own name,
         // so copy the .tgs there. Failure here must not break the whole catalog.
