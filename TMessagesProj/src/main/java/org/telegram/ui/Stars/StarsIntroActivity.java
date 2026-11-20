@@ -5604,6 +5604,13 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
             imageReceiver.clearImage();
             return;
         }
+        // NimarkoGram: MoGram gifts keep their .tgs on disk; load it directly as a Lottie file.
+        if (document.localPath != null && "application/x-tgsticker".equals(document.mime_type)) {
+            ImageLocation location = ImageLocation.getForPath(document.localPath);
+            location.imageType = FileLoader.IMAGE_TYPE_LOTTIE;
+            imageReceiver.setImage(location, size + "_" + size, null, null, null, 0, null, null, 0);
+            return;
+        }
         final TLRPC.PhotoSize photoSize = FileLoader.getClosestPhotoSizeWithSize(document.thumbs, size);
         final SvgHelper.SvgDrawable svgThumb = DocumentObject.getSvgThumb(document.thumbs, Theme.key_windowBackgroundGray, 0.35f);
         imageReceiver.setImage(

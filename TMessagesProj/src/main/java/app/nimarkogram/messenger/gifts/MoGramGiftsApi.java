@@ -224,4 +224,32 @@ public final class MoGramGiftsApi {
             c.disconnect();
         }
     }
+
+    /** Raw catalog JSON from api.mogram (kept on disk so the shop works without network). */
+    public static String fetchCatalogJson() throws Exception {
+        return http("GET", "/v1/gifts/catalog", null);
+    }
+
+    public static List<Gift> parseCatalog(String json) throws Exception {
+        JSONArray arr = new JSONObject(json).optJSONArray("gifts");
+        List<Gift> list = new ArrayList<>();
+        if (arr == null) {
+            return list;
+        }
+        for (int i = 0; i < arr.length(); i++) {
+            JSONObject o = arr.getJSONObject(i);
+            list.add(new Gift(
+                    o.getString("id"),
+                    o.getString("title"),
+                    o.getString("file_url"),
+                    o.optInt("price_stars", 0)));
+        }
+        return list;
+    }
+
+    /** Returns the downloaded .tgs if it is already on disk, otherwise null. */
+    public static File cachedFile(Context context, Gift gift) {
+        File f = new File(new File(context.getCacheDir(), "mogram_gifts"), gift.id + ".tgs");
+        return f.exists() && f.length() > 0 ? f : null;
+    }
 }
