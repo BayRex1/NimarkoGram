@@ -73,10 +73,13 @@ public final class MoGramStarGifts {
 
     /** Loads the catalog once per app start and asks StarsController to rebuild its list. */
     public static void refreshOnce(Context context, int account) {
-        if (requested) {
-            return;
+        // Retries on every shop open until the catalog arrives: the api host on Render may be asleep.
+        synchronized (lock) {
+            if (requested || !gifts.isEmpty()) {
+                return;
+            }
+            requested = true;
         }
-        requested = true;
         new Thread(() -> {
             try {
                 List<MoGramGiftsApi.Gift> catalog = MoGramGiftsApi.fetchCatalog();
@@ -104,7 +107,8 @@ public final class MoGramStarGifts {
                 }
                 AndroidUtilities.runOnUIThread(() -> StarsController.getInstance(account).invalidateStarGifts());
             } catch (Throwable ignored) {
-                // Catalog stays as it was; Telegram gifts still work.
+                // Catalog stays empty; the next shop open retries.
+                requested = false;
             }
         }).start();
     }
