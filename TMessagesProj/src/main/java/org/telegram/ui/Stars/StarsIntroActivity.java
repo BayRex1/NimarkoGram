@@ -5601,6 +5601,17 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
 
     }
 
+    private static boolean nimarkoSetImageShown;
+
+    private static void debugSetImageOnce(String text) {
+        if (nimarkoSetImageShown) {
+            return;
+        }
+        nimarkoSetImageShown = true;
+        AndroidUtilities.runOnUIThread(() -> android.widget.Toast.makeText(
+                org.telegram.messenger.ApplicationLoader.applicationContext, "MoGram setGiftImage: " + text, android.widget.Toast.LENGTH_LONG).show());
+    }
+
     private static boolean nimarkoDebugShown;
 
     private static void debugOnce(String text) {
@@ -5613,6 +5624,10 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
     }
 
     public static void setGiftImage(ImageReceiver imageReceiver, TLRPC.Document document, int size) {
+        // NimarkoGram diagnostics: show what arrives for .tgs documents (once per app start).
+        if (document == null || "application/x-tgsticker".equals(document.mime_type)) {
+            debugSetImageOnce(document == null ? "doc=null size=" + size : "doc id=" + document.id + " local=" + document.localPath + " mime=" + document.mime_type + " size=" + size);
+        }
         if (document == null) {
             imageReceiver.clearImage();
             return;
