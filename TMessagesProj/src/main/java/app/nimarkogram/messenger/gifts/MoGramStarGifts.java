@@ -92,7 +92,7 @@ public final class MoGramStarGifts {
                     catalogById.putAll(map);
                 }
                 AndroidUtilities.runOnUIThread(() -> StarsController.getInstance(account).invalidateStarGifts());
-            } catch (Exception ignored) {
+            } catch (Throwable ignored) {
                 // Catalog stays as it was; Telegram gifts still work.
             }
         }).start();
@@ -111,13 +111,31 @@ public final class MoGramStarGifts {
         doc.attributes.add(new TLRPC.TL_documentAttributeAnimated());
         doc.localPath = file.getAbsolutePath();
         // ImageLoader looks for the animation in the cache folder under Telegram's own name,
-        // so copy the .tgs there. Without this the catalog cell stays empty.
-        File cacheFile = org.telegram.messenger.FileLoader.getInstance(account).getPathToAttach(doc, true);
-        if (cacheFile != null && (!cacheFile.exists() || cacheFile.length() != file.length())) {
-            cacheFile.getParentFile().mkdirs();
-            java.nio.file.Files.copy(file.toPath(), cacheFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        // so copy the .tgs there. Failure here must not break the whole catalog.
+        try {
+            File cacheFile = org.telegram.messenger.FileLoader.getInstance(account).getPathToAttach(doc, true);
+            if (cacheFile != null && (!cacheFile.exists() || cacheFile.length() != file.length())) {
+                File parent = cacheFile.getParentFile();
+                if (parent != null) {
+                    parent.mkdirs();
+                }
+                copyFile(file, cacheFile);
+            }
+        } catch (Throwable ignored) {
+            // The sticker stays unavailable in the cache, but the rest of the catalog still loads.
         }
         return doc;
+    }
+
+    private static void copyFile(File from, File to) throws java.io.IOException {
+        try (java.io.InputStream in = new java.io.FileInputStream(from);
+             java.io.OutputStream out = new java.io.FileOutputStream(to)) {
+            byte[] buf = new byte[8192];
+            int n;
+            while ((n = in.read(buf)) > 0) {
+                out.write(buf, 0, n);
+            }
+        }
     }
 
     /** Purchase goes to api.mogram instead of Telegram payments. The price is 0 stars. */
