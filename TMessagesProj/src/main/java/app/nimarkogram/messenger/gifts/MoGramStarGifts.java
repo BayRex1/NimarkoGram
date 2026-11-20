@@ -42,6 +42,17 @@ public final class MoGramStarGifts {
         }
     }
 
+    /** Telegram gifts only: this is what goes into the on-disk catalog cache. */
+    public static ArrayList<TL_stars.StarGift> withoutMoGram(List<TL_stars.StarGift> list) {
+        ArrayList<TL_stars.StarGift> result = new ArrayList<>();
+        for (TL_stars.StarGift g : list) {
+            if (!isMoGram(g)) {
+                result.add(g);
+            }
+        }
+        return result;
+    }
+
     /** Adds MoGram gifts to a catalog list that Telegram just built from its own server response. */
     public static void inject(List<TL_stars.StarGift> target) {
         synchronized (lock) {

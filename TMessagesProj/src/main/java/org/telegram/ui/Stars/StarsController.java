@@ -2349,7 +2349,8 @@ public class StarsController {
                     NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.starGiftsLoaded);
                     saveStarGiftsCached(res.gifts, giftsHash, giftsRemoteTime);
                 } else if (giftsRemote instanceof TL_stars.TL_starGiftsNotModified) {
-                    saveStarGiftsCached(gifts, giftsHash, giftsRemoteTime = System.currentTimeMillis());
+                    app.nimarkogram.messenger.gifts.MoGramStarGifts.inject(gifts);
+                    saveStarGiftsCached(app.nimarkogram.messenger.gifts.MoGramStarGifts.withoutMoGram(gifts), giftsHash, giftsRemoteTime = System.currentTimeMillis());
                 }
             });
         }
