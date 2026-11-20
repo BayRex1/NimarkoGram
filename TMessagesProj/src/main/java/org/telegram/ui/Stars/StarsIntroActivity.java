@@ -5623,6 +5623,26 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
                 org.telegram.messenger.ApplicationLoader.applicationContext, text, android.widget.Toast.LENGTH_LONG).show());
     }
 
+    /**
+     * NimarkoGram: draws a MoGram .tgs straight from its file. Returns false for any other document.
+     * ImageLoader decides the animation type from the extension, so MoGram gifts bypass it.
+     */
+    public static boolean setMoGramLottie(ImageReceiver imageReceiver, TLRPC.Document document, int sizePx) {
+        if (document == null || document.localPath == null || !"application/x-tgsticker".equals(document.mime_type)) {
+            return false;
+        }
+        try {
+            File file = new File(document.localPath);
+            String json = ImageLoader.decompressGzip(file);
+            RLottieDrawable lottie = new RLottieDrawable(file, json, sizePx, sizePx, null, true, null, 0, false);
+            imageReceiver.setImageBitmap(lottie);
+            debugOnce("MoGram tgs ok: frames=" + lottie.getFramesCount() + " px=" + sizePx);
+        } catch (Throwable e) {
+            debugOnce("MoGram tgs error: " + e);
+        }
+        return true;
+    }
+
     public static void setGiftImage(ImageReceiver imageReceiver, TLRPC.Document document, int size) {
         // NimarkoGram diagnostics: show what arrives for .tgs documents (once per app start).
         if (document == null || "application/x-tgsticker".equals(document.mime_type)) {
