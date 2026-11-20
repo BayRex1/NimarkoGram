@@ -2,6 +2,8 @@
 
 package org.telegram.ui.Stars;
 
+import org.telegram.messenger.ImageLoader;
+import java.io.File;
 import static org.telegram.messenger.AndroidUtilities.dp;
 import org.telegram.utils.glass.BaseFragmentSimpleGlass;
 import static org.telegram.messenger.LocaleController.formatPluralString;
@@ -5604,11 +5606,13 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
             imageReceiver.clearImage();
             return;
         }
-        // NimarkoGram: MoGram gifts keep their .tgs on disk; load it directly as a Lottie file.
+        // NimarkoGram: MoGram gifts keep their .tgs on disk. Build the Lottie drawable from the file
+        // directly: ImageLoader decides the animation type from the extension, so it draws nothing here.
         if (document.localPath != null && "application/x-tgsticker".equals(document.mime_type)) {
-            ImageLocation location = ImageLocation.getForPath(document.localPath);
-            location.imageType = FileLoader.IMAGE_TYPE_LOTTIE;
-            imageReceiver.setImage(location, size + "_" + size, null, null, null, 0, null, null, 0);
+            File file = new File(document.localPath);
+            int px = AndroidUtilities.dp(size);
+            RLottieDrawable lottie = new RLottieDrawable(file, ImageLoader.decompressGzip(file), px, px, null, true, null, 0, false);
+            imageReceiver.setImageBitmap(lottie);
             return;
         }
         final TLRPC.PhotoSize photoSize = FileLoader.getClosestPhotoSizeWithSize(document.thumbs, size);
