@@ -252,4 +252,66 @@ public final class MoGramGiftsApi {
         File f = new File(new File(context.getCacheDir(), "mogram_gifts"), gift.id + ".tgs");
         return f.exists() && f.length() > 0 ? f : null;
     }
+
+    public static final class ManifestItem {
+        public final String id;
+        public final String title;
+        public final int priceStars;
+        public final String fileUrl;
+        public final String sha256;
+
+        ManifestItem(String id, String title, int priceStars, String fileUrl, String sha256) {
+            this.id = id;
+            this.title = title;
+            this.priceStars = priceStars;
+            this.fileUrl = fileUrl;
+            this.sha256 = sha256;
+        }
+    }
+
+    public static String fetchManifestJson() throws Exception {
+        return http("GET", "/v1/gifts/manifest", null);
+    }
+
+    public static List<ManifestItem> parseManifest(String json) throws Exception {
+        JSONArray arr = new JSONObject(json).optJSONArray("gifts");
+        List<ManifestItem> list = new ArrayList<>();
+        if (arr == null) {
+            return list;
+        }
+        for (int i = 0; i < arr.length(); i++) {
+            JSONObject o = arr.getJSONObject(i);
+            list.add(new ManifestItem(
+                    o.getString("id"),
+                    o.getString("title"),
+                    o.optInt("price_stars", 0),
+                    o.getString("file_url"),
+                    o.isNull("sha256") ? null : o.getString("sha256")));
+        }
+        return list;
+    }
+
+    /** Downloads a file fully into memory (.tgs files are small). */
+    public static byte[] download(String url) throws Exception {
+        HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
+        try {
+            c.setConnectTimeout(TIMEOUT_MS);
+            c.setReadTimeout(TIMEOUT_MS);
+            int code = c.getResponseCode();
+            if (code != 200) {
+                throw new ApiException("file_http_" + code);
+            }
+            try (InputStream in = c.getInputStream()) {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                byte[] buf = new byte[8192];
+                int n;
+                while ((n = in.read(buf)) > 0) {
+                    out.write(buf, 0, n);
+                }
+                return out.toByteArray();
+            }
+        } finally {
+            c.disconnect();
+        }
+    }
 }

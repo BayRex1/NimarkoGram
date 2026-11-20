@@ -11,7 +11,6 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.tgnet.tl.TL_stars;
 import org.telegram.ui.Stars.StarsController;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -23,19 +22,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Turns the MoGram catalog into native TL_stars.StarGift objects so they show up in the regular
- * gift catalog. The catalog is kept on disk, so the shop shows gifts even if api.mogram is asleep.
+ * Turns synced MoGram gifts into native TL_stars.StarGift objects so they show up in the regular
+ * gift catalog. Files come from MoGramGiftSync (Downloads/MoGram), so the shop works offline.
  */
 public final class MoGramStarGifts {
 
     // Telegram gift ids are small positive longs; this base keeps ours clear of them.
     private static final long ID_BASE = 9_000_000_000_000L;
     private static final long REFRESH_INTERVAL_MS = 5 * 60 * 1000L;
-    private static final String CATALOG_FILE = "catalog.json";
 
     private static final Object lock = new Object();
     private static final List<TL_stars.StarGift> gifts = new ArrayList<>();
-    private static final Map<Long, MoGramGiftsApi.Gift> catalogById = new HashMap<>();
+    private static final Map<Long, String> catalogIdByTelegramId = new HashMap<>();
     private static volatile boolean refreshing;
     private static volatile long lastRefreshOk;
 
@@ -48,7 +46,7 @@ public final class MoGramStarGifts {
 
     public static boolean isMoGram(TL_stars.StarGift gift) {
         synchronized (lock) {
-            return gift != null && catalogById.containsKey(gift.id);
+            return gift != null && catalogIdByTelegramId.containsKey(gift.id);
         }
     }
 
@@ -65,7 +63,7 @@ public final class MoGramStarGifts {
 
     /** Adds MoGram gifts to a catalog list that Telegram just built from its own data. */
     public static void inject(List<TL_stars.StarGift> target) {
-        loadFromDiskIfEmpty(ApplicationLoader.applicationContext);
+        loadLocalIfEmpty(ApplicationLoader.applicationContext);
         synchronized (lock) {
             for (TL_stars.StarGift g : gifts) {
                 boolean exists = false;
@@ -82,7 +80,7 @@ public final class MoGramStarGifts {
         }
     }
 
-    /** Asks api.mogram for the catalog. Runs at most once per few minutes and retries on failure. */
+    /** Syncs Downloads/MoGram with the server. At most once per few minutes; retries on failure. */
     public static void refreshOnce(Context context, int account) {
         synchronized (lock) {
             if (refreshing || System.currentTimeMillis() - lastRefreshOk < REFRESH_INTERVAL_MS) {
@@ -93,11 +91,9 @@ public final class MoGramStarGifts {
         new Thread(() -> {
             boolean ok = false;
             try {
-                String json = MoGramGiftsApi.fetchCatalogJson();
-                List<MoGramGiftsApi.Gift> catalog = MoGramGiftsApi.parseCatalog(json);
-                List<TL_stars.StarGift> built = buildGifts(context, account, catalog, true);
-                saveCatalogJson(context, json);
-                setGifts(built, catalog);
+                List<MoGramGiftSync.Ready> ready = MoGramGiftSync.sync(context);
+                Map<Long, String> ids = new HashMap<>();
+                setGifts(buildGifts(account, ready, ids), ids);
                 lastRefreshOk = System.currentTimeMillis();
                 ok = true;
             } catch (Throwable ignored) {
@@ -111,56 +107,51 @@ public final class MoGramStarGifts {
         }).start();
     }
 
-    private static void loadFromDiskIfEmpty(Context context) {
+    private static void loadLocalIfEmpty(Context context) {
         synchronized (lock) {
             if (!gifts.isEmpty() || context == null) {
                 return;
             }
         }
         try {
-            File f = new File(new File(context.getCacheDir(), "mogram_gifts"), CATALOG_FILE);
-            if (!f.exists()) {
-                return;
-            }
-            List<MoGramGiftsApi.Gift> catalog = MoGramGiftsApi.parseCatalog(readFile(f));
-            setGifts(buildGifts(context, UserConfig.selectedAccount, catalog, false), catalog);
+            Map<Long, String> ids = new HashMap<>();
+            setGifts(buildGifts(UserConfig.selectedAccount, MoGramGiftSync.loadLocal(context), ids), ids);
         } catch (Throwable ignored) {
-            // No usable disk copy; the network refresh will fill it in.
+            // Nothing on disk yet; the network sync fills it in.
         }
     }
 
-    private static List<TL_stars.StarGift> buildGifts(Context context, int account, List<MoGramGiftsApi.Gift> catalog, boolean download) throws Exception {
+    private static List<TL_stars.StarGift> buildGifts(int account, List<MoGramGiftSync.Ready> ready, Map<Long, String> ids) {
         List<TL_stars.StarGift> built = new ArrayList<>();
-        for (MoGramGiftsApi.Gift g : catalog) {
-            File file = download ? MoGramGiftsApi.ensureFile(context, g) : MoGramGiftsApi.cachedFile(context, g);
-            if (file == null) {
-                continue;
-            }
-            long id = telegramIdFor(g.id);
-            // The catalog cell only draws the sticker for TL_starGift (the regular gift type), not the base class.
+        for (MoGramGiftSync.Ready r : ready) {
+            long id = telegramIdFor(r.id);
+            ids.put(id, r.id);
+            // The catalog cell only draws the sticker for TL_starGift (the regular gift type).
             TL_stars.TL_starGift sg = new TL_stars.TL_starGift();
             sg.id = id;
             sg.gift_id = id;
-            sg.stars = g.priceStars;
-            sg.title = g.title;
+            sg.stars = r.priceStars;
+            sg.title = r.title;
             sg.limited = false;
             sg.sold_out = false;
-            sg.sticker = animationDocument(account, id, file);
+            sg.sticker = animationDocument(account, id, r.renderFile);
             built.add(sg);
         }
         return built;
     }
 
-    private static void setGifts(List<TL_stars.StarGift> built, List<MoGramGiftsApi.Gift> catalog) {
-        Map<Long, MoGramGiftsApi.Gift> map = new HashMap<>();
-        for (MoGramGiftsApi.Gift g : catalog) {
-            map.put(telegramIdFor(g.id), g);
-        }
+    private static void setGifts(List<TL_stars.StarGift> built, Map<Long, String> ids) {
         synchronized (lock) {
             gifts.clear();
             gifts.addAll(built);
-            catalogById.clear();
-            catalogById.putAll(map);
+            catalogIdByTelegramId.clear();
+            catalogIdByTelegramId.putAll(ids);
+        }
+    }
+
+    private static String catalogIdFor(long telegramId) {
+        synchronized (lock) {
+            return catalogIdByTelegramId.get(telegramId);
         }
     }
 
@@ -196,28 +187,6 @@ public final class MoGramStarGifts {
         return doc;
     }
 
-    private static void saveCatalogJson(Context context, String json) throws Exception {
-        File dir = new File(context.getCacheDir(), "mogram_gifts");
-        if (!dir.exists() && !dir.mkdirs()) {
-            return;
-        }
-        try (OutputStream out = new FileOutputStream(new File(dir, CATALOG_FILE))) {
-            out.write(json.getBytes("UTF-8"));
-        }
-    }
-
-    private static String readFile(File file) throws Exception {
-        try (InputStream in = new FileInputStream(file)) {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] buf = new byte[8192];
-            int n;
-            while ((n = in.read(buf)) > 0) {
-                out.write(buf, 0, n);
-            }
-            return out.toString("UTF-8");
-        }
-    }
-
     private static void copyFile(File from, File to) throws Exception {
         try (InputStream in = new FileInputStream(from); OutputStream out = new FileOutputStream(to)) {
             byte[] buf = new byte[8192];
@@ -230,14 +199,11 @@ public final class MoGramStarGifts {
 
     /** Purchase goes to api.mogram instead of Telegram payments. The price is 0 stars. */
     public static void buy(int account, TL_stars.StarGift gift, long toUserId, Utilities.Callback2<Boolean, String> whenDone) {
-        final MoGramGiftsApi.Gift catalogGift;
-        synchronized (lock) {
-            catalogGift = catalogById.get(gift.id);
-        }
+        final String catalogId = catalogIdFor(gift.id);
         final long fromId = UserConfig.getInstance(account).getClientUserId();
         new Thread(() -> {
             try {
-                MoGramGiftsApi.send(fromId, catalogGift.id, toUserId);
+                MoGramGiftsApi.send(fromId, catalogId, toUserId);
                 AndroidUtilities.runOnUIThread(() -> whenDone.run(true, null));
             } catch (MoGramGiftsApi.ApiException e) {
                 final String msg = e.getMessage();
