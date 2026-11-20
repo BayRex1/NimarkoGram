@@ -5601,6 +5601,17 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
 
     }
 
+    private static boolean nimarkoDebugShown;
+
+    private static void debugOnce(String text) {
+        if (nimarkoDebugShown) {
+            return;
+        }
+        nimarkoDebugShown = true;
+        AndroidUtilities.runOnUIThread(() -> android.widget.Toast.makeText(
+                org.telegram.messenger.ApplicationLoader.applicationContext, text, android.widget.Toast.LENGTH_LONG).show());
+    }
+
     public static void setGiftImage(ImageReceiver imageReceiver, TLRPC.Document document, int size) {
         if (document == null) {
             imageReceiver.clearImage();
@@ -5611,8 +5622,14 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
         if (document.localPath != null && "application/x-tgsticker".equals(document.mime_type)) {
             File file = new File(document.localPath);
             int px = AndroidUtilities.dp(size);
-            RLottieDrawable lottie = new RLottieDrawable(file, ImageLoader.decompressGzip(file), px, px, null, true, null, 0, false);
-            imageReceiver.setImageBitmap(lottie);
+            try {
+                String json = ImageLoader.decompressGzip(file);
+                RLottieDrawable lottie = new RLottieDrawable(file, json, px, px, null, true, null, 0, false);
+                imageReceiver.setImageBitmap(lottie);
+                debugOnce("MoGram tgs: file=" + file.length() + "B json=" + (json == null ? "null" : json.length()) + " frames=" + lottie.getFramesCount() + " px=" + px);
+            } catch (Throwable e) {
+                debugOnce("MoGram tgs error: " + e);
+            }
             return;
         }
         final TLRPC.PhotoSize photoSize = FileLoader.getClosestPhotoSizeWithSize(document.thumbs, size);
