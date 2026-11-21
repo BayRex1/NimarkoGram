@@ -1,6 +1,7 @@
 package app.nimarkogram.messenger.gifts;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -23,6 +24,8 @@ import org.telegram.ui.Components.RLottieImageView;
 
 import java.io.File;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Bottom sheet opened from a user's profile: sends a catalog gift to that user
@@ -34,6 +37,9 @@ public class MoGramGiftSheet extends BottomSheet {
     private final int currentAccount;
     private final long targetUserId;
     private final LinearLayout list;
+    private final LinearLayout catalogList;
+    private final LinearLayout historyList;
+    private final Set<String> sendingGiftIds = new HashSet<>();
 
     public MoGramGiftSheet(Context context, int account, long userId) {
         super(context, false);
@@ -50,6 +56,12 @@ public class MoGramGiftSheet extends BottomSheet {
 
         list = new LinearLayout(context);
         list.setOrientation(LinearLayout.VERTICAL);
+        catalogList = new LinearLayout(context);
+        catalogList.setOrientation(LinearLayout.VERTICAL);
+        historyList = new LinearLayout(context);
+        historyList.setOrientation(LinearLayout.VERTICAL);
+        list.addView(catalogList);
+        list.addView(historyList);
         ScrollView scroll = new ScrollView(context);
         scroll.addView(list);
         root.addView(scroll, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, AndroidUtilities.dp(460)));
@@ -63,47 +75,63 @@ public class MoGramGiftSheet extends BottomSheet {
     }
 
     private void load() {
-        list.removeAllViews();
-        addSection(LocaleController.getString(R.string.NM_MogramGiftsSend));
+        catalogList.removeAllViews();
+        historyList.removeAllViews();
+        addSection(catalogList, LocaleController.getString(R.string.NM_MogramGiftsSend));
         new Thread(() -> {
             try {
                 List<MoGramGiftsApi.Gift> gifts = MoGramGiftsApi.fetchCatalog();
                 AndroidUtilities.runOnUIThread(() -> renderCatalog(gifts));
             } catch (Exception e) {
-                AndroidUtilities.runOnUIThread(() -> addInfo(LocaleController.getString(R.string.NM_MogramGiftsError)));
+                AndroidUtilities.runOnUIThread(() -> addInfo(catalogList, LocaleController.getString(R.string.NM_MogramGiftsError)));
             }
         }).start();
 
-        addSection(LocaleController.getString(R.string.NM_MogramGiftsHistory));
+        addSection(historyList, LocaleController.getString(R.string.NM_MogramGiftsHistory));
         new Thread(() -> {
             try {
                 List<MoGramGiftsApi.Transfer> transfers = MoGramGiftsApi.fetchReceived(targetUserId);
                 AndroidUtilities.runOnUIThread(() -> renderHistory(transfers));
             } catch (Exception e) {
-                AndroidUtilities.runOnUIThread(() -> addInfo(LocaleController.getString(R.string.NM_MogramGiftsError)));
+                AndroidUtilities.runOnUIThread(() -> addInfo(historyList, LocaleController.getString(R.string.NM_MogramGiftsError)));
             }
         }).start();
     }
 
     private void renderCatalog(List<MoGramGiftsApi.Gift> gifts) {
         if (gifts.isEmpty()) {
-            addInfo(LocaleController.getString(R.string.NM_MogramGiftsEmpty));
+            addInfo(catalogList, LocaleController.getString(R.string.NM_MogramGiftsEmpty));
             return;
         }
         for (MoGramGiftsApi.Gift gift : gifts) {
-            list.addView(giftRow(gift));
+            catalogList.addView(giftRow(gift));
         }
     }
 
     private void renderHistory(List<MoGramGiftsApi.Transfer> transfers) {
         if (transfers.isEmpty()) {
-            addInfo(LocaleController.getString(R.string.NM_MogramGiftsEmpty));
+            addInfo(historyList, LocaleController.getString(R.string.NM_MogramGiftsEmpty));
             return;
         }
         for (MoGramGiftsApi.Transfer t : transfers) {
             String from = displayName(t.fromId);
             String to = displayName(t.toId);
-            list.addView(makeText(from + " → " + to + ": " + t.giftTitle, 15, false));
+            LinearLayout historyRow = new LinearLayout(ctx);
+            historyRow.setOrientation(LinearLayout.HORIZONTAL);
+            historyRow.setGravity(Gravity.CENTER_VERTICAL);
+            historyRow.setPadding(AndroidUtilities.dp(8), AndroidUtilities.dp(8), AndroidUtilities.dp(8), AndroidUtilities.dp(8));
+            RLottieImageView historyIcon = new RLottieImageView(ctx);
+            historyIcon.setAutoRepeat(true);
+            historyRow.addView(historyIcon, new LinearLayout.LayoutParams(AndroidUtilities.dp(48), AndroidUtilities.dp(48)));
+            MoGramGiftAnimation.bind(ctx, historyIcon, t.id, t.giftFileUrl, 48);
+            LinearLayout historyTexts = new LinearLayout(ctx);
+            historyTexts.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams historyTextParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+            historyTextParams.leftMargin = AndroidUtilities.dp(10);
+            historyRow.addView(historyTexts, historyTextParams);
+            historyTexts.addView(makeText(TextUtils.isEmpty(t.giftTitle) ? "MoGram Gift" : t.giftTitle, 15, true));
+            historyTexts.addView(makeText(from + " → " + to, 12, false));
+            historyList.addView(historyRow);
         }
     }
 
@@ -134,7 +162,9 @@ public class MoGramGiftSheet extends BottomSheet {
         tp.leftMargin = AndroidUtilities.dp(12);
         row.addView(title, tp);
 
-        row.setOnClickListener(v -> send(gift));
+        row.setOnClickListener(v -> {
+            if (!sendingGiftIds.contains(gift.id)) send(gift, row);
+        });
 
         new Thread(() -> {
             try {
@@ -153,12 +183,21 @@ public class MoGramGiftSheet extends BottomSheet {
         return row;
     }
 
-    private void send(MoGramGiftsApi.Gift gift) {
+    private void send(MoGramGiftsApi.Gift gift, View giftRow) {
         final long from = myId();
+        synchronized (sendingGiftIds) {
+            if (!sendingGiftIds.add(gift.id)) return;
+        }
+        giftRow.setAlpha(0.65f);
+        giftRow.setScaleX(0.97f);
+        giftRow.setScaleY(0.97f);
         new Thread(() -> {
             try {
-                MoGramGiftsApi.send(from, gift.id, targetUserId);
+                MoGramGiftsApi.Transfer transfer = MoGramGiftsApi.send(from, gift.id, targetUserId);
                 AndroidUtilities.runOnUIThread(() -> {
+                    sendingGiftIds.remove(gift.id);
+                    giftRow.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(220).start();
+                    giftRow.animate().scaleX(1.04f).scaleY(1.04f).setDuration(130).withEndAction(() -> giftRow.animate().scaleX(1f).scaleY(1f).setDuration(180).start()).start();
                     toast(LocaleController.getString(R.string.NM_MogramGiftsSent));
                     load();
                 });
@@ -166,9 +205,17 @@ public class MoGramGiftSheet extends BottomSheet {
                 final int msg = "daily_send_limit".equals(e.getMessage())
                         ? R.string.NM_MogramGiftsLimit
                         : R.string.NM_MogramGiftsError;
-                AndroidUtilities.runOnUIThread(() -> toast(LocaleController.getString(msg)));
+                AndroidUtilities.runOnUIThread(() -> {
+                    sendingGiftIds.remove(gift.id);
+                    giftRow.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(180).start();
+                    toast(LocaleController.getString(msg));
+                });
             } catch (Exception e) {
-                AndroidUtilities.runOnUIThread(() -> toast(LocaleController.getString(R.string.NM_MogramGiftsError)));
+                AndroidUtilities.runOnUIThread(() -> {
+                    sendingGiftIds.remove(gift.id);
+                    giftRow.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(180).start();
+                    toast(LocaleController.getString(R.string.NM_MogramGiftsError));
+                });
             }
         }).start();
     }
@@ -177,17 +224,17 @@ public class MoGramGiftSheet extends BottomSheet {
         Toast.makeText(ctx, text, Toast.LENGTH_SHORT).show();
     }
 
-    private void addSection(String title) {
+    private void addSection(LinearLayout target, String title) {
         TextView t = makeText(title, 13, true);
         t.setPadding(0, AndroidUtilities.dp(12), 0, AndroidUtilities.dp(4));
         t.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2));
-        list.addView(t);
+        target.addView(t);
     }
 
-    private void addInfo(String text) {
+    private void addInfo(LinearLayout target, String text) {
         TextView t = makeText(text, 14, false);
         t.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2));
-        list.addView(t);
+        target.addView(t);
     }
 
     private TextView makeText(String text, int sizeSp, boolean bold) {

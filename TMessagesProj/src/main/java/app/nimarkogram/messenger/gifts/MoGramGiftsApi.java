@@ -40,16 +40,20 @@ public final class MoGramGiftsApi {
     }
 
     public static final class Transfer {
+        public final String id;
         public final String fromId;
         public final String toId;
         public final String createdAt;
+        public final String giftId;
         public final String giftTitle;
         public final String giftFileUrl;
 
-        Transfer(String fromId, String toId, String createdAt, String giftTitle, String giftFileUrl) {
+        Transfer(String id, String fromId, String toId, String createdAt, String giftId, String giftTitle, String giftFileUrl) {
+            this.id = id;
             this.fromId = fromId;
             this.toId = toId;
             this.createdAt = createdAt;
+            this.giftId = giftId;
             this.giftTitle = giftTitle;
             this.giftFileUrl = giftFileUrl;
         }
@@ -124,17 +128,40 @@ public final class MoGramGiftsApi {
         return list;
     }
 
-    public static void send(long fromId, String giftId, long toId) throws Exception {
+    public static Transfer send(long fromId, String giftId, long toId) throws Exception {
         JSONObject body = new JSONObject();
         body.put("from_id", String.valueOf(fromId));
         body.put("gift_id", giftId);
         body.put("to_id", String.valueOf(toId));
-        http("POST", "/v1/gifts/send", body.toString());
+        JSONObject response = new JSONObject(http("POST", "/v1/gifts/send", body.toString()));
+        return parseTransfer(response.optJSONObject("transfer"));
     }
 
     /** Gifts this user received (from, to and gift title are in every row). */
     public static List<Transfer> fetchReceived(long userId) throws Exception {
         return fetchTransfers("/v1/users/" + userId + "/gifts?limit=20");
+    }
+
+    /** New gifts since the last acknowledged transfer ID; used by the in-client inbox poller. */
+    public static List<Transfer> fetchInbox(long userId, String afterId) throws Exception {
+        String path = "/v1/users/" + userId + "/gifts/inbox?limit=100";
+        if (afterId != null && !afterId.isEmpty()) {
+            path += "&after=" + java.net.URLEncoder.encode(afterId, "UTF-8");
+        }
+        return fetchTransfers(path);
+    }
+
+    private static Transfer parseTransfer(JSONObject o) throws Exception {
+        if (o == null) return null;
+        JSONObject gift = o.optJSONObject("gift");
+        return new Transfer(
+                o.optString("id"),
+                o.optString("from_id"),
+                o.optString("to_id"),
+                o.optString("created_at"),
+                gift != null ? gift.optString("id") : "",
+                gift != null ? gift.optString("title") : "",
+                gift != null ? gift.optString("file_url") : "");
     }
 
     private static List<Transfer> fetchTransfers(String path) throws Exception {
@@ -144,29 +171,39 @@ public final class MoGramGiftsApi {
             return list;
         }
         for (int i = 0; i < arr.length(); i++) {
-            JSONObject o = arr.getJSONObject(i);
-            JSONObject gift = o.optJSONObject("gift");
-            list.add(new Transfer(
-                    o.optString("from_id"),
-                    o.optString("to_id"),
-                    o.optString("created_at"),
-                    gift != null ? gift.optString("title") : "",
-                    gift != null ? gift.optString("file_url") : ""));
+            list.add(parseTransfer(arr.getJSONObject(i)));
         }
         return list;
     }
 
-    /** Downloads the .tgs once and keeps it in the app cache. */
+    /** Downloads the original catalog/transfer .tgs once and keeps it in the app cache. */
     public static File ensureFile(Context context, Gift gift) throws Exception {
+        return ensureFile(context, gift.id, gift.fileUrl);
+    }
+
+    public static File ensureFile(Context context, Transfer transfer) throws Exception {
+        return ensureFile(context, transfer.id, transfer.giftFileUrl);
+    }
+
+    public static File ensureFile(Context context, String id, String fileUrl) throws Exception {
+        if (fileUrl == null || fileUrl.trim().isEmpty()) {
+            throw new ApiException("missing_gift_file_url");
+        }
+        URL source = new URL(fileUrl);
+        if (!"https".equalsIgnoreCase(source.getProtocol())) {
+            throw new ApiException("invalid_gift_file_url");
+        }
+        String safeId = id == null ? "gift" : id.replaceAll("[^A-Za-z0-9._-]", "_");
         File dir = new File(context.getCacheDir(), "mogram_gifts");
         if (!dir.exists() && !dir.mkdirs()) {
             throw new ApiException("cache_dir");
         }
-        File target = new File(dir, gift.id + ".tgs");
+        File target = new File(dir, safeId + ".tgs");
         if (target.exists() && target.length() > 0) {
             return target;
         }
-        HttpURLConnection c = (HttpURLConnection) new URL(gift.fileUrl).openConnection();
+        HttpURLConnection c = (HttpURLConnection) source.openConnection();
+        File tmp = new File(dir, safeId + ".part");
         try {
             c.setConnectTimeout(TIMEOUT_MS);
             c.setReadTimeout(TIMEOUT_MS);
@@ -174,7 +211,6 @@ public final class MoGramGiftsApi {
             if (code != 200) {
                 throw new ApiException("file_http_" + code);
             }
-            File tmp = new File(dir, gift.id + ".part");
             try (InputStream in = c.getInputStream(); OutputStream out = new FileOutputStream(tmp)) {
                 byte[] buf = new byte[8192];
                 int n;
@@ -183,9 +219,100 @@ public final class MoGramGiftsApi {
                 }
             }
             if (!tmp.renameTo(target)) {
+                tmp.delete();
                 throw new ApiException("rename_failed");
             }
             return target;
+        } finally {
+            c.disconnect();
+        }
+    }
+
+    /** Raw catalog JSON from api.mogram (kept on disk so the shop works without network). */
+    public static String fetchCatalogJson() throws Exception {
+        return http("GET", "/v1/gifts/catalog", null);
+    }
+
+    public static List<Gift> parseCatalog(String json) throws Exception {
+        JSONArray arr = new JSONObject(json).optJSONArray("gifts");
+        List<Gift> list = new ArrayList<>();
+        if (arr == null) {
+            return list;
+        }
+        for (int i = 0; i < arr.length(); i++) {
+            JSONObject o = arr.getJSONObject(i);
+            list.add(new Gift(
+                    o.getString("id"),
+                    o.getString("title"),
+                    o.getString("file_url"),
+                    o.optInt("price_stars", 0)));
+        }
+        return list;
+    }
+
+    /** Returns the downloaded .tgs if it is already on disk, otherwise null. */
+    public static File cachedFile(Context context, Gift gift) {
+        File f = new File(new File(context.getCacheDir(), "mogram_gifts"), gift.id + ".tgs");
+        return f.exists() && f.length() > 0 ? f : null;
+    }
+
+    public static final class ManifestItem {
+        public final String id;
+        public final String title;
+        public final int priceStars;
+        public final String fileUrl;
+        public final String sha256;
+
+        ManifestItem(String id, String title, int priceStars, String fileUrl, String sha256) {
+            this.id = id;
+            this.title = title;
+            this.priceStars = priceStars;
+            this.fileUrl = fileUrl;
+            this.sha256 = sha256;
+        }
+    }
+
+    public static String fetchManifestJson() throws Exception {
+        return http("GET", "/v1/gifts/manifest", null);
+    }
+
+    public static List<ManifestItem> parseManifest(String json) throws Exception {
+        JSONArray arr = new JSONObject(json).optJSONArray("gifts");
+        List<ManifestItem> list = new ArrayList<>();
+        if (arr == null) {
+            return list;
+        }
+        for (int i = 0; i < arr.length(); i++) {
+            JSONObject o = arr.getJSONObject(i);
+            list.add(new ManifestItem(
+                    o.getString("id"),
+                    o.getString("title"),
+                    o.optInt("price_stars", 0),
+                    o.getString("file_url"),
+                    o.isNull("sha256") ? null : o.getString("sha256")));
+        }
+        return list;
+    }
+
+    /** Downloads a file fully into memory (.tgs files are small). */
+    public static byte[] download(String url) throws Exception {
+        HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
+        try {
+            c.setConnectTimeout(TIMEOUT_MS);
+            c.setReadTimeout(TIMEOUT_MS);
+            int code = c.getResponseCode();
+            if (code != 200) {
+                throw new ApiException("file_http_" + code);
+            }
+            try (InputStream in = c.getInputStream()) {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                byte[] buf = new byte[8192];
+                int n;
+                while ((n = in.read(buf)) > 0) {
+                    out.write(buf, 0, n);
+                }
+                return out.toByteArray();
+            }
         } finally {
             c.disconnect();
         }

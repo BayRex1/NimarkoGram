@@ -462,6 +462,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             if (intent != null && intent.getAction() != null) {
                 if (Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction())) {
                     super.onCreate(savedInstanceState);
+        // NimarkoGram: MoGram gifts inbox poller (delivers received gifts into chats).
+        app.nimarkogram.messenger.gifts.MoGramChat.start(org.telegram.messenger.UserConfig.selectedAccount);
                     finish();
                     return;
                 } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {

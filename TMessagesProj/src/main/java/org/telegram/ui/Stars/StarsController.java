@@ -2301,6 +2301,7 @@ public class StarsController {
 
     public void loadStarGifts() {
         if (giftsLoading || giftsLoaded && (System.currentTimeMillis() - giftsRemoteTime) < 1000 * 60) return;
+        app.nimarkogram.messenger.gifts.MoGramStarGifts.refreshOnce(org.telegram.messenger.ApplicationLoader.applicationContext, currentAccount);
         giftsLoading = true;
 
         if (!giftsCacheLoaded) {
@@ -2311,6 +2312,7 @@ public class StarsController {
                 giftsCacheLoaded = true;
                 gifts.clear();
                 gifts.addAll(giftsCached);
+                app.nimarkogram.messenger.gifts.MoGramStarGifts.inject(gifts);
                 birthdaySortedGifts.clear();
                 birthdaySortedGifts.addAll(gifts);
                 Collections.sort(birthdaySortedGifts, Comparator.comparingInt((TL_stars.StarGift a) -> (a.sold_out ? 1 : 0)).thenComparingInt((TL_stars.StarGift a) -> (a.birthday ? -1 : 0)));
@@ -2335,6 +2337,7 @@ public class StarsController {
                     MessagesStorage.getInstance(currentAccount).putUsersAndChats(res.users, res.chats, true, true);
                     gifts.clear();
                     gifts.addAll(res.gifts);
+                    app.nimarkogram.messenger.gifts.MoGramStarGifts.inject(gifts);
                     birthdaySortedGifts.clear();
                     birthdaySortedGifts.addAll(gifts);
                     Collections.sort(birthdaySortedGifts, Comparator.comparingInt((TL_stars.StarGift a) -> (a.sold_out ? 1 : 0)).thenComparingInt((TL_stars.StarGift a) -> (a.birthday ? -1 : 0)));
@@ -2346,7 +2349,8 @@ public class StarsController {
                     NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.starGiftsLoaded);
                     saveStarGiftsCached(res.gifts, giftsHash, giftsRemoteTime);
                 } else if (giftsRemote instanceof TL_stars.TL_starGiftsNotModified) {
-                    saveStarGiftsCached(gifts, giftsHash, giftsRemoteTime = System.currentTimeMillis());
+                    app.nimarkogram.messenger.gifts.MoGramStarGifts.inject(gifts);
+                    saveStarGiftsCached(app.nimarkogram.messenger.gifts.MoGramStarGifts.withoutMoGram(gifts), giftsHash, giftsRemoteTime = System.currentTimeMillis());
                 }
             });
         }
@@ -2686,6 +2690,10 @@ public class StarsController {
     }
 
     public void buyStarGift(TL_stars.StarGift gift, boolean anonymous, boolean upgraded, long dialogId, TLRPC.TL_textWithEntities text, Utilities.Callback2<Boolean, String> whenDone) {
+        if (app.nimarkogram.messenger.gifts.MoGramStarGifts.isMoGram(gift)) {
+            app.nimarkogram.messenger.gifts.MoGramStarGifts.buy(currentAccount, gift, dialogId, whenDone);
+            return;
+        }
         final Context context = LaunchActivity.instance != null ? LaunchActivity.instance : ApplicationLoader.applicationContext;
         final Theme.ResourcesProvider resourcesProvider = getResourceProvider();
 

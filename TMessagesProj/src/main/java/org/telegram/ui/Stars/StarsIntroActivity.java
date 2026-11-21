@@ -2,6 +2,8 @@
 
 package org.telegram.ui.Stars;
 
+import org.telegram.messenger.ImageLoader;
+import java.io.File;
 import static org.telegram.messenger.AndroidUtilities.dp;
 import org.telegram.utils.glass.BaseFragmentSimpleGlass;
 import static org.telegram.messenger.LocaleController.formatPluralString;
@@ -5599,9 +5601,40 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
 
     }
 
+    /**
+     * NimarkoGram: draws a MoGram .tgs straight from its file. Returns false for any other document.
+     * ImageLoader decides the animation type from the extension, so MoGram gifts bypass it.
+     */
+    public static boolean setMoGramLottie(ImageReceiver imageReceiver, TLRPC.Document document, int sizePx) {
+        if (document == null || document.localPath == null || !"application/x-tgsticker".equals(document.mime_type)) {
+            return false;
+        }
+        try {
+            File file = new File(document.localPath);
+            String json = ImageLoader.decompressGzip(file);
+            RLottieDrawable lottie = new RLottieDrawable(file, json, sizePx, sizePx, null, true, null, 0, false);
+            imageReceiver.setImageBitmap(lottie);
+        } catch (Throwable e) {
+        }
+        return true;
+    }
+
     public static void setGiftImage(ImageReceiver imageReceiver, TLRPC.Document document, int size) {
         if (document == null) {
             imageReceiver.clearImage();
+            return;
+        }
+        // NimarkoGram: MoGram gifts keep their .tgs on disk. Build the Lottie drawable from the file
+        // directly: ImageLoader decides the animation type from the extension, so it draws nothing here.
+        if (document.localPath != null && "application/x-tgsticker".equals(document.mime_type)) {
+            File file = new File(document.localPath);
+            int px = AndroidUtilities.dp(size);
+            try {
+                String json = ImageLoader.decompressGzip(file);
+                RLottieDrawable lottie = new RLottieDrawable(file, json, px, px, null, true, null, 0, false);
+                imageReceiver.setImageBitmap(lottie);
+            } catch (Throwable e) {
+                }
             return;
         }
         final TLRPC.PhotoSize photoSize = FileLoader.getClosestPhotoSizeWithSize(document.thumbs, size);
