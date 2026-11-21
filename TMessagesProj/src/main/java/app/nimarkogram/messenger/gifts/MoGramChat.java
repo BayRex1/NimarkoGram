@@ -94,7 +94,9 @@ public final class MoGramChat {
     public static void deliver(int account, long otherUserId, boolean outgoing, TL_stars.StarGift gift, String transferId, int date) {
         long me = UserConfig.getInstance(account).getClientUserId();
 
-        TLRPC.TL_message message = new TLRPC.TL_message();
+        // A gift is a service message in Telegram (TL_messageService). A plain TL_message with an action
+        // is drawn as an empty text bubble, so the type must be TL_messageService.
+        TLRPC.TL_messageService message = new TLRPC.TL_messageService();
         message.id = messageIdFor(transferId);
         message.out = outgoing;
         message.date = date;
