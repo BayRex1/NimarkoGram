@@ -64,6 +64,19 @@ public final class MoGramStarGifts {
         return result;
     }
 
+    /** The native gift object for a catalog id, or null if it is not synced on this device yet. */
+    public static TL_stars.StarGift giftFor(String catalogId) {
+        long id = telegramIdFor(catalogId);
+        synchronized (lock) {
+            for (TL_stars.StarGift g : gifts) {
+                if (g.id == id) {
+                    return g;
+                }
+            }
+        }
+        return null;
+    }
+
     /** Adds MoGram gifts to a catalog list that Telegram just built from its own data. */
     public static void inject(List<TL_stars.StarGift> target) {
         loadLocalIfEmpty(ApplicationLoader.applicationContext);
@@ -206,8 +219,10 @@ public final class MoGramStarGifts {
         final long fromId = UserConfig.getInstance(account).getClientUserId();
         new Thread(() -> {
             try {
-                MoGramGiftsApi.send(fromId, catalogId, toUserId);
+                MoGramGiftsApi.Transfer transfer = MoGramGiftsApi.send(fromId, catalogId, toUserId);
                 AndroidUtilities.runOnUIThread(() -> {
+                    // The gift appears in the chat right away, and the animation plays there.
+                    MoGramChat.deliver(account, toUserId, true, gift, transfer.id, (int) (System.currentTimeMillis() / 1000));
                     // Same success banner Telegram shows after a real gift, with the animated sticker.
                     BulletinFactory.global().createEmojiBulletin(gift.sticker, LocaleController.getString(R.string.StarsGiftCompleted), gift.title).show();
                     whenDone.run(true, null);
