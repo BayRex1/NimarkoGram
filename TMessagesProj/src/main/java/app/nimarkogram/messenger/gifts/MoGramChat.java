@@ -108,13 +108,34 @@ public final class MoGramChat {
         from.user_id = outgoing ? me : otherUserId;
         message.from_id = from;
 
+        // Telegram builds the gift text from from_id (sender) and peer (recipient), so both must be set.
+        long senderId = outgoing ? me : otherUserId;
+        long recipientId = outgoing ? otherUserId : me;
+        TLRPC.TL_peerUser fromPeer = new TLRPC.TL_peerUser();
+        fromPeer.user_id = senderId;
+        TLRPC.TL_peerUser recipientPeer = new TLRPC.TL_peerUser();
+        recipientPeer.user_id = recipientId;
+
         TLRPC.TL_messageActionStarGift action = new TLRPC.TL_messageActionStarGift();
         action.gift = gift;
         action.name_hidden = false;
+        action.from_id = fromPeer;
+        action.peer = recipientPeer;
         message.action = action;
 
+        // The real users, so the text can show names.
+        HashMap<Long, TLRPC.User> users = new HashMap<>();
+        TLRPC.User sender = MessagesController.getInstance(account).getUser(senderId);
+        TLRPC.User recipient = MessagesController.getInstance(account).getUser(recipientId);
+        if (sender != null) {
+            users.put(senderId, sender);
+        }
+        if (recipient != null) {
+            users.put(recipientId, recipient);
+        }
+
         ArrayList<MessageObject> list = new ArrayList<>();
-        list.add(new MessageObject(account, message, new HashMap<Long, TLRPC.User>(), false, false));
+        list.add(new MessageObject(account, message, users, false, false));
         MessagesController.getInstance(account).updateInterfaceWithMessages(otherUserId, list, 0);
     }
 
