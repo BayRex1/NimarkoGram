@@ -44,14 +44,16 @@ public final class MoGramGiftsApi {
         public final String fromId;
         public final String toId;
         public final String createdAt;
+        public final String giftId;
         public final String giftTitle;
         public final String giftFileUrl;
 
-        Transfer(String id, String fromId, String toId, String createdAt, String giftTitle, String giftFileUrl) {
+        Transfer(String id, String fromId, String toId, String createdAt, String giftId, String giftTitle, String giftFileUrl) {
             this.id = id;
             this.fromId = fromId;
             this.toId = toId;
             this.createdAt = createdAt;
+            this.giftId = giftId;
             this.giftTitle = giftTitle;
             this.giftFileUrl = giftFileUrl;
         }
@@ -157,6 +159,7 @@ public final class MoGramGiftsApi {
                 o.optString("from_id"),
                 o.optString("to_id"),
                 o.optString("created_at"),
+                gift != null ? gift.optString("id") : "",
                 gift != null ? gift.optString("title") : "",
                 gift != null ? gift.optString("file_url") : "");
     }
