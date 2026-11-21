@@ -3,11 +3,14 @@ package app.nimarkogram.messenger.gifts;
 import android.content.Context;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.R;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.Utilities;
 import org.telegram.tgnet.TLRPC;
+import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.tgnet.tl.TL_stars;
 import org.telegram.ui.Stars.StarsController;
 
@@ -204,7 +207,11 @@ public final class MoGramStarGifts {
         new Thread(() -> {
             try {
                 MoGramGiftsApi.send(fromId, catalogId, toUserId);
-                AndroidUtilities.runOnUIThread(() -> whenDone.run(true, null));
+                AndroidUtilities.runOnUIThread(() -> {
+                    // Same success banner Telegram shows after a real gift, with the animated sticker.
+                    BulletinFactory.global().createEmojiBulletin(gift.sticker, LocaleController.getString(R.string.StarsGiftCompleted), gift.title).show();
+                    whenDone.run(true, null);
+                });
             } catch (MoGramGiftsApi.ApiException e) {
                 final String msg = e.getMessage();
                 AndroidUtilities.runOnUIThread(() -> whenDone.run(false, msg));

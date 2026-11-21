@@ -5601,28 +5601,6 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
 
     }
 
-    private static boolean nimarkoSetImageShown;
-
-    private static void debugSetImageOnce(String text) {
-        if (nimarkoSetImageShown) {
-            return;
-        }
-        nimarkoSetImageShown = true;
-        AndroidUtilities.runOnUIThread(() -> android.widget.Toast.makeText(
-                org.telegram.messenger.ApplicationLoader.applicationContext, "MoGram setGiftImage: " + text, android.widget.Toast.LENGTH_LONG).show());
-    }
-
-    private static boolean nimarkoDebugShown;
-
-    private static void debugOnce(String text) {
-        if (nimarkoDebugShown) {
-            return;
-        }
-        nimarkoDebugShown = true;
-        AndroidUtilities.runOnUIThread(() -> android.widget.Toast.makeText(
-                org.telegram.messenger.ApplicationLoader.applicationContext, text, android.widget.Toast.LENGTH_LONG).show());
-    }
-
     /**
      * NimarkoGram: draws a MoGram .tgs straight from its file. Returns false for any other document.
      * ImageLoader decides the animation type from the extension, so MoGram gifts bypass it.
@@ -5636,18 +5614,12 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
             String json = ImageLoader.decompressGzip(file);
             RLottieDrawable lottie = new RLottieDrawable(file, json, sizePx, sizePx, null, true, null, 0, false);
             imageReceiver.setImageBitmap(lottie);
-            debugOnce("MoGram tgs ok: frames=" + lottie.getFramesCount() + " px=" + sizePx);
         } catch (Throwable e) {
-            debugOnce("MoGram tgs error: " + e);
         }
         return true;
     }
 
     public static void setGiftImage(ImageReceiver imageReceiver, TLRPC.Document document, int size) {
-        // NimarkoGram diagnostics: show what arrives for .tgs documents (once per app start).
-        if (document == null || "application/x-tgsticker".equals(document.mime_type)) {
-            debugSetImageOnce(document == null ? "doc=null size=" + size : "doc id=" + document.id + " local=" + document.localPath + " mime=" + document.mime_type + " size=" + size);
-        }
         if (document == null) {
             imageReceiver.clearImage();
             return;
@@ -5661,10 +5633,8 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
                 String json = ImageLoader.decompressGzip(file);
                 RLottieDrawable lottie = new RLottieDrawable(file, json, px, px, null, true, null, 0, false);
                 imageReceiver.setImageBitmap(lottie);
-                debugOnce("MoGram tgs: file=" + file.length() + "B json=" + (json == null ? "null" : json.length()) + " frames=" + lottie.getFramesCount() + " px=" + px);
             } catch (Throwable e) {
-                debugOnce("MoGram tgs error: " + e);
-            }
+                }
             return;
         }
         final TLRPC.PhotoSize photoSize = FileLoader.getClosestPhotoSizeWithSize(document.thumbs, size);
