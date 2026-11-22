@@ -5620,6 +5620,8 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
         try {
             String json = ImageLoader.decompressGzip(file);
             RLottieDrawable lottie = new RLottieDrawable(file, json, sizePx, sizePx, null, true, null, 0, false);
+            // Play once and stop on the last frame, like Telegram's own gift animations.
+            lottie.setAutoRepeat(0);
             imageReceiver.setImageBitmap(lottie);
         } catch (Throwable e) {
         }

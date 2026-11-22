@@ -92,7 +92,6 @@ public class ProfileActivityHelper extends BaseController {
     public final static int OPTION_GET_PROFILE_BACKGROUND = 1002;
     public final static int OPTION_APPLY_PROFILE_BACKGROUND = 1003;
     public final static int OPTION_USER_INFO = 1004;
-    public final static int OPTION_MOGRAM_GIFTS = 1005;
 
     public void injectProfileMenu(
             ActionBarMenuItem otherItem,
@@ -124,14 +123,6 @@ public class ProfileActivityHelper extends BaseController {
                     );
                 }
             }
-        }
-
-        if (user != null && !UserObject.isUserSelf(user) && currentEncryptedChat == null && !isBot) {
-            otherItem.addSubItem(
-                    OPTION_MOGRAM_GIFTS,
-                    R.drawable.msg_gift_premium,
-                    getString(R.string.NM_MogramGifts)
-            );
         }
 
         otherItem.addSubItem(
