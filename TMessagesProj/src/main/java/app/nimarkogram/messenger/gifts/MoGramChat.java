@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.MessagesController;
+import org.telegram.messenger.MessagesStorage;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.tgnet.tl.TL_stars;
@@ -135,6 +136,11 @@ public final class MoGramChat {
         if (recipient != null) {
             users.put(recipientId, recipient);
         }
+
+        // Save to Telegram's local message database so the gift is still there after reopening the chat.
+        ArrayList<TLRPC.Message> toStore = new ArrayList<>();
+        toStore.add(message);
+        MessagesStorage.getInstance(account).putMessages(toStore, true, true, false, 0, 0, 0);
 
         ArrayList<MessageObject> list = new ArrayList<>();
         list.add(new MessageObject(account, message, users, false, false));
