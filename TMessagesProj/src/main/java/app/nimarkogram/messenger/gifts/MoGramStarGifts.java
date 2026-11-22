@@ -77,6 +77,37 @@ public final class MoGramStarGifts {
         return null;
     }
 
+    /** True if this document id belongs to a MoGram gift (ids are in our reserved range). */
+    public static boolean isMoGramDocumentId(long docId) {
+        return docId >= ID_BASE;
+    }
+
+    /**
+     * Local .tgs for a MoGram sticker document. Works for documents loaded from the message database
+     * after a restart, where localPath is no longer set.
+     */
+    public static File renderFileForDocumentId(long docId) {
+        if (!isMoGramDocumentId(docId)) {
+            return null;
+        }
+        synchronized (lock) {
+            for (TL_stars.StarGift g : gifts) {
+                if (g.sticker != null && g.sticker.id == docId && g.sticker.localPath != null) {
+                    return new File(g.sticker.localPath);
+                }
+            }
+        }
+        loadLocalIfEmpty(ApplicationLoader.applicationContext);
+        synchronized (lock) {
+            for (TL_stars.StarGift g : gifts) {
+                if (g.sticker != null && g.sticker.id == docId && g.sticker.localPath != null) {
+                    return new File(g.sticker.localPath);
+                }
+            }
+        }
+        return null;
+    }
+
     /** Adds MoGram gifts to a catalog list that Telegram just built from its own data. */
     public static void inject(List<TL_stars.StarGift> target) {
         loadLocalIfEmpty(ApplicationLoader.applicationContext);
