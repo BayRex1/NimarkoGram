@@ -3816,6 +3816,10 @@ public class StarsController {
                         gifts.clear();
                     }
                     gifts.addAll(rez.gifts);
+                    // NimarkoGram: add MoGram gifts this user received, next to the Telegram gifts.
+                    if (first && !isCollection) {
+                        app.nimarkogram.messenger.gifts.MoGramProfileGifts.attach(GiftsList.this);
+                    }
                     lastOffset = rez.next_offset;
                     totalCount = rez.count;
                     chat_notifications_enabled = (rez.flags & 2) != 0 ? rez.chat_notifications_enabled : null;
