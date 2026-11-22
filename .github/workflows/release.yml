@@ -83,7 +83,7 @@ jobs:
         run: python tools/ayugram/patch_tlrpc.py
 
       - name: Build signed standalone APK
-        run: ./gradlew --no-daemon --stacktrace :TMessagesProj_AppStandalone:assembleAfatStandalone
+        run: ./gradlew --no-daemon --stacktrace --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g" :TMessagesProj_AppStandalone:assembleAfatStandalone
 
       - name: Locate and rename APK
         shell: bash
