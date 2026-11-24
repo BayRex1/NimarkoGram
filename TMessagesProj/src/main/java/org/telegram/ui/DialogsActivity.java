@@ -152,6 +152,7 @@ import org.telegram.tgnet.tl.TL_account;
 import org.telegram.tgnet.tl.TL_chatlists;
 import org.telegram.tgnet.tl.TL_stars;
 import org.telegram.tgnet.tl.TL_stories;
+import org.telegram.ui.Components.MofGramTitleSpan;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.ActionBarMenu;
 import org.telegram.ui.ActionBar.ActionBarMenuItem;
@@ -987,6 +988,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     // returning to the All-Chats tab. Set when the default title is first installed.
     private CharSequence actionBarDefaultTitle;
     private AnimatedStatusView animatedStatusView;
+    private MofGramTitleSpan mofGramTitleSpan;
     public RightSlidingDialogContainer rightSlidingDialogContainer;
 
     public final Property<DialogsActivity, Float> SCROLL_Y = new AnimationProperties.FloatProperty<DialogsActivity>("animationValue") {
@@ -1014,6 +1016,26 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             return searchViewPagerTranslationY;
         }
     };
+
+    private CharSequence createMofGramHeaderTitle(String value) {
+        if (mofGramTitleSpan != null) {
+            mofGramTitleSpan.detach();
+        }
+        SpannableStringBuilder title = new SpannableStringBuilder(value);
+        if (title.length() > 0) {
+            mofGramTitleSpan = new MofGramTitleSpan(AndroidUtilities.density);
+            title.setSpan(mofGramTitleSpan, 0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } else {
+            mofGramTitleSpan = null;
+        }
+        return title;
+    }
+
+    private void attachMofGramHeaderAnimation() {
+        if (mofGramTitleSpan != null && actionBar != null && actionBar.getTitleTextView() != null) {
+            mofGramTitleSpan.attach(actionBar.getTitleTextView());
+        }
+    }
 
     private class ContentView extends SizeNotifierFrameLayout {
 
@@ -4331,7 +4353,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 // ImageSpan and let the SpannableStringBuilder show the localised
                 // R.string.AppName ("NimarkoGram") directly.
                 // NG: custom main-screen title overrides the app name when set.
-                SpannableStringBuilder ssb = new SpannableStringBuilder(
+                CharSequence ssb = createMofGramHeaderTitle(
                         app.nimarkogram.messenger.AppConfig.resolveMainTitle(getString(R.string.AppName)));
                 actionBarDefaultTitle = ssb;
                 // NG: explicit gilroy=true so the initial chat-list title renders in Gilroy
@@ -4341,6 +4363,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 // connecting overlay then briefly fixes (its gilroy=true path) before
                 // clearing — perceived as a "bold flicker" on connect/disconnect.
                 actionBar.setTitle(ssb, statusDrawable, true);
+                attachMofGramHeaderAnimation();
                 updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
             }
             if (folderId == 0) {
@@ -12484,7 +12507,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             // re-apply it live (layout-independent, unlike the old rebuildAllFragmentViews path which skipped
             // DialogsActivity on tablet/split-layout). Respect folderNameInHeader on non-default tabs.
             if (!onlySelect && folderId == 0 && communityId == 0 && actionBar != null) {
-                actionBarDefaultTitle = new SpannableStringBuilder(
+                actionBarDefaultTitle = createMofGramHeaderTitle(
                         app.nimarkogram.messenger.AppConfig.resolveMainTitle(getString(R.string.AppName)));
                 FilterTabsView.Tab currentTab = (filterTabsView != null && viewPages != null && viewPages[0] != null)
                         ? filterTabsView.findTabById(viewPages[0].selectedType) : null;
@@ -12501,6 +12524,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 } else {
                     actionBar.setTitle(actionBarDefaultTitle, statusDrawable, true);
                 }
+                attachMofGramHeaderAnimation();
                 // NimarkoGram: also push the new title into the stories brand slot so the collapsed stories
                 // header (revealed on scroll-with-stories) stays in sync. The brand slot mirrors the no-folder
                 // main title; folder names live only in the ActionBar title, not the brand.
