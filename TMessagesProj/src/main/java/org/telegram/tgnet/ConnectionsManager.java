@@ -1214,7 +1214,9 @@ public class ConnectionsManager extends BaseController {
     }
 
     public static void onInternalPushReceived(final int currentAccount) {
-        KeepAliveJob.startJob();
+        if (app.nimarkogram.messenger.AppConfig.keepAliveService) {
+            KeepAliveJob.startJob();
+        }
     }
     private static final ThreadLocal<ProxySettings> proxySettingsDispatch = new ThreadLocal<>();
 
