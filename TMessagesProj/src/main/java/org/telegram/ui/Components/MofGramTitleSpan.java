@@ -89,7 +89,7 @@ public final class MofGramTitleSpan extends ReplacementSpan implements View.OnAt
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
         paint.getFontMetricsInt(fm);
         float textWidth = paint.measureText(text, start, end);
-        return Math.round(textWidth + dp(43) + dp(34));
+        return Math.round(textWidth + dp(48));
     }
 
     @Override
