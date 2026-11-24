@@ -4331,7 +4331,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 // ImageSpan and let the SpannableStringBuilder show the localised
                 // R.string.AppName ("NimarkoGram") directly.
                 // NG: custom main-screen title overrides the app name when set.
-                SpannableStringBuilder ssb = new SpannableStringBuilder(
+                // NimarkoGram: styled main title (sparkle, periwinkle bold text, animated island pill).
+                SpannableStringBuilder ssb = app.nimarkogram.messenger.ui.MoGramTitle.style(
                         app.nimarkogram.messenger.AppConfig.resolveMainTitle(getString(R.string.AppName)));
                 actionBarDefaultTitle = ssb;
                 // NG: explicit gilroy=true so the initial chat-list title renders in Gilroy
@@ -4341,6 +4342,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 // connecting overlay then briefly fixes (its gilroy=true path) before
                 // clearing — perceived as a "bold flicker" on connect/disconnect.
                 actionBar.setTitle(ssb, statusDrawable, true);
+                app.nimarkogram.messenger.ui.MoGramTitle.installPill(actionBar.getTitleTextView());
                 updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
             }
             if (folderId == 0) {
@@ -12484,7 +12486,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             // re-apply it live (layout-independent, unlike the old rebuildAllFragmentViews path which skipped
             // DialogsActivity on tablet/split-layout). Respect folderNameInHeader on non-default tabs.
             if (!onlySelect && folderId == 0 && communityId == 0 && actionBar != null) {
-                actionBarDefaultTitle = new SpannableStringBuilder(
+                actionBarDefaultTitle = app.nimarkogram.messenger.ui.MoGramTitle.style(
                         app.nimarkogram.messenger.AppConfig.resolveMainTitle(getString(R.string.AppName)));
                 FilterTabsView.Tab currentTab = (filterTabsView != null && viewPages != null && viewPages[0] != null)
                         ? filterTabsView.findTabById(viewPages[0].selectedType) : null;
