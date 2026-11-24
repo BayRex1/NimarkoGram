@@ -1017,7 +1017,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         }
     };
 
-    private CharSequence createMofGramHeaderTitle(String value) {
+    private CharSequence createMofGramHeaderTitle(CharSequence value) {
         if (mofGramTitleSpan != null) {
             mofGramTitleSpan.detach();
         }
