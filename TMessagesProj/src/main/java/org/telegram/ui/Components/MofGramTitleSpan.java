@@ -3,6 +3,7 @@ package org.telegram.ui.Components;
 import android.animation.ValueAnimator;
 import android.graphics.Canvas;
 import android.graphics.LinearGradient;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
@@ -116,10 +117,14 @@ public final class MofGramTitleSpan extends ReplacementSpan implements View.OnAt
 
         shapePaint.setStyle(Paint.Style.STROKE);
         shapePaint.setStrokeWidth(dp(1.15f));
-        shapePaint.setShader(new LinearGradient(
+        LinearGradient outlineGradient = new LinearGradient(
                 pill.left, pill.top, pill.right, pill.bottom,
                 new int[] { 0xFF8F8BFF, 0xFFB7C8FF, 0xFF79D8F2, 0xFF9D8BFA },
-                new float[] { 0f, 0.34f, 0.68f, 1f }, Shader.TileMode.CLAMP));
+                new float[] { 0f, 0.34f, 0.68f, 1f }, Shader.TileMode.CLAMP);
+        Matrix gradientMatrix = new Matrix();
+        gradientMatrix.setTranslate((phase - 0.5f) * dp(34), 0f);
+        outlineGradient.setLocalMatrix(gradientMatrix);
+        shapePaint.setShader(outlineGradient);
         shapePaint.setShadowLayer(dp(3.5f), 0f, 0f, 0x558E9CFF);
         canvas.drawRoundRect(pill, pillHeight * 0.5f, pillHeight * 0.5f, shapePaint);
         shapePaint.clearShadowLayer();
@@ -138,11 +143,15 @@ public final class MofGramTitleSpan extends ReplacementSpan implements View.OnAt
         starPaint.setShader(null);
 
         textPaint.setStyle(Paint.Style.FILL);
-        textPaint.setShader(new LinearGradient(
+        LinearGradient textGradient = new LinearGradient(
                 x + leftPadding + starSize + gap, pill.top,
                 x + width - rightPadding, pill.bottom,
                 new int[] { 0xFFB6C5FF, 0xFFD0C6FF, 0xFF91D7F5 },
-                null, Shader.TileMode.CLAMP));
+                null, Shader.TileMode.CLAMP);
+        Matrix textMatrix = new Matrix();
+        textMatrix.setTranslate((phase - 0.5f) * dp(18), 0f);
+        textGradient.setLocalMatrix(textMatrix);
+        textPaint.setShader(textGradient);
         canvas.drawText(text, start, end, x + leftPadding + starSize + gap,
                 centerY - (fm.ascent + fm.descent) * 0.5f, textPaint);
         textPaint.setShader(null);
