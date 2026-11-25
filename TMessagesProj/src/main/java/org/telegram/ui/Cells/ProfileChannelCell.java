@@ -534,7 +534,7 @@ public class ProfileChannelCell extends FrameLayout implements Theme.Colorable {
         ArrayList<DialogCell.CustomDialog> dialogs = new ArrayList<>();
 
         DialogCell.CustomDialog customDialog = new DialogCell.CustomDialog();
-        customDialog.name = "NimarkoGram 💎";
+        customDialog.name = "MofGram 💎";
         customDialog.message = LocaleController.getString(R.string.NM_MP_PreviewChannelMessage);
         customDialog.id = 1390;
         customDialog.unread_count = 0;

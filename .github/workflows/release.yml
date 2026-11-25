@@ -12,6 +12,9 @@ on:
         required: true
         default: "false"
   push:
+    branches:
+      - feature/mogram-gifts-native-integration
+      - main
     tags:
       - "v*"
 
@@ -83,7 +86,7 @@ jobs:
         run: python tools/ayugram/patch_tlrpc.py
 
       - name: Build signed standalone APK
-        run: ./gradlew --no-daemon --stacktrace :TMessagesProj_AppStandalone:assembleAfatStandalone
+        run: ./gradlew --no-daemon --stacktrace --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g" :TMessagesProj_AppStandalone:assembleAfatStandalone
 
       - name: Locate and rename APK
         shell: bash
@@ -100,7 +103,7 @@ jobs:
           path: MofGram-1.0.0.apk
 
       - name: Publish GitHub release
-        if: github.event_name == 'push' || github.event.inputs.publish == 'true'
+        if: (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) || github.event.inputs.publish == 'true'
         shell: bash
         run: |
           TAG="${{ github.event.inputs.tag || github.ref_name }}"
