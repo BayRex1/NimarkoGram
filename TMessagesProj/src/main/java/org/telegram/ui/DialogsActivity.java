@@ -1031,6 +1031,24 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         return title;
     }
 
+    private float mofGramTitleScrollOffset;
+
+    /** While the chat list scrolls, the MofGram title slides left and fades, like Telegram's header. */
+    private void updateMofGramTitleScroll(int dy, RecyclerView recyclerView) {
+        if (actionBar == null || actionBar.getTitleTextView() == null) {
+            return;
+        }
+        View title = actionBar.getTitleTextView();
+        float max = Math.max(AndroidUtilities.dp(120), title.getMeasuredWidth() + AndroidUtilities.dp(16));
+        if (!recyclerView.canScrollVertically(-1)) {
+            mofGramTitleScrollOffset = 0;
+        } else {
+            mofGramTitleScrollOffset = Math.max(0, Math.min(max, mofGramTitleScrollOffset + dy));
+        }
+        title.setTranslationX(-mofGramTitleScrollOffset);
+        title.setAlpha(1f - Math.min(1f, mofGramTitleScrollOffset / max));
+    }
+
     private void attachMofGramHeaderAnimation() {
         if (mofGramTitleSpan != null && actionBar != null && actionBar.getTitleTextView() != null) {
             mofGramTitleSpan.attach(actionBar.getTitleTextView());
@@ -5506,6 +5524,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    updateMofGramTitleScroll(dy, recyclerView);
                     viewPage.listView.recordStoriesScrollHaptic(dy);
                     if (contentView != null) {
                         contentView.updateBlurContent();
