@@ -87,8 +87,11 @@ public final class MofGramTitleSpan extends ReplacementSpan implements View.OnAt
 
     @Override
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
-        paint.getFontMetricsInt(fm);
-        float textWidth = paint.measureText(text, start, end);
+        // Measure with the same bold weight that draw() uses, so the pill is wide enough.
+        Paint measurePaint = new Paint(paint);
+        measurePaint.setFakeBoldText(true);
+        measurePaint.getFontMetricsInt(fm);
+        float textWidth = measurePaint.measureText(text, start, end);
         return Math.round(textWidth + dp(38));
     }
 
@@ -117,16 +120,16 @@ public final class MofGramTitleSpan extends ReplacementSpan implements View.OnAt
         canvas.drawRoundRect(pill, pillHeight * 0.5f, pillHeight * 0.5f, shapePaint);
 
         shapePaint.setStyle(Paint.Style.STROKE);
-        shapePaint.setStrokeWidth(dp(1.15f));
+        shapePaint.setStrokeWidth(dp(2.2f));
         LinearGradient outlineGradient = new LinearGradient(
                 pill.left, pill.top, pill.right, pill.bottom,
-                new int[] { 0xFF8F8BFF, 0xFFB7C8FF, 0xFF79D8F2, 0xFF9D8BFA },
+                new int[] { 0xFFB0A8FF, 0xFFE4EAFF, 0xFF8FEBFF, 0xFFC9B3FF },
                 new float[] { 0f, 0.34f, 0.68f, 1f }, Shader.TileMode.CLAMP);
         Matrix gradientMatrix = new Matrix();
         gradientMatrix.setTranslate((phase - 0.5f) * dp(34), 0f);
         outlineGradient.setLocalMatrix(gradientMatrix);
         shapePaint.setShader(outlineGradient);
-        shapePaint.setShadowLayer(dp(3.5f), 0f, 0f, 0x558E9CFF);
+        shapePaint.setShadowLayer(dp(6f), 0f, 0f, 0xCC9CB8FF);
         canvas.drawRoundRect(pill, pillHeight * 0.5f, pillHeight * 0.5f, shapePaint);
         shapePaint.clearShadowLayer();
         shapePaint.setShader(null);
@@ -144,6 +147,7 @@ public final class MofGramTitleSpan extends ReplacementSpan implements View.OnAt
         starPaint.setShader(null);
 
         textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setFakeBoldText(true);
         LinearGradient textGradient = new LinearGradient(
                 x + leftPadding + starSize + gap, pill.top,
                 x + width - rightPadding, pill.bottom,

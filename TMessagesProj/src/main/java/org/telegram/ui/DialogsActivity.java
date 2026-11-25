@@ -1045,8 +1045,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         } else {
             mofGramTitleScrollOffset = Math.max(0, Math.min(max, mofGramTitleScrollOffset + dy));
         }
-        title.setTranslationX(-mofGramTitleScrollOffset);
-        title.setAlpha(1f - Math.min(1f, mofGramTitleScrollOffset / max));
+        // Keep the title fully visible while scrolling (it must not disappear).
+        title.setTranslationX(0f);
+        title.setAlpha(1f);
     }
 
     private void attachMofGramHeaderAnimation() {
