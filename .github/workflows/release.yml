@@ -12,6 +12,9 @@ on:
         required: true
         default: "false"
   push:
+    branches:
+      - feature/mogram-gifts-native-integration
+      - main
     tags:
       - "v*"
 
@@ -100,7 +103,7 @@ jobs:
           path: MofGram-1.0.0.apk
 
       - name: Publish GitHub release
-        if: github.event_name == 'push' || github.event.inputs.publish == 'true'
+        if: (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) || github.event.inputs.publish == 'true'
         shell: bash
         run: |
           TAG="${{ github.event.inputs.tag || github.ref_name }}"
