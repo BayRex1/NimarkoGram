@@ -89,7 +89,7 @@ public final class MofGramTitleSpan extends ReplacementSpan implements View.OnAt
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
         paint.getFontMetricsInt(fm);
         float textWidth = paint.measureText(text, start, end);
-        return Math.round(textWidth + dp(48));
+        return Math.round(textWidth + dp(38));
     }
 
     @Override
@@ -98,14 +98,15 @@ public final class MofGramTitleSpan extends ReplacementSpan implements View.OnAt
         TextPaint textPaint = sourcePaint instanceof TextPaint
                 ? new TextPaint((TextPaint) sourcePaint) : new TextPaint(sourcePaint);
         float textWidth = textPaint.measureText(text, start, end);
-        float starSize = dp(13);
-        float leftPadding = dp(13);
-        float gap = dp(8);
-        float rightPadding = dp(14);
+        float starSize = dp(11);
+        float leftPadding = dp(10);
+        float gap = dp(6);
+        float rightPadding = dp(10);
         float width = leftPadding + starSize + gap + textWidth + rightPadding;
         Paint.FontMetrics fm = textPaint.getFontMetrics();
         float textHeight = fm.descent - fm.ascent;
-        float pillHeight = Math.max(dp(31), textHeight + dp(13));
+        // Same height as the title view, otherwise the bottom of the pill is clipped.
+        float pillHeight = Math.min(dp(24), Math.max(dp(20), textHeight));
         float centerY = y + (fm.ascent + fm.descent) * 0.5f;
 
         pill.set(x, centerY - pillHeight * 0.5f, x + width, centerY + pillHeight * 0.5f);
