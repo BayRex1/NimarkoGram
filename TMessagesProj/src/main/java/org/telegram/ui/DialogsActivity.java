@@ -1050,6 +1050,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     }
 
     private void attachMofGramHeaderAnimation() {
+        // Left-aligned title: centered titles leave only ~130dp for the text, which cut off "Gram".
+        if (actionBar != null) {
+            actionBar.setForceDisableCenterTitle(true);
+        }
         if (mofGramTitleSpan != null && actionBar != null && actionBar.getTitleTextView() != null) {
             mofGramTitleSpan.attach(actionBar.getTitleTextView());
         }
