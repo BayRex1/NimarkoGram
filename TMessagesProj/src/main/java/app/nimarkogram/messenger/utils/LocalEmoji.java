@@ -39,8 +39,10 @@ public final class LocalEmoji {
 
     public static boolean canUse(int account) {
         try {
-            return AppConfig.localPremiumEmojis
-                    && !UserConfig.getInstance(account).isPremium();
+            TLRPC.User currentUser = UserConfig.getInstance(account).getCurrentUser();
+            boolean hasRealPremium = currentUser != null && currentUser.premium;
+            return app.nimarkogram.messenger.ayugram.AyuConfig.localPremium
+                    || (AppConfig.localPremiumEmojis && !hasRealPremium);
         } catch (Throwable t) {
             return false;
         }

@@ -31,7 +31,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.CRC32;
 public class NativeLoader {
 
-    private final static int LIB_VERSION = 49;
+    private final static int LIB_VERSION = 50;
     private final static String LIB_NAME = "tmessages." + LIB_VERSION;
     private final static String LIB_SO_NAME = "lib" + LIB_NAME + ".so";
     private final static String LOCALE_LIB_SO_NAME = "lib" + LIB_NAME + "loc.so";

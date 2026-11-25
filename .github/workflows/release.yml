@@ -1,0 +1,110 @@
+name: MofGram signed release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag"
+        required: true
+        default: "v1.0.0"
+      publish:
+        description: "Publish GitHub release (true/false)"
+        required: true
+        default: "false"
+  push:
+    branches:
+      - feature/mogram-gifts-native-integration
+      - main
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build signed APK and publish release
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+      ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+      TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+      TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+      RELEASE_STORE_FILE_BASE64: ${{ secrets.RELEASE_STORE_FILE_BASE64 }}
+      RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+      RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+      RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Android SDK components
+        run: |
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort -V | tail -n 1)"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" --install "platform-tools" "platforms;android-36" "build-tools;36.0.0" "cmake;3.22.1" "ndk;26.3.11579264" "ndk;27.2.12479018"
+
+      - name: Validate required secrets
+        shell: bash
+        run: |
+          missing=0
+          for v in TELEGRAM_API_ID TELEGRAM_API_HASH RELEASE_STORE_FILE_BASE64 RELEASE_STORE_PASSWORD RELEASE_KEY_ALIAS RELEASE_KEY_PASSWORD; do
+            if [ -z "${!v}" ]; then echo "Missing secret: $v"; missing=1; fi
+          done
+          [ "$missing" -eq 0 ] || exit 1
+
+      - name: Write private.properties and keystore
+        shell: bash
+        run: |
+          echo "$RELEASE_STORE_FILE_BASE64" | base64 -d > release.keystore
+          cat > private.properties <<EOF2
+          TELEGRAM_API_ID=$TELEGRAM_API_ID
+          TELEGRAM_API_HASH=$TELEGRAM_API_HASH
+          RELEASE_STORE_FILE=release.keystore
+          RELEASE_STORE_PASSWORD=$RELEASE_STORE_PASSWORD
+          RELEASE_KEY_ALIAS=$RELEASE_KEY_ALIAS
+          RELEASE_KEY_PASSWORD=$RELEASE_KEY_PASSWORD
+          EOF2
+
+      - name: Apply AyuGram TLRPC compatibility patch
+        run: python tools/ayugram/patch_tlrpc.py
+
+      - name: Build signed standalone APK
+        run: ./gradlew --no-daemon --stacktrace --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g" :TMessagesProj_AppStandalone:assembleAfatStandalone
+
+      - name: Locate and rename APK
+        shell: bash
+        run: |
+          APK=$(find TMessagesProj_AppStandalone/build/outputs/apk -name "*.apk" | head -n 1)
+          [ -n "$APK" ] || { echo "APK not found"; exit 1; }
+          cp "$APK" MofGram-1.0.0.apk
+          echo "Signer:"; "$(find "$ANDROID_HOME/build-tools/36.0.0" -name apksigner | head -n 1)" verify --print-certs MofGram-1.0.0.apk | head -3
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MofGram-1.0.0-apk
+          path: MofGram-1.0.0.apk
+
+      - name: Publish GitHub release
+        if: (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) || github.event.inputs.publish == 'true'
+        shell: bash
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          gh release create "$TAG" MofGram-1.0.0.apk --target "$GITHUB_SHA" --title "1.0.0" --notes "NimarkoGram / MofGram 1.0.0 (signed release APK). APK version is unchanged (13.2.1 build)."

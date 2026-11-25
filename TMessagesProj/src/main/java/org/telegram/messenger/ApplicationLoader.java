@@ -13,6 +13,7 @@ package org.telegram.messenger;
 import static app.nimarkogram.messenger.CrashContext.initializationPhase;
 
 import app.nimarkogram.messenger.CrashContext.PineInitPhase;
+import app.nimarkogram.messenger.ayugram.sync.AyuSyncController;
 import app.nimarkogram.messenger.utils.AppMotionBlur;
 import app.nimarkogram.messenger.utils.UiAnimationClock;
 import app.nimarkogram.messenger.utils.UiAnimationLifecycle;
@@ -347,6 +348,13 @@ public class ApplicationLoader extends Application {
             DownloadController.getInstance(a);
         }
         BillingController.getInstance().startConnection();
+
+        // AyuGram sync must start after UserConfig/Accounts have been loaded.
+        try {
+            AyuSyncController.create();
+        } catch (Throwable t) {
+            FileLog.e("AyuGram sync startup failed", t);
+        }
     }
 
     public ApplicationLoader() {
@@ -1093,6 +1101,14 @@ public class ApplicationLoader extends Application {
         } catch (UnsatisfiedLinkError error) {
             Error loadError = NativeLoader.getLoadError();
             throw new RuntimeException("can't load native libraries " +  Build.CPU_ABI + " lookup folder " + NativeLoader.getAbiFolder(), loadError != null ? loadError : error);
+        }
+
+        // AyuConfig reads MessagesController preferences, which can touch native ConnectionsManager methods.
+        // Initialize it only after the native library has been loaded and JNI methods are registered.
+        try {
+            app.nimarkogram.messenger.ayugram.AyuConfig.loadConfig();
+        } catch (Throwable t) {
+            FileLog.e("AyuGram config startup failed", t);
         }
         new ForegroundDetector(this) {
             @Override
