@@ -120,6 +120,32 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
         setPadding(dp(12), dp(12), dp(12), dp(12));
         createCardImplementation();
 
+        // Low-contrast bank branding from the green MofGram card reference.
+        TextView sberWatermark = new TextView(context);
+        sberWatermark.setText("СБЕР");
+        sberWatermark.setTextColor(0x3f005b20);
+        sberWatermark.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 43f);
+        sberWatermark.setTypeface(Typeface.create("sans-serif-black", Typeface.NORMAL));
+        sberWatermark.setIncludeFontPadding(false);
+        sberWatermark.setSingleLine(true);
+        sberWatermark.setLetterSpacing(.025f);
+        sberWatermark.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        frontFace.addView(sberWatermark, LayoutHelper.createFrame(
+                245, 58, Gravity.LEFT | Gravity.TOP, 12, 3, 0, 0
+        ));
+
+        TextView mirMark = new TextView(context);
+        mirMark.setText("МИР");
+        mirMark.setTextColor(Color.WHITE);
+        mirMark.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 25f);
+        mirMark.setTypeface(Typeface.create("sans-serif-black", Typeface.NORMAL));
+        mirMark.setIncludeFontPadding(false);
+        mirMark.setSingleLine(true);
+        mirMark.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        frontFace.addView(mirMark, LayoutHelper.createFrame(
+                82, 34, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 13, 4
+        ));
+
         cardHolderView = new TextView(context) {
             @Override
             protected void onDraw(Canvas canvas) {
@@ -200,7 +226,7 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
         usdBalanceView.setScaleProperty(0.6f);
         usdBalanceView.setTypeface(AndroidUtilities.getTypeface("fonts/gram.ttf"));
         usdBalanceView.setTextSize(dp(14));
-        usdBalanceView.setTextColor(0xFF87EFFF);
+        usdBalanceView.setTextColor(Color.WHITE);
         usdBalanceView.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
         usdBalanceView.setTextDirection(View.TEXT_DIRECTION_LTR);
         usdBalanceView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
@@ -402,7 +428,7 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
         balanceView.invalidate();
         cardNumberView.invalidate();
         ((WalletCard2DView) cardView).setStickerStyle(style);
-        usdBalanceView.setTextColor(WalletGiftPalette.tint(0xFF87EFFF, style));
+        usdBalanceView.setTextColor(style == null ? Color.WHITE : WalletGiftPalette.tint(Color.WHITE, style));
         cardHolderView.invalidate();
     }
 
@@ -683,7 +709,7 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
         text.append(LocaleController.getString(R.string.GramCurrency));
         text.setSpan(new android.text.style.CharacterStyle() {
             @Override public void updateDrawState(android.text.TextPaint paint) {
-                paint.setColor(stickerStyle == null ? 0xFF6DDCFF : WalletGiftPalette.tint(0xFF6DDCFF, stickerStyle));
+                paint.setColor(stickerStyle == null ? Color.WHITE : WalletGiftPalette.tint(Color.WHITE, stickerStyle));
             }
         }, labelStart, text.length(),
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
