@@ -10622,7 +10622,9 @@ public class MessageObject {
                 return MessagesFilterHelper.INSTANCE.shouldBlockMessage(this);
             }
         }
-        return groupedMessageBlocked || verdict.blocked;
+        // AyuGram regex filters share NimarkoGram's existing message visibility pipeline.
+        return groupedMessageBlocked || verdict.blocked
+                || app.nimarkogram.messenger.ayugram.AyuFilter.isFiltered(this, null);
     }
 
     public boolean shouldCollapseFilteredMessage() {

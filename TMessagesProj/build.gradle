@@ -180,6 +180,9 @@ dependencies {
     // Room — extera api/db. (kapt processor disabled; we use the pre-generated *_Impl.java.)
     // Note: 2.7.0+ for SQLiteConnection / EntityInsertAdapter API surface used by ported _Impl files.
     implementation 'androidx.room:room-runtime:2.7.0'
+// ---- AyuGram original package dependencies ----
+    annotationProcessor 'androidx.room:room-compiler:2.7.0'
+    implementation 'dev.gustavoavila:java-android-websocket-client:2.0.2'
     implementation 'androidx.sqlite:sqlite:2.5.0'
 
     // ---- NimarkoGram Phase 2 (re-port: restored 144 extera files) ----
@@ -301,7 +304,7 @@ android {
             cmake {
                 version = '3.22.1'
                 arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-24' //, '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
-                targets 'tmessages.49'
+                targets 'tmessages.50'
             }
         }
     }

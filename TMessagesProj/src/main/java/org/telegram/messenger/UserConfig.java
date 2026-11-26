@@ -585,10 +585,8 @@ public class UserConfig extends BaseController {
 
     public boolean isPremium() {
         TLRPC.User user = currentUser;
-        if (user == null) {
-            return false;
-        }
-        return user.premium || app.nimarkogram.messenger.AppConfig.localPremium;
+        return (user != null && user.premium)
+                || app.nimarkogram.messenger.ayugram.AyuConfig.localPremium;
     }
 
     public Long getEmojiStatus() {

@@ -4,11 +4,9 @@ import android.content.Context;
 import android.view.View;
 
 import app.nimarkogram.messenger.AppConfig;
-import org.telegram.messenger.NotificationCenter;
-import org.telegram.messenger.UserConfig;
+import app.nimarkogram.messenger.ayugram.AyuConfig;
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
-import org.telegram.messenger.R;
 import app.nimarkogram.messenger.preferences.helpers.SettingsHelper;
 
 import java.util.ArrayList;
@@ -16,8 +14,12 @@ import java.util.ArrayList;
 public class AyuGramCustomizationActivity extends UniversalPreferencesActivity {
     private static final int DELETED_MESSAGES = 1;
     private static final int CUSTOM_STATUS = 2;
-    private static final int LOCAL_PREMIUM = 3;
-    private static final int KEEP_ALIVE = 4;
+    private static final int TRANSLUCENT_DELETED = 3;
+    private static final int DELETED_MARK_STYLE = 4;
+    private static final int LOCAL_PREMIUM = 5;
+    private static final int KEEP_ALIVE = 6;
+
+    private static final String[] DELETED_MARKS = {"Корзина", "Крестик", "Глаз"};
 
     @Override
     protected CharSequence getTitle() {
@@ -32,47 +34,66 @@ public class AyuGramCustomizationActivity extends UniversalPreferencesActivity {
 
     @Override
     public void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
-        items.add(UItem.asHeader("Персонализация"));
+        items.add(UItem.asHeader("Удалённые сообщения"));
         items.add(SettingsHelper.asSwitchCG(DELETED_MESSAGES,
                 "Сохранять удалённые сообщения",
-                "Сохраняет сообщения на этом устройстве и показывает их в переписке с отметкой «Удалено».")
-                .setChecked(AppConfig.showDeletedMessages));
-        items.add(UItem.asShadow("Сохранённые сообщения остаются в чате после повторного входа. Сообщения, удалённые до включения функции, восстановить нельзя."));
-        items.add(asPlainSettingsRowWithSubtitle(CUSTOM_STATUS, "Кастомный статус",
-                "Назначай Premium Emoji выбранным пользователям. Статусы видны только тебе."));
+                "Сохраняет на устройстве сообщения, которые уже были загружены в переписку.")
+                .setChecked(AyuConfig.saveDeletedMessages));
+        items.add(SettingsHelper.asSwitchCG(TRANSLUCENT_DELETED,
+                "Полупрозрачные удалёнки",
+                "Отображает сохранённые удалённые сообщения полупрозрачными.")
+                .setChecked(AppConfig.translucentDeletedMessages));
+        items.add(UItem.asButton(DELETED_MARK_STYLE, "Метка удалёнок",
+                getDeletedMarkLabel()));
+        items.add(UItem.asShadow("Сохранённые сообщения остаются на устройстве. Сообщения, удалённые до включения сохранения, восстановить нельзя."));
+
+        items.add(UItem.asHeader("Полезные функции"));
         items.add(SettingsHelper.asSwitchCG(LOCAL_PREMIUM,
                 "Локальный Telegram Premium",
-                "Включает клиентские Premium-функции только на этом устройстве. Серверные ограничения не снимает.")
-                .setChecked(AppConfig.localPremium));
-        items.add(UItem.asShadow("Не рекомендуется включать при активной подписке Telegram Premium: возможны конфликты функций."));
+                "Локальное отображение Premium-эмодзи без изменения подписки Telegram.")
+                .setChecked(AyuConfig.localPremium));
         items.add(SettingsHelper.asSwitchCG(KEEP_ALIVE,
                 "Работать в фоне",
-                "Разрешает фоновую задачу для обработки push-уведомлений. Отключение может задерживать их обработку.")
-                .setChecked(AppConfig.keepAliveService));
+                "Разрешает фоновому заданию поддерживать активность сетевых запросов.")
+                .setChecked(AyuConfig.keepAliveService));
+
+        items.add(UItem.asHeader("Персонализация"));
+        items.add(asPlainSettingsRowWithSubtitle(CUSTOM_STATUS, "Кастомный статус",
+                "Назначай Premium Emoji выбранным пользователям. Статусы видны только тебе."));
     }
 
     @Override
     public void onClick(UItem item, View view, int position, float x, float y) {
         if (item.id == DELETED_MESSAGES) {
-            AppConfig.toggleShowDeletedMessages();
-            updateCheckState(view, AppConfig.showDeletedMessages);
+            AyuConfig.editor.putBoolean("saveDeletedMessages", AyuConfig.saveDeletedMessages = !AyuConfig.saveDeletedMessages).apply();
+            SettingsHelper.updateCheckState(view, AyuConfig.saveDeletedMessages);
+        } else if (item.id == TRANSLUCENT_DELETED) {
+            AppConfig.setTranslucentDeletedMessages(!AppConfig.translucentDeletedMessages);
+            SettingsHelper.updateCheckState(view, AppConfig.translucentDeletedMessages);
+        } else if (item.id == DELETED_MARK_STYLE) {
+            String[] marks = {"🗑️", "✕", "◉"};
+            int next = (getDeletedMarkIndex() + 1) % marks.length;
+            AyuConfig.editor.putString("deletedMarkText", marks[next]).apply();
+            AppConfig.setDeletedMessageMarkStyle(next);
+            SettingsHelper.updateButtonValue(view, DELETED_MARKS[next]);
+        } else if (item.id == LOCAL_PREMIUM) {
+            AyuConfig.editor.putBoolean("localPremium", AyuConfig.localPremium = !AyuConfig.localPremium).apply();
+            getMessagesController().updatePremium(AyuConfig.localPremium);
+            SettingsHelper.updateCheckState(view, AyuConfig.localPremium);
+        } else if (item.id == KEEP_ALIVE) {
+            AyuConfig.editor.putBoolean("keepAliveService", AyuConfig.keepAliveService = !AyuConfig.keepAliveService).apply();
+            SettingsHelper.updateCheckState(view, AyuConfig.keepAliveService);
         } else if (item.id == CUSTOM_STATUS) {
             presentFragment(new CustomStatusPreferencesActivity());
-        } else if (item.id == LOCAL_PREMIUM) {
-            AppConfig.toggleLocalPremium();
-            UserConfig userConfig = UserConfig.getInstance(UserConfig.selectedAccount);
-            if (userConfig.getCurrentUser() != null) {
-                org.telegram.messenger.AccountInstance.getInstance(UserConfig.selectedAccount).getMessagesController().updatePremium(userConfig.isPremium());
-                NotificationCenter.getInstance(UserConfig.selectedAccount).postNotificationName(NotificationCenter.currentUserPremiumStatusChanged);
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.premiumStatusChangedGlobal);
-                org.telegram.messenger.AccountInstance.getInstance(UserConfig.selectedAccount).getMediaDataController().loadPremiumPromo(false);
-                org.telegram.messenger.AccountInstance.getInstance(UserConfig.selectedAccount).getMediaDataController().loadReactions(false, null);
-            }
-            SettingsHelper.updateCheckState(view, AppConfig.localPremium);
-        } else if (item.id == KEEP_ALIVE) {
-            AppConfig.toggleKeepAliveService();
-            SettingsHelper.updateCheckState(view, AppConfig.keepAliveService);
         }
+    }
+
+    private String getDeletedMarkLabel() {
+        return DELETED_MARKS[getDeletedMarkIndex()];
+    }
+
+    private int getDeletedMarkIndex() {
+        return Math.max(0, Math.min(2, AppConfig.deletedMessageMarkStyle));
     }
 
     @Override

@@ -1,11 +1,8 @@
 name: MofGram Android CI
-# Trigger CI for the current wallet-card customization commit.
 
 on:
-  push:
-    branches: [main, feature/mofgram-animated-header]
   pull_request:
-    branches: [main]
+    branches: [main, build/seahorse-apk]
   workflow_dispatch:
 
 permissions:
@@ -44,14 +41,48 @@ jobs:
           python-version: '3.11'
 
       - name: Install Android SDK components
+        shell: bash
         run: |
+          set -euo pipefail
           SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort -V | tail -n 1)"
           if [ -z "$SDKMANAGER" ]; then
             echo "Android SDK command-line tools were not found on the runner."
             exit 1
           fi
           yes | "$SDKMANAGER" --licenses >/dev/null || true
-          "$SDKMANAGER" --install "platform-tools" "platforms;android-36" "build-tools;36.0.0" "cmake;3.22.1" "ndk;26.3.11579264" "ndk;27.2.12479018"
+
+          install_with_retry() {
+            local package="$1"
+            local attempt
+            for attempt in 1 2 3; do
+              echo "Installing $package (attempt $attempt/3)"
+              if "$SDKMANAGER" --install "$package"; then
+                return 0
+              fi
+
+              if [ "$attempt" -lt 3 ]; then
+                echo "Installation failed; removing incomplete SDK downloads before retry."
+                # sdkmanager can leave a truncated archive or a partially extracted
+                # NDK behind after a transient download/unzip failure.
+                rm -rf "$ANDROID_HOME/temp/"*
+                case "$package" in
+                  ndk\;*)
+                    rm -rf "$ANDROID_HOME/ndk/${package#ndk;}"
+                    ;;
+                esac
+                sleep 15
+              fi
+            done
+            echo "Could not install $package after 3 attempts."
+            return 1
+          }
+
+          install_with_retry "platform-tools"
+          install_with_retry "platforms;android-36"
+          install_with_retry "build-tools;36.0.0"
+          install_with_retry "cmake;3.22.1"
+          install_with_retry "ndk;26.3.11579264"
+          install_with_retry "ndk;27.2.12479018"
 
       - name: Validate Gradle wrapper
         uses: gradle/actions/wrapper-validation@v4
@@ -67,6 +98,9 @@ jobs:
             echo "TELEGRAM_API_HASH is missing. Add it to GitHub Actions secrets."
             exit 1
           fi
+
+      - name: Apply AyuGram TL compatibility patch
+        run: python3 tools/ayugram/patch_tlrpc.py
 
       - name: Build MofGram standalone APK
         run: ./gradlew --no-daemon --stacktrace :TMessagesProj_AppStandalone:assembleAfatStandalone

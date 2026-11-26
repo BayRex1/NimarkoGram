@@ -53,6 +53,7 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
     public static final int ID_TEXTANIM       = 28;
     public static final int ID_PILLSTACK      = 29;
     public static final int ID_SOURCE_CODE    = 30;
+    public static final int ID_AYUGRAM       = 31;
 
     private static final String SOURCE_REPOSITORY_URL = "https://github.com/BayRex1/NimarkoGram";
     private static final int SEARCH_MENU_ID = 1000;
@@ -155,6 +156,8 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                 R.drawable.msg_edit_solar, R.string.NM_TA_Title, R.string.NM_SettingsSummaryTextAnimation, "nimarko_textanim"));
         arrayList.add(category(ID_PILLSTACK, IconBackgroundColors.CYAN,
                 R.drawable.msg_search_solar, R.string.NM_CARDS_Title, R.string.NM_SettingsSummaryInfoCards, "nimarko_infocards"));
+        arrayList.add(category(ID_AYUGRAM, IconBackgroundColors.PURPLE,
+                R.drawable.ghost, R.string.AyuPreferences, 0, "ayugram_settings"));
         arrayList.add(UItem.asShadow(null));
 
         arrayList.add(UItem.asHeader(LocaleController.getString(R.string.NM_SettingsSectionApp)));
@@ -376,6 +379,9 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                 break;
             case ID_PILLSTACK:
                 presentFragment(new InfoCardsPreferencesActivity());
+                break;
+            case ID_AYUGRAM:
+                presentFragment(new AyuGramPreferencesActivity());
                 break;
             case ID_TEXTANIM:
                 presentFragment(new TextAnimPreferencesActivity());

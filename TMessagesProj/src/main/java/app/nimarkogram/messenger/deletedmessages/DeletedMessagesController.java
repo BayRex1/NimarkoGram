@@ -59,19 +59,51 @@ public final class DeletedMessagesController {
     }
 
     public static synchronized void onNotification(int account, int eventId, Object... args) {
-        if (!AppConfig.showDeletedMessages) {
+        if (!AppConfig.showDeletedMessages
+                && !app.nimarkogram.messenger.ayugram.AyuConfig.saveDeletedMessages) {
             return;
         }
         if (eventId == NotificationCenter.didReceiveNewMessages
                 || eventId == NotificationCenter.messagesDidLoad
                 || eventId == NotificationCenter.messagesDidLoadWithoutProcess) {
             cacheMessages(account, args);
+            if (eventId == NotificationCenter.messagesDidLoad
+                    || eventId == NotificationCenter.messagesDidLoadWithoutProcess) {
+                restoreLoadedMessages(account, args);
+            }
         } else if (eventId == NotificationCenter.messagesDeleted) {
             archiveDeleted(account, args);
         } else if (eventId == NotificationCenter.historyCleared) {
             // A full history clear does not provide a reliable message-id list.
             // Keep already archived copies; only pending snapshots are discarded.
             clearPending(account);
+        }
+    }
+
+    /**
+     * Reinsert locally archived messages into the history list before Telegram's
+     * message-list observers receive the messagesDidLoad notification.
+     */
+    private static void restoreLoadedMessages(int account, Object[] args) {
+        if (args == null) return;
+        for (Object arg : args) {
+            if (!(arg instanceof ArrayList)) continue;
+            ArrayList<?> values = (ArrayList<?>) arg;
+            ArrayList<MessageObject> messages = null;
+            long dialogId = 0;
+            for (Object value : values) {
+                if (value instanceof MessageObject) {
+                    MessageObject message = (MessageObject) value;
+                    dialogId = message.getDialogId();
+                    @SuppressWarnings("unchecked")
+                    ArrayList<MessageObject> typed = (ArrayList<MessageObject>) values;
+                    messages = typed;
+                    break;
+                }
+            }
+            if (messages != null && dialogId != 0) {
+                restoreDeletedMessages(account, dialogId, messages);
+            }
         }
     }
 
@@ -218,7 +250,8 @@ public final class DeletedMessagesController {
     }
 
     public static synchronized void restoreDeletedMessages(int account, long dialogId, ArrayList<MessageObject> target) {
-        if (target == null || !AppConfig.showDeletedMessages) return;
+        if (target == null || (!AppConfig.showDeletedMessages
+                && !app.nimarkogram.messenger.ayugram.AyuConfig.saveDeletedMessages)) return;
         SharedPreferences prefs = preferences();
         if (prefs == null) return;
         Set<Integer> existingIds = new HashSet<>();
@@ -240,6 +273,7 @@ public final class DeletedMessagesController {
                 if (message == null) continue;
                 MessageObject restored = new MessageObject(account, message, true, false);
                 restored.ayuDeleted = true;
+                restored.deleted = true;
                 target.add(restored);
                 existingIds.add(messageId);
                 changed = true;

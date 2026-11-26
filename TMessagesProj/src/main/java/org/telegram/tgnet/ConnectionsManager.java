@@ -547,34 +547,47 @@ public class ConnectionsManager extends BaseController {
         final RequestDelegate onComplete = userOnComplete == null ? null
                 : releaseOwner == null ? (response, error) -> postHookCallback.run(response, error, null)
                 : new ManagedRequestDelegate(postHookCallback, releaseOwner);
-        // AyuGram Ghost Mode: suppress read receipts and presence/typing requests.
-        if (app.nimarkogram.messenger.ayugram.GhostModeConfig.isGhostModeEnabled()) {
-            if (object instanceof TLRPC.TL_messages_setTyping
-                    || object instanceof TLRPC.TL_messages_setEncryptedTyping) {
-                return;
-            }
-            if (object instanceof org.telegram.tgnet.tl.TL_account.updateStatus) {
-                ((org.telegram.tgnet.tl.TL_account.updateStatus) object).offline = true;
-            }
-            boolean readRequest = object instanceof TLRPC.TL_messages_readHistory
-                    || object instanceof TLRPC.TL_messages_readEncryptedHistory
-                    || object instanceof TLRPC.TL_messages_readDiscussion
-                    || object instanceof TLRPC.TL_messages_readMessageContents
-                    || object instanceof TLRPC.TL_channels_readHistory
-                    || object instanceof TLRPC.TL_channels_readMessageContents;
-            if (readRequest) {
-                TLRPC.TL_messages_affectedMessages fakeResponse = new TLRPC.TL_messages_affectedMessages();
-                fakeResponse.pts = -1;
-                fakeResponse.pts_count = 0;
-                if (onComplete != null) {
-                    try {
-                        onComplete.run(fakeResponse, null);
-                    } catch (Throwable t) {
-                        FileLog.e("Ghost Mode: read receipt callback failed", t);
-                    }
+        // AyuGram Ghost Mode: apply each privacy option independently.
+        if (!app.nimarkogram.messenger.ayugram.AyuConfig.sendUploadProgress
+                && (object instanceof TLRPC.TL_messages_setTyping
+                || object instanceof TLRPC.TL_messages_setEncryptedTyping)) {
+            return;
+        }
+        if (!app.nimarkogram.messenger.ayugram.AyuConfig.sendOnlinePackets
+                && object instanceof org.telegram.tgnet.tl.TL_account.updateStatus) {
+            ((org.telegram.tgnet.tl.TL_account.updateStatus) object).offline = true;
+        }
+        boolean suppressReadReceipts = !app.nimarkogram.messenger.ayugram.AyuConfig.sendReadPackets;
+        boolean readRequest = object instanceof TLRPC.TL_messages_readHistory
+                || object instanceof TLRPC.TL_messages_readEncryptedHistory
+                || object instanceof TLRPC.TL_messages_readDiscussion
+                || object instanceof TLRPC.TL_messages_readMessageContents
+                || object instanceof TLRPC.TL_channels_readHistory
+                || object instanceof TLRPC.TL_channels_readMessageContents;
+        if (suppressReadReceipts && readRequest
+                && !app.nimarkogram.messenger.ayugram.utils.AyuState.getAllowReadPacket()) {
+            TLRPC.TL_messages_affectedMessages fakeResponse = new TLRPC.TL_messages_affectedMessages();
+            fakeResponse.pts = -1;
+            fakeResponse.pts_count = 0;
+            if (onComplete != null) {
+                try {
+                    onComplete.run(fakeResponse, null);
+                } catch (Throwable t) {
+                    FileLog.e("Ghost Mode: read receipt callback failed", t);
                 }
-                return;
             }
+            try {
+                android.util.Pair<Long, Integer> readInfo =
+                        app.nimarkogram.messenger.ayugram.utils.AyuGhostUtils
+                                .getDialogIdAndMessageIdFromRequest(object);
+                if (readInfo != null) {
+                    app.nimarkogram.messenger.ayugram.sync.AyuSyncController
+                            .getInstance().syncRead(currentAccount, readInfo.first, readInfo.second);
+                }
+            } catch (Throwable t) {
+                FileLog.e("Ghost Mode: cross-device read sync failed", t);
+            }
+            return;
         }
         if (BuildVars.LOGS_ENABLED) {
             FileLog.d("send request " + object + " with token = " + requestToken);

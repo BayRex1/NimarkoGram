@@ -1663,6 +1663,11 @@ public class GiftSheet extends BottomSheetWithRecyclerListView implements Notifi
             lastDocument = document;
             lastDocumentId = document.id;
 
+            // NimarkoGram: MoGram gifts are drawn straight from their .tgs file.
+            if (org.telegram.ui.Stars.StarsIntroActivity.setMoGramLottie(imageView.getImageReceiver(), document, dp(80))) {
+                return;
+            }
+
             TLRPC.PhotoSize photoSize = FileLoader.getClosestPhotoSizeWithSize(document.thumbs, dp(100));
             SvgHelper.SvgDrawable svgThumb = DocumentObject.getSvgThumb(document, Theme.key_windowBackgroundGray, 0.3f);
 
