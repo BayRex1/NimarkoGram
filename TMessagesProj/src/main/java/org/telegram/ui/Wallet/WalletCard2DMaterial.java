@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.*;
 import androidx.core.graphics.ColorUtils;
 import org.telegram.messenger.FileLog;
+import app.nimarkogram.messenger.AppConfig;
 import java.io.InputStream;
 import java.util.Random;
 
@@ -63,7 +64,7 @@ final class WalletCard2DMaterial {
     private final boolean[] surfaceGifts = new boolean[2];
     private final int[][] faceColors = new int[2][];
     private final PorterDuffColorFilter[][] faceFilters = new PorterDuffColorFilter[2][8];
-    private static final int[] STOCK_FACE_COLORS = {0xff006edb,0xff0072df,0xff0076e3,0xff007ae6,0xff007ee8,0xff0081ed,0xff0084f1,0xff0087f4,0xff008af5};
+    private static final int[] STOCK_FACE_COLORS = {0xff00a82e,0xff00ad32,0xff00b236,0xff00b83a,0xff00bd3e,0xff00c342,0xff00c846,0xff00ce4a,0xff00d34e};
     private final int[] darks = {0, 0}, lights = {0, 0};
     private final float[][] stars = new float[22][6];
     private final RectF qr;
@@ -77,7 +78,7 @@ final class WalletCard2DMaterial {
     private final SweepGradient qrBrushMask;
     private Shader qrBrush;
     private int iconRes;
-    private int rimDark = 0xff2368d5, rimLight = 0xff278ff7;
+    private int rimDark = 0xff087c28, rimLight = 0xff20e34d;
     private boolean hasRotation;
     private static final android.util.LruCache<Integer, Bitmap[]> ICON_CACHE = new android.util.LruCache<>(2);
 
@@ -229,12 +230,12 @@ final class WalletCard2DMaterial {
 
     void drawSurface(Canvas canvas, float[] style) {
         for (int pass = 0; pass < (style == null ? 1 : 2); pass++) {
-            int d = 0xff2368d5, l = 0xff278ff7;
+            int d = 0xff07872a, l = 0xff16d943;
             if (style != null) {
                 int offset = 10 + pass * 4;
                 if (style.length >= 18 && style[offset] >= 0) {
-                    d = WalletGiftPalette.surface2DEdge(0xff088fee, (int)style[offset], (int)style[offset + 1]);
-                    l = WalletGiftPalette.surface2DEdge(0xff16abf9, (int)style[offset], (int)style[offset + 1]);
+                    d = WalletGiftPalette.surface2DEdge(0xff07872a, (int)style[offset], (int)style[offset + 1]);
+                    l = WalletGiftPalette.surface2DEdge(0xff16d943, (int)style[offset], (int)style[offset + 1]);
                 } else {
                     d = WalletGiftPalette.tint(0xff2368d5, style, pass * 3);
                     l = WalletGiftPalette.tint(0xff278ff7, style, pass * 3);
@@ -302,7 +303,7 @@ final class WalletCard2DMaterial {
             }
             paint.setShader(null); paint.setAlpha(255);
         }
-        int tint = style == null ? 0xff3995ff : Color.rgb(
+        int tint = style == null ? 0xff21e64d : Color.rgb(
                 Math.min(255, Math.round(Color.red(rimLight) * 1.12f)),
                 Math.min(255, Math.round(Color.green(rimLight) * 1.12f)),
                 Math.min(255, Math.round(Color.blue(rimLight) * 1.12f)));
