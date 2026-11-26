@@ -2,6 +2,8 @@
 
 package org.telegram.ui.Wallet;
 
+import app.nimarkogram.messenger.AppConfig;
+
 import static org.telegram.messenger.AndroidUtilities.dp;
 
 import android.content.Context;
@@ -123,20 +125,46 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
         // Low-contrast bank branding from the green MofGram card reference.
         TextView sberWatermark = new TextView(context);
         sberWatermark.setText("СБЕР");
-        sberWatermark.setTextColor(0x3f005b20);
-        sberWatermark.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 43f);
+        sberWatermark.setTextColor(0x66ffffff);
+        sberWatermark.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 48f);
         sberWatermark.setTypeface(Typeface.create("sans-serif-black", Typeface.NORMAL));
         sberWatermark.setIncludeFontPadding(false);
         sberWatermark.setSingleLine(true);
         sberWatermark.setLetterSpacing(.025f);
         sberWatermark.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        sberWatermark.setVisibility(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? View.GONE : View.VISIBLE);
         frontFace.addView(sberWatermark, LayoutHelper.createFrame(
-                245, 58, Gravity.LEFT | Gravity.TOP, 12, 3, 0, 0
+                250, 62, Gravity.LEFT | Gravity.TOP, 10, 1, 0, 0
+        ));
+
+        View sberVerifiedMark = new View(context) {
+            private final Paint markPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            private final android.graphics.Path check = new android.graphics.Path();
+            @Override
+            protected void onDraw(Canvas canvas) {
+                float cx = getWidth() / 2f, cy = getHeight() / 2f;
+                markPaint.setStyle(Paint.Style.STROKE);
+                markPaint.setStrokeWidth(dp(2.4f));
+                markPaint.setStrokeCap(Paint.Cap.ROUND);
+                markPaint.setStrokeJoin(Paint.Join.ROUND);
+                markPaint.setColor(0x77ffffff);
+                canvas.drawCircle(cx, cy, dp(17), markPaint);
+                check.reset();
+                check.moveTo(cx - dp(8), cy);
+                check.lineTo(cx - dp(2), cy + dp(6));
+                check.lineTo(cx + dp(9), cy - dp(7));
+                canvas.drawPath(check, markPaint);
+            }
+        };
+        sberVerifiedMark.setVisibility(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? View.GONE : View.VISIBLE);
+        frontFace.addView(sberVerifiedMark, LayoutHelper.createFrame(
+                42, 42, Gravity.RIGHT | Gravity.TOP, 0, 8, 10, 0
         ));
 
         TextView mirMark = new TextView(context);
         mirMark.setText("МИР");
         mirMark.setTextColor(Color.WHITE);
+        mirMark.setVisibility(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? View.GONE : View.VISIBLE);
         mirMark.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 25f);
         mirMark.setTypeface(Typeface.create("sans-serif-black", Typeface.NORMAL));
         mirMark.setIncludeFontPadding(false);
