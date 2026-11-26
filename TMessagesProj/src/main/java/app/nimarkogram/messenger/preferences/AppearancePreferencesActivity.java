@@ -392,8 +392,9 @@ public class AppearancePreferencesActivity extends UniversalPreferencesActivity 
             ArrayList<CharSequence> opts = new ArrayList<>();
             opts.add("Зелёная");
             opts.add("Красная (скоро)");
+            opts.add("Оригинальная");
             PopupHelper.show(opts, "Дизайн карты", AppConfig.walletCardDesign, getContext(), i -> {
-                if (i != 0) {
+                if (i == AppConfig.WALLET_CARD_RED) {
                     SettingsHelper.updateButtonValue(view, getWalletCardDesignValueText());
                     return;
                 }
@@ -525,7 +526,11 @@ public class AppearancePreferencesActivity extends UniversalPreferencesActivity 
     }
 
     private String getWalletCardDesignValueText() {
-        return "Зелёная";
+        return switch (AppConfig.walletCardDesign) {
+            case AppConfig.WALLET_CARD_ORIGINAL -> "Оригинальная";
+            case AppConfig.WALLET_CARD_RED -> "Красная";
+            default -> "Зелёная";
+        };
     }
 
     private String getIconPackValueText()  {
