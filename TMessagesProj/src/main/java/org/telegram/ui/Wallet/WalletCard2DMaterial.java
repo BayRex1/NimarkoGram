@@ -66,7 +66,26 @@ final class WalletCard2DMaterial {
     private final int[][] faceColors = new int[2][];
     private final PorterDuffColorFilter[][] faceFilters = new PorterDuffColorFilter[2][8];
     private static final int[] GREEN_FACE_COLORS = {0xff00a82e,0xff00ad32,0xff00b236,0xff00b83a,0xff00bd3e,0xff00c342,0xff00c846,0xff00ce4a,0xff00d34e};
+    private static final int[] RED_FACE_COLORS = {0xffd91e16,0xffe32319,0xffed281c,0xfff12d20,0xfff53224,0xfff73829,0xfffa3e2e,0xfffc4534,0xffff4b3a};
+    private static final int[] YELLOW_FACE_COLORS = {0xffb99a00,0xffc9a600,0xffd8b300,0xffe3bd00,0xffedc800,0xfff4d000,0xffffd900,0xffffdf18,0xffffe52e};
     private static final int[] ORIGINAL_FACE_COLORS = {0xff006edb,0xff0072df,0xff0076e3,0xff007ae6,0xff007ee8,0xff0081ed,0xff0084f1,0xff0087f4,0xff008af5};
+
+    private static int stockDarkColor() {
+        return switch (AppConfig.walletCardDesign) {
+            case AppConfig.WALLET_CARD_RED -> 0xffc51b14;
+            case AppConfig.WALLET_CARD_YELLOW -> 0xffa98b00;
+            case AppConfig.WALLET_CARD_ORIGINAL -> 0xff2368d5;
+            default -> 0xff07872a;
+        };
+    }
+    private static int stockLightColor() {
+        return switch (AppConfig.walletCardDesign) {
+            case AppConfig.WALLET_CARD_RED -> 0xffff4b3a;
+            case AppConfig.WALLET_CARD_YELLOW -> 0xffffe52e;
+            case AppConfig.WALLET_CARD_ORIGINAL -> 0xff278ff7;
+            default -> 0xff16d943;
+        };
+    }
     private final int[] darks = {0, 0}, lights = {0, 0};
     private final float[][] stars = new float[22][6];
     private final RectF qr;
@@ -80,7 +99,7 @@ final class WalletCard2DMaterial {
     private final SweepGradient qrBrushMask;
     private Shader qrBrush;
     private int iconRes;
-    private int rimDark = 0xff087c28, rimLight = 0xff20e34d;
+    private int rimDark = 0xff07872a, rimLight = 0xff16d943;
     private boolean hasRotation;
     private static final android.util.LruCache<Integer, Bitmap[]> ICON_CACHE = new android.util.LruCache<>(2);
 
@@ -232,8 +251,8 @@ final class WalletCard2DMaterial {
 
     void drawSurface(Canvas canvas, float[] style) {
         for (int pass = 0; pass < (style == null ? 1 : 2); pass++) {
-            int d = AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? 0xff2368d5 : 0xff07872a;
-            int l = AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? 0xff278ff7 : 0xff16d943;
+            int d = stockDarkColor();
+            int l = stockLightColor();
             if (style != null) {
                 int offset = 10 + pass * 4;
                 if (style.length >= 18 && style[offset] >= 0) {
@@ -342,7 +361,12 @@ final class WalletCard2DMaterial {
     }
 
     private static int[] faceStops(int dark, int light, boolean gift) {
-        if (!gift) return AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? ORIGINAL_FACE_COLORS : GREEN_FACE_COLORS;
+        if (!gift) return switch (AppConfig.walletCardDesign) {
+            case AppConfig.WALLET_CARD_RED -> RED_FACE_COLORS;
+            case AppConfig.WALLET_CARD_YELLOW -> YELLOW_FACE_COLORS;
+            case AppConfig.WALLET_CARD_ORIGINAL -> ORIGINAL_FACE_COLORS;
+            default -> GREEN_FACE_COLORS;
+        };
         float[] darkChannels = new float[3], lightChannels = new float[3];
         for (int k = 0; k < 3; k++) {
             darkChannels[k] = encodeSrgb(linearChannel((dark >> (16 - k * 8)) & 255) * .73f);
@@ -458,8 +482,8 @@ final class WalletCard2DMaterial {
     void drawDepth(Canvas canvas, float[] style) {
         if (depthScale == 0) return;
         if (Math.abs(Math.sin(Math.toRadians(pitch))) < FLAT_DEPTH_SIN && Math.abs(Math.sin(Math.toRadians(yaw))) < FLAT_DEPTH_SIN) return;
-        int dark = WalletGiftPalette.card2DEdgeTone(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? 0xff088fee : 0xff087c28, style);
-        int light = WalletGiftPalette.card2DEdgeTone(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? 0xff16abf9 : 0xff20e34d, style);
+        int dark = WalletGiftPalette.card2DEdgeTone(stockDarkColor(), style);
+        int light = WalletGiftPalette.card2DEdgeTone(stockLightColor(), style);
         paint.setShader(null); paint.setAlpha(255);
         paint.setColor(depthColor(dark, light, .55f * EDGE_BRIGHTNESS, 0, 0));
         depthPath.rewind(); depthPath.moveTo(depthBack[0], depthBack[1]);
