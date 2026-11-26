@@ -94,7 +94,7 @@ final class WalletGiftPalette {
     private static final android.util.LruCache<String, Integer> EDGE_2D_COLORS = new android.util.LruCache<>(128);
 
     static int card2DEdgeTone(int stock, float[] style) {
-        int fallback = stock == 0xff088fee ? 0xff2368d5 : 0xff278ff7;
+        int fallback = stock == 0xff088fee ? 0xff087c28 : 0xff20e34d;
         if (style == null || style.length < 18) return fallback;
         int first = style[10] < 0 ? fallback : surface2DEdge(stock, (int)style[10], (int)style[11]);
         int second = style[14] < 0 ? fallback : surface2DEdge(stock, (int)style[14], (int)style[15]);
@@ -231,7 +231,7 @@ final class WalletGiftPalette {
     }
 
     private static int makeStock2DInk() {
-        float[] base = oklch(0xff0071cc);
+        float[] base = oklch(0xff087c28);
         float lightness = base[0] * (1 + (.443f - 1) * .221f), hue = base[2];
         float chroma = inkMaxChroma(lightness, hue), bestHue = hue;
         for (int degrees = -15; degrees <= 15; degrees++) {
