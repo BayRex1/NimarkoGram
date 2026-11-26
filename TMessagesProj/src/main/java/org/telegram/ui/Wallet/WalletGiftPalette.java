@@ -97,8 +97,12 @@ final class WalletGiftPalette {
 
     static int card2DEdgeTone(int stock, float[] style) {
         int fallback = stock == 0xff088fee
-                ? (AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? 0xff2368d5 : 0xff087c28)
-                : (AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? 0xff278ff7 : 0xff20e34d);
+                ? (AppConfig.walletCardDesign == AppConfig.WALLET_CARD_RED ? 0xffc51b14
+                    : AppConfig.walletCardDesign == AppConfig.WALLET_CARD_YELLOW ? 0xffa98b00
+                    : AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? 0xff2368d5 : 0xff087c28)
+                : (AppConfig.walletCardDesign == AppConfig.WALLET_CARD_RED ? 0xffff4b3a
+                    : AppConfig.walletCardDesign == AppConfig.WALLET_CARD_YELLOW ? 0xffffe52e
+                    : AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? 0xff278ff7 : 0xff20e34d);
         if (style == null || style.length < 18) return fallback;
         int first = style[10] < 0 ? fallback : surface2DEdge(stock, (int)style[10], (int)style[11]);
         int second = style[14] < 0 ? fallback : surface2DEdge(stock, (int)style[14], (int)style[15]);
@@ -235,7 +239,13 @@ final class WalletGiftPalette {
     }
 
     private static int makeStock2DInk() {
-        float[] base = oklch(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? 0xff2368d5 : 0xff087c28);
+        int stock = switch (AppConfig.walletCardDesign) {
+            case AppConfig.WALLET_CARD_RED -> 0xffc51b14;
+            case AppConfig.WALLET_CARD_YELLOW -> 0xffa98b00;
+            case AppConfig.WALLET_CARD_ORIGINAL -> 0xff2368d5;
+            default -> 0xff087c28;
+        };
+        float[] base = oklch(stock);
         float lightness = base[0] * (1 + (.443f - 1) * .221f), hue = base[2];
         float chroma = inkMaxChroma(lightness, hue), bestHue = hue;
         for (int degrees = -15; degrees <= 15; degrees++) {
