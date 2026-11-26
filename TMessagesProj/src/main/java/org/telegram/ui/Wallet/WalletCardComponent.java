@@ -122,6 +122,26 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
         setPadding(dp(12), dp(12), dp(12), dp(12));
         createCardImplementation();
 
+        // Yellow T-Bank inspired diagonal panel, kept behind the live balance and QR controls.
+        View yellowCardPanel = new View(context) {
+            private final Paint panelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            private final android.graphics.Path panelPath = new android.graphics.Path();
+            @Override protected void onDraw(Canvas canvas) {
+                float w = getWidth(), h = getHeight();
+                panelPath.reset();
+                panelPath.moveTo(0, 0);
+                panelPath.lineTo(w * .48f, 0);
+                panelPath.lineTo(w * .66f, h * .50f);
+                panelPath.lineTo(w * .48f, h);
+                panelPath.lineTo(0, h);
+                panelPath.close();
+                panelPaint.setColor(0x99000000);
+                canvas.drawPath(panelPath, panelPaint);
+            }
+        };
+        yellowCardPanel.setVisibility(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_YELLOW ? View.VISIBLE : View.GONE);
+        frontFace.addView(yellowCardPanel, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+
         // Low-contrast bank branding from the green MofGram card reference.
         TextView sberWatermark = new TextView(context);
         sberWatermark.setText("СБЕР");
@@ -132,7 +152,7 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
         sberWatermark.setSingleLine(true);
         sberWatermark.setLetterSpacing(.025f);
         sberWatermark.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-        sberWatermark.setVisibility(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? View.GONE : View.VISIBLE);
+        sberWatermark.setVisibility(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_GREEN ? View.VISIBLE : View.GONE);
         frontFace.addView(sberWatermark, LayoutHelper.createFrame(
                 250, 62, Gravity.LEFT | Gravity.TOP, 10, 1, 0, 0
         ));
@@ -156,7 +176,7 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
                 canvas.drawPath(check, markPaint);
             }
         };
-        sberVerifiedMark.setVisibility(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? View.GONE : View.VISIBLE);
+        sberVerifiedMark.setVisibility(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_GREEN ? View.VISIBLE : View.GONE);
         frontFace.addView(sberVerifiedMark, LayoutHelper.createFrame(
                 42, 42, Gravity.RIGHT | Gravity.TOP, 0, 8, 10, 0
         ));
@@ -164,7 +184,7 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
         TextView mirMark = new TextView(context);
         mirMark.setText("МИР");
         mirMark.setTextColor(Color.WHITE);
-        mirMark.setVisibility(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_ORIGINAL ? View.GONE : View.VISIBLE);
+        mirMark.setVisibility(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_GREEN || AppConfig.walletCardDesign == AppConfig.WALLET_CARD_RED ? View.VISIBLE : View.GONE);
         mirMark.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 25f);
         mirMark.setTypeface(Typeface.create("sans-serif-black", Typeface.NORMAL));
         mirMark.setIncludeFontPadding(false);
@@ -173,6 +193,75 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
         frontFace.addView(mirMark, LayoutHelper.createFrame(
                 82, 34, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 13, 4
         ));
+
+        TextView mtsBankMark = new TextView(context);
+        mtsBankMark.setText("● МТС БАНК");
+        mtsBankMark.setTextColor(Color.WHITE);
+        mtsBankMark.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16f);
+        mtsBankMark.setTypeface(Typeface.create("sans-serif-black", Typeface.BOLD));
+        mtsBankMark.setIncludeFontPadding(false);
+        mtsBankMark.setSingleLine(true);
+        mtsBankMark.setVisibility(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_RED ? View.VISIBLE : View.GONE);
+        frontFace.addView(mtsBankMark, LayoutHelper.createFrame(
+                150, 26, Gravity.LEFT | Gravity.TOP, 12, 9, 0, 0
+        ));
+
+        View cardChip = new View(context) {
+            private final Paint chipPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            private final android.graphics.Path chipLines = new android.graphics.Path();
+            @Override protected void onDraw(Canvas canvas) {
+                float w = getWidth(), h = getHeight();
+                RectF chip = new RectF(0, 0, w, h);
+                chipPaint.setColor(0xffdedbd2);
+                canvas.drawRoundRect(chip, dp(5), dp(5), chipPaint);
+                chipPaint.setStyle(Paint.Style.STROKE);
+                chipPaint.setStrokeWidth(dp(1));
+                chipPaint.setColor(0xffa7a39a);
+                canvas.drawRoundRect(chip, dp(5), dp(5), chipPaint);
+                chipLines.reset();
+                chipLines.moveTo(w * .33f, 0); chipLines.lineTo(w * .33f, h);
+                chipLines.moveTo(w * .66f, 0); chipLines.lineTo(w * .66f, h);
+                chipLines.moveTo(0, h * .5f); chipLines.lineTo(w, h * .5f);
+                canvas.drawPath(chipLines, chipPaint);
+                chipPaint.setStyle(Paint.Style.FILL);
+            }
+        };
+        boolean showPhysicalChip = AppConfig.walletCardDesign == AppConfig.WALLET_CARD_RED
+                || AppConfig.walletCardDesign == AppConfig.WALLET_CARD_YELLOW;
+        cardChip.setVisibility(showPhysicalChip ? View.VISIBLE : View.GONE);
+        frontFace.addView(cardChip, LayoutHelper.createFrame(38, 25, Gravity.LEFT | Gravity.TOP, 30, 52, 0, 0));
+
+        View tBankShield = new View(context) {
+            private final Paint shieldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            private final android.graphics.Path shield = new android.graphics.Path();
+            private final Paint letterPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            @Override protected void onDraw(Canvas canvas) {
+                float w = getWidth(), h = getHeight();
+                shield.reset();
+                shield.moveTo(w * .08f, h * .04f); shield.lineTo(w * .92f, h * .04f);
+                shield.lineTo(w * .88f, h * .63f); shield.lineTo(w * .50f, h * .96f);
+                shield.lineTo(w * .12f, h * .63f); shield.close();
+                shieldPaint.setColor(0xff202020);
+                canvas.drawPath(shield, shieldPaint);
+                letterPaint.setColor(0xffffdf18);
+                letterPaint.setTypeface(Typeface.create("sans-serif-black", Typeface.BOLD));
+                letterPaint.setTextSize(h * .62f);
+                letterPaint.setTextAlign(Paint.Align.CENTER);
+                canvas.drawText("T", w * .5f, h * .67f, letterPaint);
+            }
+        };
+        tBankShield.setVisibility(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_YELLOW ? View.VISIBLE : View.GONE);
+        frontFace.addView(tBankShield, LayoutHelper.createFrame(35, 38, Gravity.RIGHT | Gravity.TOP, 0, 10, 15, 0));
+
+        TextView yellowLabel = new TextView(context);
+        yellowLabel.setText("YELLOW");
+        yellowLabel.setTextColor(0xff202020);
+        yellowLabel.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20f);
+        yellowLabel.setTypeface(Typeface.create("sans-serif-black", Typeface.BOLD));
+        yellowLabel.setIncludeFontPadding(false);
+        yellowLabel.setSingleLine(true);
+        yellowLabel.setVisibility(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_YELLOW ? View.VISIBLE : View.GONE);
+        frontFace.addView(yellowLabel, LayoutHelper.createFrame(105, 28, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 17, 14));
 
         cardHolderView = new TextView(context) {
             @Override
