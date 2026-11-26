@@ -121,17 +121,17 @@ public final class MofGramTitleSpan extends ReplacementSpan implements View.OnAt
 
         shapePaint.setStyle(Paint.Style.STROKE);
         shapePaint.setStrokeWidth(dp(2.2f));
+        // A bright band that repeats along the border and travels across the whole pill.
+        float pillWidth = Math.max(1f, pill.width());
         LinearGradient outlineGradient = new LinearGradient(
-                pill.left, pill.top, pill.right, pill.bottom,
-                new int[] { 0xFFB0A8FF, 0xFFE4EAFF, 0xFF8FEBFF, 0xFFC9B3FF },
-                new float[] { 0f, 0.34f, 0.68f, 1f }, Shader.TileMode.CLAMP);
+                pill.left, pill.top, pill.left + pillWidth * 0.5f, pill.top,
+                new int[] { 0xFF7F8CFF, 0xFFE8EEFF, 0xFF7FE8FF, 0xFFB9A4FF, 0xFF7F8CFF },
+                new float[] { 0f, 0.25f, 0.5f, 0.75f, 1f }, Shader.TileMode.REPEAT);
         Matrix gradientMatrix = new Matrix();
-        gradientMatrix.setTranslate((phase - 0.5f) * dp(34), 0f);
+        gradientMatrix.setTranslate(phase * pillWidth, 0f);
         outlineGradient.setLocalMatrix(gradientMatrix);
         shapePaint.setShader(outlineGradient);
-        shapePaint.setShadowLayer(dp(6f), 0f, 0f, 0xCC9CB8FF);
         canvas.drawRoundRect(pill, pillHeight * 0.5f, pillHeight * 0.5f, shapePaint);
-        shapePaint.clearShadowLayer();
         shapePaint.setShader(null);
 
         float starCenterX = x + leftPadding + starSize * 0.5f;
