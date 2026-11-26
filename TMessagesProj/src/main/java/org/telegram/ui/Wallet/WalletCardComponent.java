@@ -2,6 +2,8 @@
 
 package org.telegram.ui.Wallet;
 
+import app.nimarkogram.messenger.AppConfig;
+
 import static org.telegram.messenger.AndroidUtilities.dp;
 
 import android.content.Context;
