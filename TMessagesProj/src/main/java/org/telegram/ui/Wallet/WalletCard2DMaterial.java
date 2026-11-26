@@ -6,7 +6,6 @@ import android.content.Context;
 import android.graphics.*;
 import androidx.core.graphics.ColorUtils;
 import org.telegram.messenger.FileLog;
-import app.nimarkogram.messenger.AppConfig;
 import java.io.InputStream;
 import java.util.Random;
 
