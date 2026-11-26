@@ -391,7 +391,12 @@ public class AppearancePreferencesActivity extends UniversalPreferencesActivity 
         } else if (item.id == walletCardDesignRow) {
             ArrayList<CharSequence> opts = new ArrayList<>();
             opts.add("Зелёная");
+            opts.add("Красная (скоро)");
             PopupHelper.show(opts, "Дизайн карты", AppConfig.walletCardDesign, getContext(), i -> {
+                if (i != 0) {
+                    SettingsHelper.updateButtonValue(view, getWalletCardDesignValueText());
+                    return;
+                }
                 AppConfig.setWalletCardDesign(i);
                 SettingsHelper.updateButtonValue(view, getWalletCardDesignValueText());
                 if (getParentLayout() != null) {
