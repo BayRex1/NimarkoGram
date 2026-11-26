@@ -2082,6 +2082,13 @@ public final class AppConfig {
         getEditor().putBoolean("disableSendHints", disableSendHints).apply();
     }
 
+    // Wallet card appearance: 0 = Green (the current public design).
+    public static volatile int walletCardDesign = getPreferences().getInt("walletCardDesign", 0);
+    public static void setWalletCardDesign(int design) {
+        walletCardDesign = 0; // Red is intentionally reserved until its artwork is ready.
+        getEditor().putInt("walletCardDesign", walletCardDesign).apply();
+    }
+
     public static boolean customTitleEnabled = getPreferences().getBoolean("customTitleEnabled", false);
     public static String customTitleText = getPreferences().getString("customTitleText", "");
     public static void setCustomTitle(boolean enabled, String text) {
