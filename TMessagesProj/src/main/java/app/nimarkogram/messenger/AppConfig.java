@@ -2100,16 +2100,26 @@ public final class AppConfig {
         getEditor().putBoolean("disableSendHints", disableSendHints).apply();
     }
 
-    // Wallet card appearance: 0 = Green, 1 = Red (reserved), 2 = original Telegram design.
+    // Wallet card appearance: 0 = Green, 1 = Red, 2 = Yellow, 3 = original Telegram design.
     public static final int WALLET_CARD_GREEN = 0;
     public static final int WALLET_CARD_RED = 1;
-    public static final int WALLET_CARD_ORIGINAL = 2;
-    public static volatile int walletCardDesign = getPreferences().getInt("walletCardDesign", WALLET_CARD_GREEN) == WALLET_CARD_ORIGINAL
-            ? WALLET_CARD_ORIGINAL : WALLET_CARD_GREEN;
+    public static final int WALLET_CARD_YELLOW = 2;
+    public static final int WALLET_CARD_ORIGINAL = 3;
+    private static int loadWalletCardDesign() {
+        int stored = getPreferences().getInt("walletCardDesign", WALLET_CARD_GREEN);
+        int version = getPreferences().getInt("walletCardDesignVersion", 0);
+        // Before Yellow was introduced, value 2 meant the original Telegram design.
+        if (version == 0) {
+            if (stored == 2) stored = WALLET_CARD_ORIGINAL;
+            getEditor().putInt("walletCardDesignVersion", 1).putInt("walletCardDesign", stored).apply();
+        }
+        return stored >= WALLET_CARD_GREEN && stored <= WALLET_CARD_ORIGINAL ? stored : WALLET_CARD_GREEN;
+    }
+    public static volatile int walletCardDesign = loadWalletCardDesign();
     public static void setWalletCardDesign(int design) {
-        if (design != WALLET_CARD_GREEN && design != WALLET_CARD_ORIGINAL) return;
+        if (design < WALLET_CARD_GREEN || design > WALLET_CARD_ORIGINAL) return;
         walletCardDesign = design;
-        getEditor().putInt("walletCardDesign", walletCardDesign).apply();
+        getEditor().putInt("walletCardDesignVersion", 1).putInt("walletCardDesign", walletCardDesign).apply();
     }
 
     public static boolean customTitleEnabled = getPreferences().getBoolean("customTitleEnabled", false);
