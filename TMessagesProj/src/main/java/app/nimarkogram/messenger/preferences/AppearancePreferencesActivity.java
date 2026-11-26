@@ -84,6 +84,7 @@ public class AppearancePreferencesActivity extends UniversalPreferencesActivity 
     private static final int hideMuteButtonRow = 29;
     private static final int weekdayNearDateRow = 30;
     private static final int enhancedGlassBlurRow = 31;
+    private static final int walletCardDesignRow = 33;
 
     private static final int motionBlurRow = 32;
     private static final int foldersRow = 7;
@@ -110,7 +111,7 @@ public class AppearancePreferencesActivity extends UniversalPreferencesActivity 
                     foldersRow, bottomTabsRow -> PAGE_NAVIGATION;
             case snowflakesRow, iconPackRow, oneUISwitchesRow, disableDividersRow,
                     glareOnElementsRow, forceBlurRow, mediaGlowRow, chatSnowflakesRow,
-                    enhancedGlassBlurRow, motionBlurRow -> PAGE_INTERFACE;
+                    enhancedGlassBlurRow, motionBlurRow, walletCardDesignRow -> PAGE_INTERFACE;
             case messagesAndProfilesRow, messageSizeRow, iosStyleComposerRow, hideBubbleTailRow,
                     centerChatTitleRow, unreadBadgeRow, customWallpapersRow, hideMuteButtonRow,
                     weekdayNearDateRow -> PAGE_CHAT;
@@ -232,6 +233,8 @@ public class AppearancePreferencesActivity extends UniversalPreferencesActivity 
                 R.drawable.msg_colors, getString(R.string.AP_IconReplacements), getIconPackValueText()));
         items.add(asSettingsValue(oneUISwitchesRow, IconBackgroundColors.GREEN,
                 R.drawable.msg_hybrid, getString(R.string.NM_SwitchStyle), getSwitchStyleValueText()));
+        items.add(asSettingsValue(walletCardDesignRow, IconBackgroundColors.GREEN,
+                R.drawable.wallet_card_qr, "Дизайн карты", getWalletCardDesignValueText()));
         items.add(SettingsHelper.asSwitchCG(disableDividersRow, getString(R.string.AP_DisableDividers))
                 .setChecked(AppConfig.disableDividers)
         );
@@ -385,6 +388,16 @@ public class AppearancePreferencesActivity extends UniversalPreferencesActivity 
             showRestartBulletin();
         } else if (item.id == iconPackRow) {
             presentFragment(new IconPackSelectorActivity());   // dedicated screen with live previews
+        } else if (item.id == walletCardDesignRow) {
+            ArrayList<CharSequence> opts = new ArrayList<>();
+            opts.add("Зелёная");
+            PopupHelper.show(opts, "Дизайн карты", AppConfig.walletCardDesign, getContext(), i -> {
+                AppConfig.setWalletCardDesign(i);
+                SettingsHelper.updateButtonValue(view, getWalletCardDesignValueText());
+                if (getParentLayout() != null) {
+                    getParentLayout().rebuildAllFragmentViews(false, false);
+                }
+            });
         } else if (item.id == oneUISwitchesRow) {
             ArrayList<CharSequence> opts = new ArrayList<>();
             opts.add(getString(R.string.Default));
@@ -504,6 +517,10 @@ public class AppearancePreferencesActivity extends UniversalPreferencesActivity 
     public boolean onLongClick(UItem item, View view, int position, float x, float y) {
 
         return false;
+    }
+
+    private String getWalletCardDesignValueText() {
+        return "Зелёная";
     }
 
     private String getIconPackValueText()  {
