@@ -391,13 +391,10 @@ public class AppearancePreferencesActivity extends UniversalPreferencesActivity 
         } else if (item.id == walletCardDesignRow) {
             ArrayList<CharSequence> opts = new ArrayList<>();
             opts.add("Зелёная");
-            opts.add("Красная (скоро)");
+            opts.add("Красная");
+            opts.add("Жёлтая");
             opts.add("Оригинальная");
             PopupHelper.show(opts, "Дизайн карты", AppConfig.walletCardDesign, getContext(), i -> {
-                if (i == AppConfig.WALLET_CARD_RED) {
-                    SettingsHelper.updateButtonValue(view, getWalletCardDesignValueText());
-                    return;
-                }
                 AppConfig.setWalletCardDesign(i);
                 SettingsHelper.updateButtonValue(view, getWalletCardDesignValueText());
                 if (getParentLayout() != null) {
@@ -528,6 +525,7 @@ public class AppearancePreferencesActivity extends UniversalPreferencesActivity 
     private String getWalletCardDesignValueText() {
         return switch (AppConfig.walletCardDesign) {
             case AppConfig.WALLET_CARD_ORIGINAL -> "Оригинальная";
+            case AppConfig.WALLET_CARD_YELLOW -> "Жёлтая";
             case AppConfig.WALLET_CARD_RED -> "Красная";
             default -> "Зелёная";
         };
