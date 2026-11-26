@@ -2086,8 +2086,8 @@ public final class AppConfig {
     public static final int WALLET_CARD_GREEN = 0;
     public static final int WALLET_CARD_RED = 1;
     public static final int WALLET_CARD_ORIGINAL = 2;
-    public static volatile int walletCardDesign = Math.max(WALLET_CARD_GREEN,
-            Math.min(WALLET_CARD_ORIGINAL, getPreferences().getInt("walletCardDesign", WALLET_CARD_GREEN)));
+    public static volatile int walletCardDesign = getPreferences().getInt("walletCardDesign", WALLET_CARD_GREEN) == WALLET_CARD_ORIGINAL
+            ? WALLET_CARD_ORIGINAL : WALLET_CARD_GREEN;
     public static void setWalletCardDesign(int design) {
         if (design != WALLET_CARD_GREEN && design != WALLET_CARD_ORIGINAL) return;
         walletCardDesign = design;
