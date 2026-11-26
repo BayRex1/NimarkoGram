@@ -2082,10 +2082,15 @@ public final class AppConfig {
         getEditor().putBoolean("disableSendHints", disableSendHints).apply();
     }
 
-    // Wallet card appearance: 0 = Green (the current public design).
-    public static volatile int walletCardDesign = getPreferences().getInt("walletCardDesign", 0);
+    // Wallet card appearance: 0 = Green, 1 = Red (reserved), 2 = original Telegram design.
+    public static final int WALLET_CARD_GREEN = 0;
+    public static final int WALLET_CARD_RED = 1;
+    public static final int WALLET_CARD_ORIGINAL = 2;
+    public static volatile int walletCardDesign = Math.max(WALLET_CARD_GREEN,
+            Math.min(WALLET_CARD_ORIGINAL, getPreferences().getInt("walletCardDesign", WALLET_CARD_GREEN)));
     public static void setWalletCardDesign(int design) {
-        walletCardDesign = 0; // Red is intentionally reserved until its artwork is ready.
+        if (design != WALLET_CARD_GREEN && design != WALLET_CARD_ORIGINAL) return;
+        walletCardDesign = design;
         getEditor().putInt("walletCardDesign", walletCardDesign).apply();
     }
 
