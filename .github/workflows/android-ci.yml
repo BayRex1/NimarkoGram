@@ -1,4 +1,5 @@
 name: MofGram Android CI
+# Trigger CI for the current wallet-card customization commit.
 
 on:
   push:
