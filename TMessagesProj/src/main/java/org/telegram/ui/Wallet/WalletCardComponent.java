@@ -229,7 +229,7 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
         boolean showPhysicalChip = AppConfig.walletCardDesign == AppConfig.WALLET_CARD_RED
                 || AppConfig.walletCardDesign == AppConfig.WALLET_CARD_YELLOW;
         cardChip.setVisibility(showPhysicalChip ? View.VISIBLE : View.GONE);
-        frontFace.addView(cardChip, LayoutHelper.createFrame(38, 25, Gravity.LEFT | Gravity.TOP, 30, 52, 0, 0));
+        frontFace.addView(cardChip, LayoutHelper.createFrame(38, 25, Gravity.LEFT | Gravity.TOP, 30, 39, 0, 0));
 
         View tBankShield = new View(context) {
             private final Paint shieldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
