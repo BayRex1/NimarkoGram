@@ -87,9 +87,12 @@ public final class MofGramTitleSpan extends ReplacementSpan implements View.OnAt
 
     @Override
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
-        paint.getFontMetricsInt(fm);
-        float textWidth = paint.measureText(text, start, end);
-        return Math.round(textWidth + dp(48));
+        // Measure with the same bold weight that draw() uses, so the pill is wide enough.
+        Paint measurePaint = new Paint(paint);
+        measurePaint.setFakeBoldText(true);
+        measurePaint.getFontMetricsInt(fm);
+        float textWidth = measurePaint.measureText(text, start, end);
+        return Math.round(textWidth + dp(38));
     }
 
     @Override
@@ -98,14 +101,15 @@ public final class MofGramTitleSpan extends ReplacementSpan implements View.OnAt
         TextPaint textPaint = sourcePaint instanceof TextPaint
                 ? new TextPaint((TextPaint) sourcePaint) : new TextPaint(sourcePaint);
         float textWidth = textPaint.measureText(text, start, end);
-        float starSize = dp(13);
-        float leftPadding = dp(13);
-        float gap = dp(8);
-        float rightPadding = dp(14);
+        float starSize = dp(11);
+        float leftPadding = dp(10);
+        float gap = dp(6);
+        float rightPadding = dp(10);
         float width = leftPadding + starSize + gap + textWidth + rightPadding;
         Paint.FontMetrics fm = textPaint.getFontMetrics();
         float textHeight = fm.descent - fm.ascent;
-        float pillHeight = Math.max(dp(31), textHeight + dp(13));
+        // Same height as the title view, otherwise the bottom of the pill is clipped.
+        float pillHeight = Math.min(dp(24), Math.max(dp(20), textHeight));
         float centerY = y + (fm.ascent + fm.descent) * 0.5f;
 
         pill.set(x, centerY - pillHeight * 0.5f, x + width, centerY + pillHeight * 0.5f);
@@ -116,18 +120,18 @@ public final class MofGramTitleSpan extends ReplacementSpan implements View.OnAt
         canvas.drawRoundRect(pill, pillHeight * 0.5f, pillHeight * 0.5f, shapePaint);
 
         shapePaint.setStyle(Paint.Style.STROKE);
-        shapePaint.setStrokeWidth(dp(1.15f));
+        shapePaint.setStrokeWidth(dp(2.2f));
+        // A bright band that repeats along the border and travels across the whole pill.
+        float pillWidth = Math.max(1f, pill.width());
         LinearGradient outlineGradient = new LinearGradient(
-                pill.left, pill.top, pill.right, pill.bottom,
-                new int[] { 0xFF8F8BFF, 0xFFB7C8FF, 0xFF79D8F2, 0xFF9D8BFA },
-                new float[] { 0f, 0.34f, 0.68f, 1f }, Shader.TileMode.CLAMP);
+                pill.left, pill.top, pill.left + pillWidth * 0.5f, pill.top,
+                new int[] { 0xFF7F8CFF, 0xFFE8EEFF, 0xFF7FE8FF, 0xFFB9A4FF, 0xFF7F8CFF },
+                new float[] { 0f, 0.25f, 0.5f, 0.75f, 1f }, Shader.TileMode.REPEAT);
         Matrix gradientMatrix = new Matrix();
-        gradientMatrix.setTranslate((phase - 0.5f) * dp(34), 0f);
+        gradientMatrix.setTranslate(phase * pillWidth, 0f);
         outlineGradient.setLocalMatrix(gradientMatrix);
         shapePaint.setShader(outlineGradient);
-        shapePaint.setShadowLayer(dp(3.5f), 0f, 0f, 0x558E9CFF);
         canvas.drawRoundRect(pill, pillHeight * 0.5f, pillHeight * 0.5f, shapePaint);
-        shapePaint.clearShadowLayer();
         shapePaint.setShader(null);
 
         float starCenterX = x + leftPadding + starSize * 0.5f;
@@ -143,6 +147,7 @@ public final class MofGramTitleSpan extends ReplacementSpan implements View.OnAt
         starPaint.setShader(null);
 
         textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setFakeBoldText(true);
         LinearGradient textGradient = new LinearGradient(
                 x + leftPadding + starSize + gap, pill.top,
                 x + width - rightPadding, pill.bottom,

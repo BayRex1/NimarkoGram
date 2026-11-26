@@ -1031,7 +1031,30 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         return title;
     }
 
+    private float mofGramTitleScrollOffset;
+
+    /** While the chat list scrolls, the MofGram title slides left and fades, like Telegram's header. */
+    private void updateMofGramTitleScroll(int dy, RecyclerView recyclerView) {
+        if (actionBar == null || actionBar.getTitleTextView() == null) {
+            return;
+        }
+        View title = actionBar.getTitleTextView();
+        float max = Math.max(AndroidUtilities.dp(120), title.getMeasuredWidth() + AndroidUtilities.dp(16));
+        if (!recyclerView.canScrollVertically(-1)) {
+            mofGramTitleScrollOffset = 0;
+        } else {
+            mofGramTitleScrollOffset = Math.max(0, Math.min(max, mofGramTitleScrollOffset + dy));
+        }
+        // Keep the title fully visible while scrolling (it must not disappear).
+        title.setTranslationX(0f);
+        title.setAlpha(1f);
+    }
+
     private void attachMofGramHeaderAnimation() {
+        // Left-aligned title: centered titles leave only ~130dp for the text, which cut off "Gram".
+        if (actionBar != null) {
+            actionBar.setForceDisableCenterTitle(true);
+        }
         if (mofGramTitleSpan != null && actionBar != null && actionBar.getTitleTextView() != null) {
             mofGramTitleSpan.attach(actionBar.getTitleTextView());
         }
@@ -5506,6 +5529,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    updateMofGramTitleScroll(dy, recyclerView);
                     viewPage.listView.recordStoriesScrollHaptic(dy);
                     if (contentView != null) {
                         contentView.updateBlurContent();
