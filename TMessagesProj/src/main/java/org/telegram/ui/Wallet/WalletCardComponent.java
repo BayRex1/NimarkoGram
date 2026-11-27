@@ -206,31 +206,6 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
                 150, 26, Gravity.LEFT | Gravity.TOP, 12, 9, 0, 0
         ));
 
-        View cardChip = new View(context) {
-            private final Paint chipPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            private final android.graphics.Path chipLines = new android.graphics.Path();
-            @Override protected void onDraw(Canvas canvas) {
-                float w = getWidth(), h = getHeight();
-                RectF chip = new RectF(0, 0, w, h);
-                chipPaint.setColor(0xffdedbd2);
-                canvas.drawRoundRect(chip, dp(5), dp(5), chipPaint);
-                chipPaint.setStyle(Paint.Style.STROKE);
-                chipPaint.setStrokeWidth(dp(1));
-                chipPaint.setColor(0xffa7a39a);
-                canvas.drawRoundRect(chip, dp(5), dp(5), chipPaint);
-                chipLines.reset();
-                chipLines.moveTo(w * .33f, 0); chipLines.lineTo(w * .33f, h);
-                chipLines.moveTo(w * .66f, 0); chipLines.lineTo(w * .66f, h);
-                chipLines.moveTo(0, h * .5f); chipLines.lineTo(w, h * .5f);
-                canvas.drawPath(chipLines, chipPaint);
-                chipPaint.setStyle(Paint.Style.FILL);
-            }
-        };
-        boolean showPhysicalChip = AppConfig.walletCardDesign == AppConfig.WALLET_CARD_RED
-                || AppConfig.walletCardDesign == AppConfig.WALLET_CARD_YELLOW;
-        cardChip.setVisibility(showPhysicalChip ? View.VISIBLE : View.GONE);
-        frontFace.addView(cardChip, LayoutHelper.createFrame(38, 25, Gravity.LEFT | Gravity.TOP, 30, 39, 0, 0));
-
         View tBankShield = new View(context) {
             private final Paint shieldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             private final android.graphics.Path shield = new android.graphics.Path();
@@ -404,8 +379,16 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
             bottom = (WalletCardGeometry.TOP - (.5f-bottom)*1.219512f)/span;
             ry *= 1.219512f/span;
         }
-        path.addRoundRect((336 - qrButtonRightPadding - QR_BUTTON_WIDTH) * width / 336f, top * height,
-                (336 - qrButtonRightPadding) * width / 336f, bottom * height,
+        boolean qrOnLeft = AppConfig.walletCardDesign == AppConfig.WALLET_CARD_RED
+                || AppConfig.walletCardDesign == AppConfig.WALLET_CARD_YELLOW;
+        float left = qrOnLeft ? 30f : 336f - qrButtonRightPadding - QR_BUTTON_WIDTH;
+        float right = qrOnLeft ? 30f + QR_BUTTON_WIDTH : 336f - qrButtonRightPadding;
+        if (qrOnLeft) {
+            top = 39f / 205f;
+            bottom = 75f / 205f;
+        }
+        path.addRoundRect(left * width / 336f, top * height,
+                right * width / 336f, bottom * height,
                 8 * width / 336f, ry * height, android.graphics.Path.Direction.CW);
     }
 
