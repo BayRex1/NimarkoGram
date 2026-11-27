@@ -379,14 +379,11 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
             bottom = (WalletCardGeometry.TOP - (.5f-bottom)*1.219512f)/span;
             ry *= 1.219512f/span;
         }
-        boolean qrOnLeft = AppConfig.walletCardDesign == AppConfig.WALLET_CARD_RED
-                || AppConfig.walletCardDesign == AppConfig.WALLET_CARD_YELLOW;
-        float left = qrOnLeft ? 30f : 336f - qrButtonRightPadding - QR_BUTTON_WIDTH;
-        float right = qrOnLeft ? 30f + QR_BUTTON_WIDTH : 336f - qrButtonRightPadding;
-        if (qrOnLeft) {
-            top = 39f / 205f;
-            bottom = 75f / 205f;
+        if (AppConfig.walletCardDesign == AppConfig.WALLET_CARD_YELLOW) {
+            return;
         }
+        float left = 336f - qrButtonRightPadding - QR_BUTTON_WIDTH;
+        float right = 336f - qrButtonRightPadding;
         path.addRoundRect(left * width / 336f, top * height,
                 right * width / 336f, bottom * height,
                 8 * width / 336f, ry * height, android.graphics.Path.Direction.CW);
