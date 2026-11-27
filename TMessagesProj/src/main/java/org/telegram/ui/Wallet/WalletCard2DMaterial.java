@@ -119,11 +119,8 @@ final class WalletCard2DMaterial {
                 depthNormals[i * 2] = nx; depthNormals[i * 2 + 1] = ny;
             }
         }
-        boolean qrOnLeft = AppConfig.walletCardDesign == AppConfig.WALLET_CARD_RED
-                || AppConfig.walletCardDesign == AppConfig.WALLET_CARD_YELLOW;
-        qr = qrOnLeft
-                ? new RectF(30, 39, 78, 75)
-                : new RectF(W - rightPadding - 48, 74, W - rightPadding, 110);
+        // Keep the QR tile in the original position for original, green and red designs.
+        qr = new RectF(W - rightPadding - 48, 74, W - rightPadding, 110);
         if (textures == null) {
             String[] names = {"finish_light", "finish_dark", "groove_along", "groove_across", "qr_brush_light", "qr_brush_dark", "grain"};
             textures = new Bitmap[names.length];
