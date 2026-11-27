@@ -6,15 +6,16 @@ on:
       tag:
         description: "Release tag"
         required: true
-        default: "v1.0.0"
+        default: "v1.1.0"
       publish:
         description: "Publish GitHub release (true/false)"
         required: true
         default: "false"
   push:
     branches:
-      - feature/mogram-gifts-native-integration
       - main
+    paths:
+      - ".github/workflows/release.yml"
     tags:
       - "v*"
 
@@ -93,18 +94,21 @@ jobs:
         run: |
           APK=$(find TMessagesProj_AppStandalone/build/outputs/apk -name "*.apk" | head -n 1)
           [ -n "$APK" ] || { echo "APK not found"; exit 1; }
-          cp "$APK" MofGram-1.0.0.apk
-          echo "Signer:"; "$(find "$ANDROID_HOME/build-tools/36.0.0" -name apksigner | head -n 1)" verify --print-certs MofGram-1.0.0.apk | head -3
+          cp "$APK" MofGram-1.1.0.apk
+          echo "Signer:"; "$(find "$ANDROID_HOME/build-tools/36.0.0" -name apksigner | head -n 1)" verify --print-certs MofGram-1.1.0.apk | head -3
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: MofGram-1.0.0-apk
-          path: MofGram-1.0.0.apk
+          name: MofGram-1.1.0-apk
+          path: MofGram-1.1.0.apk
 
       - name: Publish GitHub release
-        if: (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) || github.event.inputs.publish == 'true'
+        if: (github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main')) || github.event.inputs.publish == 'true'
         shell: bash
         run: |
-          TAG="${{ github.event.inputs.tag || github.ref_name }}"
-          gh release create "$TAG" MofGram-1.0.0.apk --target "$GITHUB_SHA" --title "1.0.0" --notes "NimarkoGram / MofGram 1.0.0 (signed release APK). APK version is unchanged (13.2.1 build)."
+          TAG="${{ github.event.inputs.tag }}"
+          if [ -z "$TAG" ]; then
+            if [[ "$GITHUB_REF" == refs/tags/* ]]; then TAG="$GITHUB_REF_NAME"; else TAG="v1.1.0"; fi
+          fi
+          gh release create "$TAG" MofGram-1.1.0.apk --target "$GITHUB_SHA" --title "MofGram 1.1.0" --notes "MofGram 1.1.0 — signed APK. Based on NimarkoGram 13.2.1."
