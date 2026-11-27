@@ -122,20 +122,20 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
         setPadding(dp(12), dp(12), dp(12), dp(12));
         createCardImplementation();
 
-        // Yellow T-Bank inspired diagonal panel, kept behind the live balance and QR controls.
+        // Subtle golden panel on the right; the left side stays clear for the QR button.
         View yellowCardPanel = new View(context) {
             private final Paint panelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             private final android.graphics.Path panelPath = new android.graphics.Path();
             @Override protected void onDraw(Canvas canvas) {
                 float w = getWidth(), h = getHeight();
                 panelPath.reset();
-                panelPath.moveTo(0, 0);
-                panelPath.lineTo(w * .48f, 0);
-                panelPath.lineTo(w * .66f, h * .50f);
-                panelPath.lineTo(w * .48f, h);
-                panelPath.lineTo(0, h);
+                panelPath.moveTo(w * .68f, 0);
+                panelPath.lineTo(w, 0);
+                panelPath.lineTo(w, h);
+                panelPath.lineTo(w * .68f, h);
+                panelPath.lineTo(w * .53f, h * .50f);
                 panelPath.close();
-                panelPaint.setColor(0x99000000);
+                panelPaint.setColor(0xffe8c21a);
                 canvas.drawPath(panelPath, panelPaint);
             }
         };
@@ -256,8 +256,9 @@ public class WalletCardComponent extends FrameLayout implements NotificationCent
         TextView yellowLabel = new TextView(context);
         yellowLabel.setText("YELLOW");
         yellowLabel.setTextColor(0xff202020);
-        yellowLabel.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20f);
-        yellowLabel.setTypeface(Typeface.create("sans-serif-black", Typeface.BOLD));
+        yellowLabel.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f);
+        yellowLabel.setLetterSpacing(.09f);
+        yellowLabel.setTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD));
         yellowLabel.setIncludeFontPadding(false);
         yellowLabel.setSingleLine(true);
         yellowLabel.setVisibility(AppConfig.walletCardDesign == AppConfig.WALLET_CARD_YELLOW ? View.VISIBLE : View.GONE);
