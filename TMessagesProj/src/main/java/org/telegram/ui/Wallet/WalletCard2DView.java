@@ -719,7 +719,10 @@ public class WalletCard2DView extends FrameLayout implements SensorEventListener
                 int save = canvas.save();
             canvas.scale(getWidth() / 336f, getHeight() / 205f);
             if (material != null) material.drawStars(canvas, !backFacing && hasCardNumber);
-            if (material != null && !backFacing) material.drawQr(canvas);
+            if (material != null && !backFacing
+                    && AppConfig.walletCardDesign != AppConfig.WALLET_CARD_YELLOW) {
+                material.drawQr(canvas);
+            }
             if (material != null) material.drawRim(canvas);
                 canvas.restoreToCount(save);
         }
